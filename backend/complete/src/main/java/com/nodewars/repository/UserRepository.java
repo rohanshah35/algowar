@@ -5,5 +5,11 @@ import org.springframework.stereotype.Repository;
 
 import com.nodewars.model.User;
 
+/**
+ * UserRepository is an interface that extends JpaRepository to provide CRUD operations 
+ * for User entities. It is annotated with @Repository to indicate that it is a Spring 
+ * Data repository.
+ * 
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {}

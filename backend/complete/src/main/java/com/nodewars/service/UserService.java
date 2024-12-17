@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import com.nodewars.model.User;
 import com.nodewars.repository.UserRepository;
 
+/**
+ * Service class for managing users.
+ */
 @Service
 public class UserService {
-
     @Autowired
     private UserRepository userRepository;
 

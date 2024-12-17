@@ -23,7 +23,8 @@ jwt:
 
 logging:
   level:
-    root: DEBUG        # Set the root log level to DEBUG
-    org.hibernate.SQL: DEBUG    # Enable SQL logging
-    org.hibernate.type: TRACE    # Log parameter values of SQL statements
-    org.springframework.jdbc: DEBUG    # Log all JDBC statements
+    root: INFO              # Set the root log level to INFO
+    com.nodewars: DEBUG      # Set the log level for your package to DEBUG
+    org.hibernate.SQL: INFO # Log Hibernate SQL statements at INFO level
+    org.hibernate.type: OFF # Disable detailed parameter value logging
+    org.springframework.jdbc: INFO # Log JDBC statements at INFO level

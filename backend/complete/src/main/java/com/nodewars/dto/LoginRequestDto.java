@@ -1,5 +1,9 @@
 package com.nodewars.dto;
 
+/**
+ * Data Transfer Object for login requests.
+ * This class is used to encapsulate the data required for a user to log in.
+ */
 public class LoginRequestDto {
     private String email;
     private String username;

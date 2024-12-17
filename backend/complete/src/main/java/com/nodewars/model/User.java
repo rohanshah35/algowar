@@ -7,6 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * Represents a user entity with various attributes such as email, username, password, 
+ * Cognito user ID, profile picture, and stats.
+ * 
+ * This class is annotated with JPA annotations to map it to a database table named "users". 
+ * It includes fields for the user's ID, email, username, password, Cognito user ID, profile picture, 
+ * and stats, along with their respective getters and setters.
+ * 
+ */
 @Entity
 @Table(name = "users")
 public class User {

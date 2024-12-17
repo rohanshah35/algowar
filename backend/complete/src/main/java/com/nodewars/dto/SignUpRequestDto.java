@@ -1,5 +1,9 @@
 package com.nodewars.dto;
 
+/**
+ * Data Transfer Object for user sign-up requests.
+ * This class holds the necessary information for a user to sign up.
+ */
 public class SignUpRequestDto {
     private String email;
     private String username;

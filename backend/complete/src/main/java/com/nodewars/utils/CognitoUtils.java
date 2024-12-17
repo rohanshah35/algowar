@@ -5,7 +5,20 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+/**
+ * Utility class for AWS Cognito operations.
+ */
 public class CognitoUtils {
+
+    /**
+     * Calculates the secret hash for AWS Cognito.
+     *
+     * @param username the username of the Cognito user
+     * @param clientId the client ID of the Cognito app
+     * @param clientSecret the client secret of the Cognito app
+     * @return the calculated secret hash as a Base64 encoded string
+     *
+     */
     public static String calculateSecretHash(String username, String clientId, String clientSecret) {
         try {
             String message = username + clientId;
