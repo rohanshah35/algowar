@@ -42,12 +42,15 @@ public class CognitoService {
     }
 
     public String login(String username, String password) {
+        String secretHash = CognitoUtils.calculateSecretHash(username, clientId, "1csiofdpf93nlccpf7dhlsssqa5ovhovfr0k16v4uqagg032deco");
+
         InitiateAuthRequest request = InitiateAuthRequest.builder()
             .authFlow(AuthFlowType.USER_PASSWORD_AUTH)
             .clientId(clientId)
             .authParameters(Map.of(
                 "USERNAME", username,
-                "PASSWORD", password
+                "PASSWORD", password,
+                "SECRET_HASH", secretHash
             ))
             .build();
 
