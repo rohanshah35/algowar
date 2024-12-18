@@ -13,7 +13,6 @@ import {
 import { useState } from "react";
 
 export function LoginForm() {
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +39,6 @@ export function LoginForm() {
 
       const data = await response.json();
       console.log("Login successful:", data);
-      // Redirect or handle success here
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -60,24 +58,37 @@ export function LoginForm() {
             backgroundColor: "#18181b",
             borderColor: "#27272a",
             color: "#f4f4f5",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.6)"
           }}
         >
-          <Title
-            order={2}
-            mb="xs"
-            style={{
-              color: "#d4d4d8",
-              fontWeight: 600,
-            }}
-          >
-            Login
-          </Title>
-          <Text size="sm" mb="xl" style={{ color: "#a1a1aa" }}>
-            Enter your details to login to your account
-          </Text>
+          <Box style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <Title
+              order={2}
+              mb="xs"
+              style={{
+                color: "#d4d4d8",
+                fontWeight: 600,
+              }}
+            >
+              Login
+            </Title>
+            <Text size="xs" style={{ color: "#a1a1aa" }}>
+              Sign in to your account.
+            </Text>
+          </Box>
 
           <TextInput
-            label={<span style={{ color: "#d4d4d8", fontSize: "11px", fontWeight: "700"  }}>USERNAME</span>}
+            label={
+              <span
+                style={{
+                  color: "#d4d4d8",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                }}
+              >
+                USERNAME
+              </span>
+            }
             name="identifier"
             required
             mb="md"
@@ -93,7 +104,17 @@ export function LoginForm() {
           />
 
           <PasswordInput
-            label={<span style={{ color: "#d4d4d8", fontSize: "11px", fontWeight: "700"  }}>PASSWORD</span>}
+            label={
+              <span
+                style={{
+                  color: "#d4d4d8",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                }}
+              >
+                PASSWORD
+              </span>
+            }
             name="password"
             required
             mb="md"
@@ -124,7 +145,7 @@ export function LoginForm() {
           </Button>
         </Card>
 
-        <Text size="sm" ta="center" mt="md" style={{ color: "#a1a1aa" }}>
+        <Text size="xs" ta="center" mt="md" style={{ color: "#a1a1aa" }}>
           Don&apos;t have an account?{" "}
           <Link href="/signup">
             <Text
