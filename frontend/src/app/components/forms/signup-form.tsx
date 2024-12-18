@@ -10,11 +10,49 @@ import {
   Button,
   Box,
 } from "@mantine/core";
+import { useState } from "react";
 
 export function SignupForm() {
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      username: formData.get("username"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Signup failed. Please try again.");
+      }
+
+      const data = await response.json();
+      console.log("Signup successful:", data);
+      // Redirect or handle success here
+    } catch (err: any) {
+      setError(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box maw={400} mx="auto" w="100%">
-      <form>
+      <form onSubmit={handleSubmit}>
         <Card
           shadow="lg"
           padding="xl"
