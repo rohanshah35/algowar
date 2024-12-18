@@ -13,7 +13,6 @@ import {
 import { useState } from "react";
 
 export function SignupForm() {
-  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,7 +41,6 @@ export function SignupForm() {
 
       const data = await response.json();
       console.log("Signup successful:", data);
-      // Redirect or handle success here
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -54,7 +52,6 @@ export function SignupForm() {
     <Box maw={400} mx="auto" w="100%">
       <form onSubmit={handleSubmit}>
         <Card
-          shadow="lg"
           padding="xl"
           radius="md"
           withBorder
@@ -62,24 +59,37 @@ export function SignupForm() {
             backgroundColor: "#18181b",
             borderColor: "#27272a",
             color: "#f4f4f5",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.6)"
           }}
         >
-          <Title
-            order={2}
-            mb="xs"
-            style={{
-              color: "#d4d4d8",
-              fontWeight: 600,
-            }}
-          >
-            Sign Up
-          </Title>
-          <Text size="sm" mb="xl" style={{ color: "#a1a1aa" }}>
-            Enter your details to create a new account
-          </Text>
+          <Box style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <Title
+              order={2}
+              mb="xs"
+              style={{
+                color: "#d4d4d8",
+                fontWeight: 600,
+              }}
+            >
+              Sign Up
+            </Title>
+            <Text size="xs" style={{ color: "#a1a1aa" }}>
+              Create your new account.
+            </Text>
+          </Box>
 
           <TextInput
-            label={<span style={{ color: "#d4d4d8", fontSize: "11px", fontWeight: "700" }}>USERNAME</span>}
+            label={
+              <span
+                style={{
+                  color: "#d4d4d8",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                }}
+              >
+                USERNAME
+              </span>
+            }
             id="username"
             name="username"
             required
@@ -96,7 +106,17 @@ export function SignupForm() {
           />
 
           <TextInput
-            label={<span style={{ color: "#d4d4d8", fontSize: "11px", fontWeight: "700"   }}>EMAIL</span>}
+            label={
+              <span
+                style={{
+                  color: "#d4d4d8",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                }}
+              >
+                EMAIL
+              </span>
+            }
             id="email"
             name="email"
             type="email"
@@ -114,7 +134,17 @@ export function SignupForm() {
           />
 
           <PasswordInput
-            label={<span style={{ color: "#d4d4d8", fontSize: "11px", fontWeight: "700"   }}>PASSWORD</span>}
+            label={
+              <span
+                style={{
+                  color: "#d4d4d8",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                }}
+              >
+                PASSWORD
+              </span>
+            }
             id="password"
             name="password"
             required
@@ -146,7 +176,7 @@ export function SignupForm() {
           </Button>
         </Card>
 
-        <Text size="sm" ta="center" mt="md" style={{ color: "#a1a1aa" }}>
+        <Text size="xs" ta="center" mt="md" style={{ color: "#a1a1aa" }}>
           Have an account?{" "}
           <Link href="/login">
             <Text
