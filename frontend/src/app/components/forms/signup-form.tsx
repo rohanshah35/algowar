@@ -11,15 +11,19 @@ import {
   Box,
 } from "@mantine/core";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function SignupForm() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
     const formData = new FormData(event.currentTarget);
     const payload = {
@@ -39,8 +43,10 @@ export function SignupForm() {
         throw new Error("Signup failed. Please try again.");
       }
 
-      const data = await response.json();
-      console.log("Signup successful:", data);
+      setSuccess("Signup successful! Redirecting...");
+      setTimeout(() => {
+        router.push(`/verification?username=${payload.username}`);
+      }, 10000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -164,6 +170,7 @@ export function SignupForm() {
             type="submit"
             fullWidth
             mt="md"
+            loading={loading}
             style={{
               backgroundColor: "#27272a",
               color: "#d4d4d8",

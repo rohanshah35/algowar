@@ -11,12 +11,14 @@ import {
   Box,
 } from "@mantine/core";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const router = useRouter();
     event.preventDefault();
     setLoading(true);
     setError(null);
@@ -39,6 +41,8 @@ export function LoginForm() {
 
       const data = await response.json();
       console.log("Login successful:", data);
+
+      router.push("/");
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -133,6 +137,7 @@ export function LoginForm() {
             type="submit"
             fullWidth
             mt="md"
+            loading={loading}
             style={{
               backgroundColor: "#27272a",
               color: "#d4d4d8",
