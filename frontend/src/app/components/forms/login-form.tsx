@@ -24,10 +24,9 @@ export function LoginForm() {
 
     const formData = new FormData(event.currentTarget);
     const payload = {
-      email: formData.get("identifier"),
+      username: formData.get("identifier"),
       password: formData.get("password"),
     };
-
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",

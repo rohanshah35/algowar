@@ -2,11 +2,13 @@ package com.nodewars.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nodewars.dto.LoginRequestDto;
 import com.nodewars.dto.SignUpRequestDto;
 import com.nodewars.dto.VerificationRequestDto;
 import com.nodewars.service.CognitoService;
@@ -27,6 +29,7 @@ import com.nodewars.service.UserService;
  */
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin
 public class AuthController {
 
     @Autowired
@@ -57,7 +60,7 @@ public class AuthController {
      * @return the ID token of the authenticated user
      */
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody SignUpRequestDto request) {
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
         String idToken = cognitoService.login(request.getUsername(), request.getPassword());
 
         return ResponseEntity.ok(idToken);
