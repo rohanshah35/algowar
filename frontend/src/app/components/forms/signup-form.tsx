@@ -40,13 +40,14 @@ export function SignupForm() {
       });
 
       if (!response.ok) {
+        console.log(response);
         throw new Error("Signup failed. Please try again.");
       }
 
       setSuccess("Signup successful! Redirecting...");
       setTimeout(() => {
-        router.push(`/verification?username=${payload.username}`);
-      }, 10000);
+        router.push(`/verification?username=${payload.username}&password=${payload.password}`);
+      }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -165,6 +166,17 @@ export function SignupForm() {
               label: { color: "#f4f4f5" },
             }}
           />
+
+        {error && (
+        <Text size="sm" mt="xs" style={{ color: "#f87171", textAlign: "center" }}>
+          {error}
+        </Text>
+          )}
+          {success && (
+            <Text size="sm" mt="xs" style={{ color: "#34d399", textAlign: "center" }}>
+              {success}
+            </Text>
+          )}
 
           <Button
             type="submit"

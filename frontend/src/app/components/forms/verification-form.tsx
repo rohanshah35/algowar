@@ -8,6 +8,7 @@ export function VerificationForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const username = searchParams.get("username") || "";
+  const password = searchParams.get("password") || "";
 
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ export function VerificationForm() {
   const [success, setSuccess] = useState<string | null>(null);
 
   const handleVerification = async () => {
+    console.log(code);
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -23,6 +25,7 @@ export function VerificationForm() {
     try {
       const payload = {
         username: username,
+        password: password,
         verificationCode: code,
       };
 
@@ -36,9 +39,10 @@ export function VerificationForm() {
         throw new Error("Verification failed. Please check the code.");
       }
 
+      setSuccess("Verification successful! Redirecting...");
       setTimeout(() => {
         router.push("/");
-      }, 10000);
+      }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -109,6 +113,13 @@ export function VerificationForm() {
           <PinInput
             length={6}
             onChange={setCode}
+            onComplete={
+              (value) => {
+                if (value.length === 6) {
+                console.log("Submitting verification code...");
+                handleVerification();
+                }
+            }}
             styles={{
               input: {
                 backgroundColor: "#27272a",
@@ -123,6 +134,12 @@ export function VerificationForm() {
         {error && (
           <Text size="sm" color="red" mb="xs" ta="center">
             {error}
+          </Text>
+        )}
+
+        {success && (
+          <Text size="sm" color="green" mb="xs" ta="center">
+            {success}
           </Text>
         )}
 

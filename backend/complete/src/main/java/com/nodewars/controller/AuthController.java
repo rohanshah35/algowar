@@ -1,7 +1,9 @@
 package com.nodewars.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,12 +71,20 @@ public class AuthController {
     public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
         try {
             String idToken = cognitoService.login(request.getUsername(), request.getPassword());
+            ResponseCookie cookie = ResponseCookie.from("idToken", idToken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(3600)
+                    .build();
 
-            return ResponseEntity.ok(idToken);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body("{\"message\": \"User logged in successfully. Cookie: " + cookie.toString() + "\"}");
         } catch (Exception e) {
             // Return 401 Unauthorized if authentication fails
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Authentication failed: " + e.getMessage());
+                    .body("{\"error\": \"Authentication failed: " + e.getMessage() + "\"}");
         }
     }
 
@@ -90,10 +100,20 @@ public class AuthController {
         try {
             cognitoService.verifyEmail(request.getUsername(), request.getVerificationCode());
 
-            return ResponseEntity.ok("Email verified successfully");
+            String idToken = cognitoService.login(request.getUsername(), request.getPassword());
+            ResponseCookie cookie = ResponseCookie.from("idToken", idToken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(3600)
+                    .build();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body("{\"message\": \"User verified and logged in successfully. Cookie: " + cookie.toString() + "\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error occurred during email verification: " + e.getMessage());
+                    .body("{\"error\": \"An error occured during email verification: " + e.getMessage() + "\"}");
         }
     }
 
@@ -108,10 +128,10 @@ public class AuthController {
         try {
             cognitoService.resendVerificationCode(request.getUsername());
 
-            return ResponseEntity.ok("Verification code resent successfully");
+            return ResponseEntity.ok("{\"message\": \"User logged in successfully\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error occurred during resending verification code: " + e.getMessage());
+                    .body("{\"error\": \"An error occured while resending: " + e.getMessage() + "\"}");
         }
     }
 }

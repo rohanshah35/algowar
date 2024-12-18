@@ -14,11 +14,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function LoginForm() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    const router = useRouter();
     event.preventDefault();
     setLoading(true);
     setError(null);
@@ -41,8 +42,11 @@ export function LoginForm() {
 
       const data = await response.json();
       console.log("Login successful:", data);
+      setSuccess("Login successful! Redirecting...");
 
-      router.push("/");
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -132,6 +136,17 @@ export function LoginForm() {
               label: { color: "#f4f4f5" },
             }}
           />
+
+        {error && (
+        <Text size="sm" mt="xs" style={{ color: "#f87171", textAlign: "center" }}>
+          {error}
+        </Text>
+          )}
+          {success && (
+            <Text size="sm" mt="xs" style={{ color: "#34d399", textAlign: "center" }}>
+              {success}
+            </Text>
+          )}
 
           <Button
             type="submit"
