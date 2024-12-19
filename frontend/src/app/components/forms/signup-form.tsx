@@ -10,7 +10,7 @@ import {
   Button,
   Box,
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function SignupForm() {
@@ -18,6 +18,29 @@ export function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/auth/check-auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Not authenticated.");
+        }
+
+        console.log("Authenticated.");
+        router.push("/");
+      } catch (err: any) {
+        console.log(err);
+      }
+    }
+
+    checkAuth();
+  }, [router])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,6 +59,7 @@ export function SignupForm() {
       const response = await fetch("http://localhost:8080/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
 

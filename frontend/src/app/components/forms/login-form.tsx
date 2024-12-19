@@ -10,14 +10,38 @@ import {
   Button,
   Box,
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { GetServerSideProps } from "next";
 
 export function LoginForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/auth/check-auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Not authenticated.");
+        }
+
+        console.log("Authenticated.");
+        router.push("/");
+      } catch (err: any) {
+        console.log(err);
+      }
+    }
+
+    checkAuth();
+  }, [router])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,11 +54,15 @@ export function LoginForm() {
       password: formData.get("password"),
     };
     try {
+      console.log("All cookies from the current domain:", document.cookie);
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
+
+      console.log("All cookies from the current domain:", document.cookie);
 
       if (!response.ok) {
         throw new Error("Login failed. Please check your credentials.");
@@ -182,3 +210,24 @@ export function LoginForm() {
     </Box>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const res = await fetch("http://localhost:8080/auth/check-auth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // Include cookies in the request
+  });
+
+  if (res.ok) {
+    // If authenticated, redirect to the homepage
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  // If not authenticated, allow the page to render
+  return { props: {} };
+};

@@ -1,10 +1,13 @@
 package com.nodewars.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +34,7 @@ import com.nodewars.service.UserService;
  */
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthController {
 
     @Autowired
@@ -39,6 +42,8 @@ public class AuthController {
 
     @Autowired
     private CognitoService cognitoService;
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     /**
      * Registers a new user and saves the user data to the database. 
@@ -73,7 +78,7 @@ public class AuthController {
             String idToken = cognitoService.login(request.getUsername(), request.getPassword());
             ResponseCookie cookie = ResponseCookie.from("idToken", idToken)
                     .httpOnly(true)
-                    .secure(true)
+                    .secure(false)
                     .path("/")
                     .maxAge(3600)
                     .build();
@@ -132,6 +137,52 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("{\"error\": \"An error occured while resending: " + e.getMessage() + "\"}");
+        }
+    }
+
+    /**
+     * Logs out the user by deleting the ID token cookie.
+     * @return a success message
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        ResponseCookie cookie = ResponseCookie.from("idToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body("{\"message\": \"User logged out successfully. Cookie: " + cookie.toString() + "\"}");
+    }
+
+    /**
+     * Checks if the user is authenticated by verifying the ID token cookie.
+     * 401 Unauthorized is returned if the user is not authenticated.
+     * @return a success message
+     */
+    @PostMapping("/check-auth")
+    public ResponseEntity<String> checkAuth(@CookieValue(name = "idToken", required = false) String idToken) {
+        try {
+            logger.info("idToken: " + idToken);
+            if (idToken == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("{\"error\": \"User is not authenticated\"}");
+            }
+
+            boolean isValid = cognitoService.isTokenValid(idToken);
+
+            if (!isValid) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("{\"error\": \"User is not authenticated\"}");
+            }
+            
+            return ResponseEntity.ok("{\"message\": \"User is authenticated\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"error\": \"User is not authenticated: " + e.getMessage() + "\"}");
         }
     }
 }

@@ -7,6 +7,8 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.nodewars.utils.CognitoUtils;
@@ -18,6 +20,7 @@ import com.nodewars.utils.CognitoUtils;
 public class CognitoService {
 
     private final CognitoIdentityProviderClient cognitoClient;
+    private static final Logger logger = LoggerFactory.getLogger(CognitoService.class);
     private String clientId = "5e4jldap6ts7jifjfnhdibgmlk";
 
     /**
@@ -111,4 +114,22 @@ public class CognitoService {
 
         cognitoClient.resendConfirmationCode(request);
     }
+
+    /**
+     * Checks if token is valid
+     * @param token
+     * @return boolean
+     * @throws Exception
+     */
+    public boolean isTokenValid(String token) throws Exception {
+        try {
+            boolean isValid = CognitoUtils.verifyToken(token);
+            logger.info("Token is valid: " + isValid);
+            return isValid;
+        } catch (Exception e) {
+            logger.error("Error validating token: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
