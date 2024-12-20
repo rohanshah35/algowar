@@ -17,7 +17,6 @@ export function VerificationForm() {
   const [success, setSuccess] = useState<string | null>(null);
 
   const handleVerification = async () => {
-    console.log(code);
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -32,6 +31,8 @@ export function VerificationForm() {
       const response = await fetch("http://localhost:8080/auth/verify-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
+    
         body: JSON.stringify(payload),
       });
 

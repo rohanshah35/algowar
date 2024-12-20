@@ -62,8 +62,6 @@ export function LoginForm() {
         body: JSON.stringify(payload),
       });
 
-      console.log("All cookies from the current domain:", document.cookie);
-
       if (!response.ok) {
         throw new Error("Login failed. Please check your credentials.");
       }
@@ -210,24 +208,3 @@ export function LoginForm() {
     </Box>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch("http://localhost:8080/auth/check-auth", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include", // Include cookies in the request
-  });
-
-  if (res.ok) {
-    // If authenticated, redirect to the homepage
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  // If not authenticated, allow the page to render
-  return { props: {} };
-};

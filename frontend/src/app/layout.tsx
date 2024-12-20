@@ -1,6 +1,10 @@
+"use client";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AppShell, MantineProvider } from '@mantine/core';
+import '@mantine/core/styles.css';
 import "./globals.css";
+import AppNavbar from "./components/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,11 +16,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "NW1.0",
-  description: "",
-};
-
+// Note: metadata needs to be moved to a separate layout file since it can't be used
+// in client components
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +28,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <MantineProvider>
+          <AppShell
+            header={{ height: 60 }}
+            padding="md"
+          >
+            <AppNavbar />
+            {children}
+          </AppShell>
+        </MantineProvider>
       </body>
     </html>
   );
