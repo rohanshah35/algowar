@@ -50,7 +50,7 @@ public class CognitoUtils {
      * @return true if the token is valid, false otherwise
      * @throws IOException
      */
-    public static boolean verifyToken(String token) throws IOException {
+    public static String verifyAndGetUsername(String token) throws IOException {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             
@@ -66,30 +66,30 @@ public class CognitoUtils {
 
             RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
             if (!signedJWT.verify(verifier)) {
-                return false;
+                throw new RuntimeException("Invalid token");
             }
 
             JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
             
             Date expirationTime = claims.getExpirationTime();
             if (expirationTime != null && expirationTime.before(new Date())) {
-                return false;
+                throw new RuntimeException("Token expired");
             }
             
             String audience = claims.getAudience().get(0);
             if (!audience.equals("5e4jldap6ts7jifjfnhdibgmlk")) {
-                return false; 
+                throw new RuntimeException("Invalid audience");
             }
 
             String issuer = claims.getIssuer();
             if (!issuer.equals("https://cognito-idp.us-west-1.amazonaws.com/us-west-1_CIZV2e5aH")) {
-                return false; 
+                throw new RuntimeException("Invalid issuer");
             }
 
-            return true; 
+            return claims.getStringClaim("cognito:username");
         } catch (JOSEException | java.text.ParseException e) {
             e.printStackTrace();
-            return false; 
+            throw new RuntimeException("Error verifying token", e);
         }
     }
 }

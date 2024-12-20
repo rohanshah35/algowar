@@ -33,7 +33,8 @@ export function LoginForm() {
           throw new Error("Not authenticated.");
         }
 
-        console.log("Authenticated.");
+        const data = await response.json();
+        localStorage.setItem("username", data.username);
         router.push("/");
       } catch (err: any) {
         console.log(err);
