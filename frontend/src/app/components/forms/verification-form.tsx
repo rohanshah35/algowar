@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Title, Text, Button, Box, PinInput, Flex } from "@mantine/core";
 
 export function VerificationForm() {
@@ -15,6 +15,30 @@ export function VerificationForm() {
   const [resending, setResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/auth/check-auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Not authenticated.");
+        }
+
+        const data = await response.json();
+        localStorage.setItem("username", data.username);
+        router.push("/");
+      } catch (err: any) {
+        console.log(err);
+      }
+    }
+
+    checkAuth();
+  }, [router])
 
   const handleVerification = async () => {
     setLoading(true);

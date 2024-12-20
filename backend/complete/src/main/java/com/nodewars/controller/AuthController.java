@@ -19,6 +19,7 @@ import com.nodewars.dto.SignUpRequestDto;
 import com.nodewars.dto.VerificationRequestDto;
 import com.nodewars.service.CognitoService;
 import com.nodewars.service.UserService;
+import com.nodewars.utils.CognitoUtils;
 /**
  * AuthController handles authentication-related requests such as user signup, login, and email verification.
  * It uses UserService for user management and CognitoService for interacting with AWS Cognito.
@@ -172,14 +173,14 @@ public class AuthController {
                         .body("{\"error\": \"User is not authenticated\"}");
             }
 
-            boolean isValid = cognitoService.isTokenValid(idToken);
+            String username = CognitoUtils.verifyAndGetUsername(idToken);
 
-            if (!isValid) {
+            if (username == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body("{\"error\": \"User is not authenticated\"}");
             }
             
-            return ResponseEntity.ok("{\"message\": \"User is authenticated\"}");
+            return ResponseEntity.ok("{\"message\": \"User is authenticated\", \"username\": \"" + username + "\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("{\"error\": \"User is not authenticated: " + e.getMessage() + "\"}");

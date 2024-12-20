@@ -114,22 +114,4 @@ public class CognitoService {
 
         cognitoClient.resendConfirmationCode(request);
     }
-
-    /**
-     * Checks if token is valid
-     * @param token
-     * @return boolean
-     * @throws Exception
-     */
-    public boolean isTokenValid(String token) throws Exception {
-        try {
-            boolean isValid = CognitoUtils.verifyToken(token);
-            logger.info("Token is valid: " + isValid);
-            return isValid;
-        } catch (Exception e) {
-            logger.error("Error validating token: " + e.getMessage());
-            return false;
-        }
-    }
-
 }
