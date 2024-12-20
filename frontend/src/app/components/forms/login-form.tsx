@@ -10,39 +10,13 @@ import {
   Button,
   Box,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { GetServerSideProps } from "next";
+import { redirect } from "next/navigation";
+import { useState } from "react";
 
 export function LoginForm() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/auth/check-auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Not authenticated.");
-        }
-
-        const data = await response.json();
-        localStorage.setItem("username", data.username);
-        router.push("/");
-      } catch (err: any) {
-        console.log(err);
-      }
-    }
-
-    checkAuth();
-  }, [router])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -72,7 +46,7 @@ export function LoginForm() {
       setSuccess("Login successful! Redirecting...");
 
       setTimeout(() => {
-        router.push("/");
+        redirect("/home");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
