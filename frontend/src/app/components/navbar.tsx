@@ -157,9 +157,6 @@ const AppNavbar = () => {
             NodeWars
           </Text>
           <Group gap="md">
-            <Link href="/" style={{ textDecoration: 'none', color: '#a1a1aa' }}>
-              Home
-            </Link>
             {renderNavItems()}
           </Group>
         </Box>

@@ -12,9 +12,11 @@
     "@mantine/core": "^7.15.1",
     "@mantine/form": "^7.15.1",
     "@mantine/hooks": "^7.15.1",
+    "@tabler/icons-react": "^3.26.0",
     "next": "15.1.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sass": "^1.83.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
