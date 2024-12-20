@@ -19,4 +19,13 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
+    /**
+     * Gets a user by their username.
+     * @param username the username of the user
+     * @return the user
+     */
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

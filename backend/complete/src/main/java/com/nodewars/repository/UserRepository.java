@@ -1,6 +1,7 @@
 package com.nodewars.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.nodewars.model.User;
@@ -12,4 +13,7 @@ import com.nodewars.model.User;
  * 
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {}
+public interface UserRepository extends JpaRepository<User, Long> {
+    @Query("SELECT u FROM User u WHERE u.username = :username")
+    User findByUsername(String username);
+}

@@ -46,6 +46,11 @@ public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
+    @Autowired
+    private CognitoUtils cognitoUtils;
+
+
+
     /**
      * Registers a new user and saves the user data to the database. 
      * 201 Created is returned if the user is successfully created.
@@ -60,7 +65,7 @@ public class AuthController {
 
             userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword());
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("User created with ID: " + userSub);
+            return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"User is authenticated\", \"sub\": \"" + userSub + "\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Error occurred during user sign-up: " + e.getMessage());
@@ -104,9 +109,11 @@ public class AuthController {
     @PostMapping("/verify-email")
     public ResponseEntity<String> verifyEmail(@RequestBody VerificationRequestDto request) {
         try {
-            cognitoService.verifyEmail(request.getUsername(), request.getVerificationCode());
 
-            String idToken = cognitoService.login(request.getUsername(), request.getPassword());
+            String username = cognitoService.getUsernameByUserSub(request.getUserSub());
+            cognitoService.verifyEmail(username, request.getVerificationCode());
+            String password = userService.getUserByUsername(username).getPassword();
+            String idToken = cognitoService.login(username, password);
             ResponseCookie cookie = ResponseCookie.from("idToken", idToken)
                     .httpOnly(true)
                     .secure(true)
@@ -132,7 +139,8 @@ public class AuthController {
     @PostMapping("/resend-verification-code")
     public ResponseEntity<String> resendVerificationCode(@RequestBody VerificationRequestDto request) {
         try {
-            cognitoService.resendVerificationCode(request.getUsername());
+            String username = cognitoService.getUsernameByUserSub(request.getUserSub());
+            cognitoService.resendVerificationCode(username);
 
             return ResponseEntity.ok("{\"message\": \"User logged in successfully\"}");
         } catch (Exception e) {
@@ -167,13 +175,12 @@ public class AuthController {
     @PostMapping("/check-auth")
     public ResponseEntity<String> checkAuth(@CookieValue(name = "idToken", required = false) String idToken) {
         try {
-            logger.info("idToken: " + idToken);
             if (idToken == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body("{\"error\": \"User is not authenticated\"}");
             }
 
-            String username = CognitoUtils.verifyAndGetUsername(idToken);
+            String username = cognitoUtils.verifyAndGetUsername(idToken);
 
             if (username == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

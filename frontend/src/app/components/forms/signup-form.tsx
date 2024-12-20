@@ -46,8 +46,9 @@ export function SignupForm() {
       }
 
       setSuccess("Signup successful! Redirecting...");
+      const responseData = await response.json();
       setTimeout(() => {
-        redirect(`/verification?username=${payload.username}&password=${payload.password}`);
+        redirect(`/verification/${responseData.sub}`);
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");

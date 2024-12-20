@@ -3,11 +3,12 @@ import { redirect } from "next/navigation";
 
 async function checkAuth() {
     try {
+      const cookieStore = await cookies();
       const response = await fetch("http://localhost:8080/auth/check-auth", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-            Cookie: cookies().toString(),
+          Cookie: cookieStore.toString(),
         },
         credentials: "include",
       });
@@ -23,7 +24,7 @@ async function checkAuth() {
     }
   }
 
-  export default async function Home() {
+export default async function Home() {
     const auth = await checkAuth();
     if (!auth) {
       redirect('/');

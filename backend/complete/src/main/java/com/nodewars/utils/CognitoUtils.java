@@ -2,6 +2,12 @@ package com.nodewars.utils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -20,7 +26,28 @@ import java.util.Date;
 /**
  * Utility class for AWS Cognito operations.
  */
+@Component
 public class CognitoUtils {
+
+    private final Logger logger = LoggerFactory.getLogger(CognitoUtils.class);
+
+    @Value("${aws.credentials.access-key-id}")
+    private String accessKeyId;
+
+    @Value("${aws.credentials.secret-access-key}")
+    private String secretAccessKey;
+
+    @Value("${aws.cognito.jwks-url}")
+    private String jwksUrl;
+
+    @Value("${aws.cognito.client-id}")
+    private String clientId;
+
+    @Value("${aws.cognito.client-secret}")
+    private String clientSecret;
+
+    @Value("${aws.cognito.user-pool-id}")
+    private String userPoolId;
 
     /**
      * Calculates the secret hash for AWS Cognito.
@@ -50,14 +77,14 @@ public class CognitoUtils {
      * @return true if the token is valid, false otherwise
      * @throws IOException
      */
-    public static String verifyAndGetUsername(String token) throws IOException {
+    public String verifyAndGetUsername(String token) throws IOException {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             
             JWSHeader header = signedJWT.getHeader();
             String keyId = header.getKeyID();
 
-            URL jwksUrl = new URL("https://cognito-idp.us-west-1.amazonaws.com/us-west-1_CIZV2e5aH/.well-known/jwks.json");
+            URL jwksUrl = new URL(this.jwksUrl);
             JWKSet jwks = JWKSet.load(jwksUrl);
 
             JWK jwk = jwks.getKeyByKeyId(keyId);
@@ -77,18 +104,20 @@ public class CognitoUtils {
             }
             
             String audience = claims.getAudience().get(0);
-            if (!audience.equals("5e4jldap6ts7jifjfnhdibgmlk")) {
+            if (!audience.equals(this.clientId)) {
                 throw new RuntimeException("Invalid audience");
             }
 
             String issuer = claims.getIssuer();
-            if (!issuer.equals("https://cognito-idp.us-west-1.amazonaws.com/us-west-1_CIZV2e5aH")) {
+            if (!issuer.equals("https://cognito-idp.us-west-1.amazonaws.com/" + this.userPoolId)) {
                 throw new RuntimeException("Invalid issuer");
             }
 
+            logger.info("claims: " + claims.getStringClaim("cognito:username"));
             return claims.getStringClaim("cognito:username");
-        } catch (JOSEException | java.text.ParseException e) {
+        } catch (JOSEException | java.text.ParseException | RuntimeException e) {
             e.printStackTrace();
+            logger.error("Error verifying token", e);
             throw new RuntimeException("Error verifying token", e);
         }
     }

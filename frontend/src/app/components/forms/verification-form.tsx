@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, Title, Text, Button, Box, PinInput, Flex } from "@mantine/core";
 
-export function VerificationForm() {
+export function VerificationForm({ sub }: { sub: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const username = searchParams.get("username") || "";
@@ -47,9 +47,8 @@ export function VerificationForm() {
 
     try {
       const payload = {
-        username: username,
-        password: password,
         verificationCode: code,
+        userSub: sub,
       };
 
       const response = await fetch("http://localhost:8080/auth/verify-email", {

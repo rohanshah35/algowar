@@ -4,11 +4,12 @@ import { SignupForm } from '@/components/forms/signup-form';
 
 async function checkAuth() {
   try {
+    const cookieStore = await cookies();
     const response = await fetch("http://localhost:8080/auth/check-auth", {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
-          Cookie: cookies().toString(),
+        Cookie: cookieStore.toString(),
       },
       credentials: "include",
     });

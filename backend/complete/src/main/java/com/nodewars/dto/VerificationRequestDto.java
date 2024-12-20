@@ -6,15 +6,14 @@ package com.nodewars.dto;
  */
 public class VerificationRequestDto {
     private String verificationCode;
-    private String username;
-    private String password;
+    private String userSub;
 
     public VerificationRequestDto() {
     }
 
-    public VerificationRequestDto(String verificationCode, String username) {
+    public VerificationRequestDto(String verificationCode, String userSub) {
         this.verificationCode = verificationCode;
-        this.username = username;
+        this.userSub = userSub;
     }
 
     public String getVerificationCode() {
@@ -25,19 +24,11 @@ public class VerificationRequestDto {
         this.verificationCode = verificationCode;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserSub() {
+        return userSub;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserSub(String userSub) {
+        this.userSub = userSub;
     }
 }
