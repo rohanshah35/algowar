@@ -28,4 +28,13 @@ public class UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    /**
+     * Checks if a username exists in the database.
+     * @param username the username to check
+     * @return true if the username exists, false otherwise
+     */
+    public boolean usernameExists(String username) {
+        return userRepository.existsByUsername(username);
+    }
 }
