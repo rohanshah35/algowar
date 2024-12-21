@@ -1,19 +1,43 @@
+# macOS
 *.DS_Store
+
+# Swap files
 *.sw?
 .#*
 *#
 *~
+
+# Eclipse files
 .classpath
 .project
 .settings
+
+# Build folders
 bin
 build
 target
+
+# Maven
 dependency-reduced-pom.xml
+
+# Sublime Text
 *.sublime-*
+
+# Temporary files
 /scratch
+
+# Gradle
 .gradle
-README.html
+
+# IntelliJ IDEA
 *.iml
 .idea
-./complete/src/main/resources/
+
+# Documentation
+README.html
+
+# Specific application.yml file
+application.yml
+
+# Ignore application.yml specifically in this path
+complete/src/main/resources/application.yml
