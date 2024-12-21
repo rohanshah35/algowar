@@ -148,33 +148,4 @@ public class CognitoService {
 
         cognitoClient.resendConfirmationCode(request);
     }
-
-    /**
-     * Gets username by their sub (unique identifier).
-     *
-     * @param userSub the unique identifier of the user
-     * @return the username of the user
-     */
-    // public String getUsernameByUserSub(String userSub) {
-    //     try {
-    //         ListUsersRequest request = ListUsersRequest.builder()
-    //             .userPoolId(userPoolId)
-    //             .filter("sub = \"" + userSub + "\"")
-    //             .limit(1)
-    //             .build();
-
-    //         ListUsersResponse response = cognitoClient.listUsers(request);
-            
-    //         if (response.users().isEmpty()) {
-    //             logger.warn("No user found with sub: {}", userSub);
-    //             throw new Exception("User not found");
-    //         }
-            
-    //         UserType user = response.users().get(0);
-    //         return user.username();
-    //     } catch (Exception e) {
-    //         logger.error("Error getting user details for sub {}: {}", userSub, e.getMessage());
-    //         throw new RuntimeException("Error getting user details", e);
-    //     }
-    // }
 }
