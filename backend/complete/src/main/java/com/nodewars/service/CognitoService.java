@@ -6,6 +6,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -78,7 +79,10 @@ public class CognitoService {
             .username(username)
             .password(password)
             .userAttributes(
-                AttributeType.builder().name("email").value(email).build()
+                Arrays.asList(
+                    AttributeType.builder().name("email").value(email).build(),
+                    AttributeType.builder().name("preferred_username").value(username).build()
+                )
             )
             .secretHash(secretHash)
             .build();
@@ -151,26 +155,26 @@ public class CognitoService {
      * @param userSub the unique identifier of the user
      * @return the username of the user
      */
-    public String getUsernameByUserSub(String userSub) {
-        try {
-            ListUsersRequest request = ListUsersRequest.builder()
-                .userPoolId(userPoolId)
-                .filter("sub = \"" + userSub + "\"")
-                .limit(1)
-                .build();
+    // public String getUsernameByUserSub(String userSub) {
+    //     try {
+    //         ListUsersRequest request = ListUsersRequest.builder()
+    //             .userPoolId(userPoolId)
+    //             .filter("sub = \"" + userSub + "\"")
+    //             .limit(1)
+    //             .build();
 
-            ListUsersResponse response = cognitoClient.listUsers(request);
+    //         ListUsersResponse response = cognitoClient.listUsers(request);
             
-            if (response.users().isEmpty()) {
-                logger.warn("No user found with sub: {}", userSub);
-                throw new Exception("User not found");
-            }
+    //         if (response.users().isEmpty()) {
+    //             logger.warn("No user found with sub: {}", userSub);
+    //             throw new Exception("User not found");
+    //         }
             
-            UserType user = response.users().get(0);
-            return user.username();
-        } catch (Exception e) {
-            logger.error("Error getting user details for sub {}: {}", userSub, e.getMessage());
-            throw new RuntimeException("Error getting user details", e);
-        }
-    }
+    //         UserType user = response.users().get(0);
+    //         return user.username();
+    //     } catch (Exception e) {
+    //         logger.error("Error getting user details for sub {}: {}", userSub, e.getMessage());
+    //         throw new RuntimeException("Error getting user details", e);
+    //     }
+    // }
 }

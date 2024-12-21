@@ -37,4 +37,31 @@ public class UserService {
     public boolean usernameExists(String username) {
         return userRepository.existsByUsername(username);
     }
+
+    /**
+     * Fetches the stats for a given username.
+     * @param username the username
+     * @return the stats JSON as a string
+     */
+    public String getStatsByUsername(String username) {
+        return userRepository.findStatsByUsername(username);
+    }
+
+    /**
+     * Fetches the profile picture for a given username.
+     * @param username the username
+     * @return the profile picture as a string
+     */
+    public String getPfpByUsername(String username) {
+        return userRepository.findPfpByUsername(username);
+    }
+
+    /**
+     * Fetches the profile picture for a given username.
+     * @param username the username
+     * @return the profile picture as a string
+     */
+    public String getUsernameByUserSub(String sub) {
+        return userRepository.findUsernameByUsersub(sub);
+    }
 }

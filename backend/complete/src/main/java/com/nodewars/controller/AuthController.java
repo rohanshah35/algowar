@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.nodewars.dto.LoginRequestDto;
 import com.nodewars.dto.SignUpRequestDto;
 import com.nodewars.dto.VerificationRequestDto;
@@ -44,8 +47,6 @@ public class AuthController {
     @Autowired
     private CognitoService cognitoService;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
     @Autowired
     private CognitoUtils cognitoUtils;
 
@@ -59,16 +60,19 @@ public class AuthController {
      * @return a success message
      */
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody SignUpRequestDto request) {
+    public ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequestDto request) {
+        Map<String, String> response = new HashMap<>();
         try {
             String userSub = cognitoService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
-
             userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword());
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"User is authenticated\", \"sub\": \"" + userSub + "\"}");
+            response.put("sub", userSub);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
+            response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error occurred during user sign-up: " + e.getMessage());
+                    .body(response);
         }
     }
 
@@ -79,7 +83,8 @@ public class AuthController {
      * @return the ID token of the authenticated user
      */
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<Map<String, String>>  login(@RequestBody LoginRequestDto request) {
+        Map<String, String> response = new HashMap<>();
         try {
             String idToken = cognitoService.login(request.getUsername(), request.getPassword());
             ResponseCookie cookie = ResponseCookie.from("idToken", idToken)
@@ -88,14 +93,14 @@ public class AuthController {
                     .path("/")
                     .maxAge(3600)
                     .build();
-
+            response.put("cookie", cookie.toString());
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body("{\"message\": \"User logged in successfully. Cookie: " + cookie.toString() + "\"}");
+                    .body(response);
         } catch (Exception e) {
-            // Return 401 Unauthorized if authentication fails
+            response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"Authentication failed: " + e.getMessage() + "\"}");
+                    .body(response);
         }
     }
 
@@ -107,10 +112,10 @@ public class AuthController {
      * 
      */
     @PostMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestBody VerificationRequestDto request) {
+    public ResponseEntity<Map<String, String>> verifyEmail(@RequestBody VerificationRequestDto request) {
+        Map<String, String> response = new HashMap<>();
         try {
-
-            String username = cognitoService.getUsernameByUserSub(request.getUserSub());
+            String username = userService.getUsernameByUserSub(request.getUserSub());
             cognitoService.verifyEmail(username, request.getVerificationCode());
             String password = userService.getUserByUsername(username).getPassword();
             String idToken = cognitoService.login(username, password);
@@ -121,12 +126,14 @@ public class AuthController {
                     .maxAge(3600)
                     .build();
 
+            response.put("cookie", cookie.toString());
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body("{\"message\": \"User verified and logged in successfully. Cookie: " + cookie.toString() + "\"}");
+                    .body(response);
         } catch (Exception e) {
+            response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"An error occured during email verification: " + e.getMessage() + "\"}");
+                    .body(response);
         }
     }
 
@@ -137,15 +144,17 @@ public class AuthController {
      * @return a success message
      */
     @PostMapping("/resend-verification-code")
-    public ResponseEntity<String> resendVerificationCode(@RequestBody VerificationRequestDto request) {
+    public ResponseEntity<Map<String, String>> resendVerificationCode(@RequestBody VerificationRequestDto request) {
+        Map<String, String> response = new HashMap<>();
         try {
-            String username = cognitoService.getUsernameByUserSub(request.getUserSub());
+            String username = userService.getUsernameByUserSub(request.getUserSub());
             cognitoService.resendVerificationCode(username);
-
-            return ResponseEntity.ok("{\"message\": \"User logged in successfully\"}");
+            response.put("message", "Successfully resent");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
+            response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"An error occured while resending: " + e.getMessage() + "\"}");
+                    .body(response);
         }
     }
 
@@ -154,17 +163,25 @@ public class AuthController {
      * @return a success message
      */
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        ResponseCookie cookie = ResponseCookie.from("idToken", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(0)
-                .build();
+    public ResponseEntity<Map<String, String>> logout() {
+        Map<String, String> response = new HashMap<>();
+        try {
+            ResponseCookie cookie = ResponseCookie.from("idToken", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(0)
+                    .build();
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body("{\"message\": \"User logged out successfully. Cookie: " + cookie.toString() + "\"}");
+            response.put("cookie", cookie.toString());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(response);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(response);
+        }
     }
 
     /**
@@ -173,24 +190,30 @@ public class AuthController {
      * @return a success message
      */
     @PostMapping("/check-auth")
-    public ResponseEntity<String> checkAuth(@CookieValue(name = "idToken", required = false) String idToken) {
+    public ResponseEntity<Map<String, String>> checkAuth(@CookieValue(name = "idToken", required = false) String idToken) {
+        Map<String, String> response = new HashMap<>();
+
         try {
             if (idToken == null) {
+                response.put("error", "User is not authenticated");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("{\"error\": \"User is not authenticated\"}");
+                        .body(response);
             }
 
             String username = cognitoUtils.verifyAndGetUsername(idToken);
 
             if (username == null) {
+                response.put("error", "User is not authenticated");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("{\"error\": \"User is not authenticated\"}");
+                        .body(response);
             }
             
-            return ResponseEntity.ok("{\"message\": \"User is authenticated\", \"username\": \"" + username + "\"}");
+            response.put("username", username);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
+            response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User is not authenticated: " + e.getMessage() + "\"}");
+                    .body(response);
         }
     }
 }

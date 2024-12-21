@@ -17,11 +17,11 @@ aws:
     secret-access-key: Et7tK1jDLo2gtvhDdFSFqViDPpxEEPRFM2P8Tb7C
   region: us-west-1
   cognito:
-    user-pool-id: us-west-1_CIZV2e5aH
-    client-id: 5e4jldap6ts7jifjfnhdibgmlk
-    client-secret: 1csiofdpf93nlccpf7dhlsssqa5ovhovfr0k16v4uqagg032deco
+    user-pool-id: us-west-1_5n91tn3CT
+    client-id: 4s7765m5l2jmdk0urllikqvp60
+    client-secret: r1jqagtqeh8ge38lalnuraok73urp87n9gb4ut8oqh5egr0hraf
     region: us-west-1
-    jwks-url: https://cognito-idp.us-west-1.amazonaws.com/us-west-1_CIZV2e5aH/.well-known/jwks.json
+    jwks-url: https://cognito-idp.us-west-1.amazonaws.com/us-west-1_5n91tn3CT/.well-known/jwks.json
 
 jwt:
   secret: 472bb50d2f6f29f9e3c0701ab9a0d168cd29a9baa423f10aaa63b4d901b347832f687b774538c08039e94256718f7a6d4915d6a519bb8d745b16314ecb922c1c74892ea416192ba5aa015a386c079d29cb676c90bf6b7c1516495c8bf2f5c74eca3d27c748b56cab5e5ef0820ec348d0895ded1e7e8201b0f0e926ea7685dad47878974e67277aa8c36c31e05751d80c5e90cac05a57b9feb4b14848b67d202441eb3b829313a9deb3afd56ccf04b51de596d6c109509f69dcb6a6da3ee8feb0e43f3088477e7695171b366b4dd70b56873aaa9783003d7235b60d184988f36ce12cdd90c1b63365b3e912771dada1c09619af24b6456d0bac3c25bf1d6b75d2
