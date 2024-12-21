@@ -95,7 +95,7 @@ export function LoginForm() {
                   fontWeight: "700",
                 }}
               >
-                USERNAME
+                USERNAME OR EMAIL
               </span>
             }
             name="identifier"
