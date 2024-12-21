@@ -200,7 +200,8 @@ public class AuthController {
                         .body(response);
             }
 
-            String username = cognitoUtils.verifyAndGetUsername(idToken);
+            String username = cognitoUtils.verifyAndGetUsernameAndEmail(idToken).split(",")[0];
+            String email = cognitoUtils.verifyAndGetUsernameAndEmail(idToken).split(",")[1];
 
             if (username == null) {
                 response.put("error", "User is not authenticated");
@@ -209,6 +210,7 @@ public class AuthController {
             }
             
             response.put("username", username);
+            response.put("email", email);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", e.getMessage());

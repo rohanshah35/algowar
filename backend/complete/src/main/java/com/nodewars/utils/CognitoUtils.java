@@ -77,7 +77,7 @@ public class CognitoUtils {
      * @return true if the token is valid, false otherwise
      * @throws IOException
      */
-    public String verifyAndGetUsername(String token) throws IOException {
+    public String verifyAndGetUsernameAndEmail(String token) throws IOException {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             
@@ -114,7 +114,7 @@ public class CognitoUtils {
             }
 
             logger.info("claims: " + claims.getStringClaim("cognito:username"));
-            return claims.getStringClaim("cognito:username");
+            return claims.getStringClaim("cognito:username") + "," + claims.getStringClaim("email");
         } catch (JOSEException | java.text.ParseException | RuntimeException e) {
             e.printStackTrace();
             logger.error("Error verifying token", e);

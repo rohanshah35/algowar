@@ -1,3 +1,4 @@
+import { NavbarNested } from "@/components/vertical-navbar/vertical-navbar";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -29,5 +30,12 @@ export default async function Home() {
     if (!auth) {
       redirect('/');
     }
-    return <div>Home</div>;
+    return (
+      <div style={{ display: 'flex' }}>
+       <NavbarNested username={auth.username} email={auth.email} />
+       <div style={{ flex: 1 }}>
+         {/* Your main content goes here */}
+       </div>
+     </div>
+    )
   }
