@@ -14,8 +14,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(String email, String cognitoUserId, String username, String password) {
-        User user = new User(email, cognitoUserId, username, password);
+    public User createUser(String email, String cognitoUserId, String username, String password, String stats) {
+        User user = new User(email, cognitoUserId, username, password, stats);
 
         return userRepository.save(user);
     }

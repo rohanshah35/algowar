@@ -64,7 +64,8 @@ public class AuthController {
         Map<String, String> response = new HashMap<>();
         try {
             String userSub = cognitoService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
-            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword());
+            String stats = "{\"wins\": 0, \"losses\": 0}";
+            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats);
 
             response.put("sub", userSub);
 
