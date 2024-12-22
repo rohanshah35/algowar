@@ -1,12 +1,13 @@
 'use client';
 
 import {
-    IconAdjustments,
-    IconCalendarStats,
-    IconFileAnalytics,
-    IconGauge,
+    IconUserCircle,
+    IconSwords,
+    IconPuzzle,
+    IconUsersGroup,
+    IconSettings,
     IconLock,
-    IconNotes,
+    IconChartBar,
     IconPresentationAnalytics,
   } from '@tabler/icons-react';
   import {  Group, ScrollArea } from '@mantine/core';
@@ -15,37 +16,35 @@ import {
   import classes from './vertical-navbar.module.css';
   
   const mockdata = [
-    { label: 'Dashboard', icon: IconGauge },
+    { label: 'Profile', icon: IconUserCircle },
     {
-      label: 'Market news',
-      icon: IconNotes,
+      label: 'Play',
+      icon: IconSwords,
       initiallyOpened: true,
       links: [
-        { label: 'Overview', link: '/' },
-        { label: 'Forecasts', link: '/' },
-        { label: 'Outlook', link: '/' },
-        { label: 'Real time', link: '/' },
+        { label: 'Join Queue', link: '/' },
+        { label: 'Invite Friend', link: '/' },
       ],
     },
     {
-      label: 'Releases',
-      icon: IconCalendarStats,
+      label: 'Puzzles',
+      icon: IconPuzzle,
       links: [
-        { label: 'Upcoming releases', link: '/' },
-        { label: 'Previous releases', link: '/' },
-        { label: 'Releases schedule', link: '/' },
+        { label: 'Daily Puzzle', link: '/' },
+        { label: 'By Topic', link: '/' },
       ],
     },
-    { label: 'Analytics', icon: IconPresentationAnalytics },
-    { label: 'Contracts', icon: IconFileAnalytics },
-    { label: 'Settings', icon: IconAdjustments },
+    { label: 'Leaderboard', icon: IconChartBar },
+    { label: 'Social', icon: IconUsersGroup },
+    { label: 'Settings', icon: IconSettings },
     {
-      label: 'Security',
+      label: 'Account',
       icon: IconLock,
       links: [
-        { label: 'Enable 2FA', link: '/' },
-        { label: 'Change password', link: '/' },
-        { label: 'Recovery codes', link: '/' },
+        { label: 'Change Username', link: '/' },
+        { label: 'Change Email', link: '/' },
+        { label: 'Change Password', link: '/' },
+        { label: 'Logout', link: '/', isLogout: true },
       ],
     },
   ];
@@ -58,7 +57,7 @@ import {
         <div className={classes.header}>
           <Group justify="space-between">
             <div style={{ color: '#d4d4d8', fontSize: '28px', fontWeight: 700 }}>
-              NodeWars
+              algowar.xyz
             </div>
           </Group>
         </div>

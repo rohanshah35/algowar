@@ -20,7 +20,7 @@ const AppNavbar = () => {
       }}>
         <Box style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Text size="xl" fw={700} style={{ color: '#d4d4d8' }}>
-            NodeWars
+            algowar.xyz
           </Text>
           <Group gap="md">
           </Group>
