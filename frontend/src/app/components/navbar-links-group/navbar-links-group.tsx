@@ -1,27 +1,42 @@
 'use client';
 
 import { useState } from 'react';
-import { IconCalendarStats, IconChevronRight } from '@tabler/icons-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import classes from './navbar-links-group.module.css';
+import { redirect } from "next/navigation";
 
 interface LinksGroupProps {
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
+  links?: { label: string; link: string; isLogout?: boolean }[];
 }
 
 export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksGroupProps) {
   const hasLinks = Array.isArray(links);
   const [opened, setOpened] = useState(initiallyOpened || false);
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:8080/auth/logout", { method: 'POST', credentials: 'include' }); 
+      redirect('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
   const items = (hasLinks ? links : []).map((link) => (
     <Text<'a'>
       component="a"
       className={classes.link}
       href={link.link}
       key={link.label}
-      onClick={(event) => event.preventDefault()}
+      onClick={() => {
+        if (link.isLogout) {
+          handleLogout();
+        } else {
+          redirect(link.link); // Navigate normally
+        }
+      }}
     >
       {link.label}
     </Text>
@@ -49,23 +64,5 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksG
       </UnstyledButton>
       {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
     </>
-  );
-}
-
-const mockdata = {
-  label: 'Releases',
-  icon: IconCalendarStats,
-  links: [
-    { label: 'Upcoming releases', link: '/' },
-    { label: 'Previous releases', link: '/' },
-    { label: 'Releases schedule', link: '/' },
-  ],
-};
-
-export function NavbarLinksGroup() {
-  return (
-    <Box mih={220} p="md">
-      <LinksGroup {...mockdata} />
-    </Box>
   );
 }
