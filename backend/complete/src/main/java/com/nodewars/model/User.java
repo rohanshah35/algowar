@@ -35,11 +35,12 @@ public class User {
     @Column(name = "stats")
     private String stats;
 
-    public User(String email, String cognitoUserId, String username, String password) {
+    public User(String email, String cognitoUserId, String username, String password, String stats) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
         this.password = password;
+        this.stats = stats;
     }
 
     public User() {
