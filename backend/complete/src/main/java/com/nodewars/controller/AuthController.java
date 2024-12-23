@@ -42,6 +42,8 @@ import com.nodewars.utils.CognitoUtils;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthController {
 
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     @Autowired
     private UserService userService;
 
@@ -91,7 +93,7 @@ public class AuthController {
             String idToken;
             if (request.getUsername().contains("@")) {
                 User currentUser = userService.getUserByEmail(request.getUsername());
-                idToken = cognitoService.login(currentUser.getEmail(), request.getPassword());
+                idToken = cognitoService.login(currentUser.getUsername(), request.getPassword());
             } else {
                 User currentUser = userService.getUserByPreferredUsername(request.getUsername());
                 idToken = cognitoService.login(currentUser.getUsername(), request.getPassword());
@@ -219,6 +221,7 @@ public class AuthController {
             }
             
             response.put("username", currentUser.getPreferredUsername());
+            response.put("email", currentUser.getEmail());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", e.getMessage());
