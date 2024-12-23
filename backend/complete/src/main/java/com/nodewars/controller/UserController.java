@@ -185,4 +185,31 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+    /**
+     * Endpoint to delete a user's account.
+     * 
+     * @param authorizationHeader contains the JWT token
+     * @return success/error message
+     */
+    @DeleteMapping("/delete")
+    public ResponseEntity<Map<String, String>> deleteUser(
+            @RequestHeader("Authorization") String authorizationHeader) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            String token = authorizationHeader.replace("Bearer ", "");
+
+            String currentUsername = cognitoUtils.verifyAndGetUsername(token);
+
+            cognitoService.deleteUserFromCognito(currentUsername);
+            userService.deleteUser(currentUsername);
+
+            response.put("message", "User account deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error deleting user: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 }

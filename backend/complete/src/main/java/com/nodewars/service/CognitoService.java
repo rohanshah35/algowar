@@ -263,4 +263,23 @@ public class CognitoService {
             throw new Exception("Failed to change password in Cognito", e);
         }
     }
+
+     /**
+     * Deletes a user account from AWS Cognito.
+     * @param username the username of the account to delete
+     * @throws Exception if the deletion fails
+     */
+    public void deleteUserFromCognito(String username) throws Exception {
+        try {
+            AdminDeleteUserRequest deleteUserRequest = AdminDeleteUserRequest.builder()
+                    .userPoolId(userPoolId)
+                    .username(username)
+                    .build();
+
+            AdminDeleteUserResponse deleteUserResponse = cognitoClient.adminDeleteUser(deleteUserRequest);
+
+        } catch (CognitoIdentityProviderException e) {
+            throw new Exception("Failed to delete user from Cognito: " + e.awsErrorDetails().errorMessage(), e);
+        }
+    }
 }

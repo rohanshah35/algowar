@@ -122,4 +122,18 @@ public class UserService {
 
         userRepository.updatePassword(currentUser.getCognitoUserId(), newPassword);
     }
+
+    /**
+     * Deletes a user by their username.
+     * @param username the username of the user to delete
+     * @throws Exception if the user does not exist
+     */
+    @Transactional
+    public void deleteUser(String username) throws Exception {
+        if (!userRepository.existsByUsername(username)) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.deleteByUsername(username);
+    }
 }
