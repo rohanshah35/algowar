@@ -20,6 +20,7 @@ import java.util.Map;
 import com.nodewars.dto.LoginRequestDto;
 import com.nodewars.dto.SignUpRequestDto;
 import com.nodewars.dto.VerificationRequestDto;
+import com.nodewars.model.User;
 import com.nodewars.service.CognitoService;
 import com.nodewars.service.UserService;
 import com.nodewars.utils.CognitoUtils;
@@ -41,7 +42,7 @@ import com.nodewars.utils.CognitoUtils;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private UserService userService;
@@ -67,7 +68,7 @@ public class AuthController {
         try {
             String userSub = cognitoService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
             String stats = "{\"wins\": 0, \"losses\": 0}";
-            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats);
+            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats, request.getUsername());
 
             response.put("sub", userSub);
 
@@ -89,7 +90,14 @@ public class AuthController {
     public ResponseEntity<Map<String, String>>  login(@RequestBody LoginRequestDto request) {
         Map<String, String> response = new HashMap<>();
         try {
-            String idToken = cognitoService.login(request.getUsername(), request.getPassword());
+            String idToken;
+            if (request.getUsername().contains("@")) {
+                User currentUser = userService.getUserByEmail(request.getUsername());
+                idToken = cognitoService.login(currentUser.getUsername(), request.getPassword());
+            } else {
+                User currentUser = userService.getUserByPreferredUsername(request.getUsername());
+                idToken = cognitoService.login(currentUser.getUsername(), request.getPassword());
+            }
             ResponseCookie cookie = ResponseCookie.from("idToken", idToken)
                     .httpOnly(true)
                     .secure(false)
@@ -203,8 +211,8 @@ public class AuthController {
                         .body(response);
             }
 
-            String username = cognitoUtils.verifyAndGetUsernameAndEmail(idToken).split(",")[0];
-            String email = cognitoUtils.verifyAndGetUsernameAndEmail(idToken).split(",")[1];
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String username = currentUser.getUsername();
 
             if (username == null) {
                 response.put("error", "User is not authenticated");
@@ -212,8 +220,8 @@ public class AuthController {
                         .body(response);
             }
             
-            response.put("username", username);
-            response.put("email", email);
+            response.put("username", currentUser.getPreferredUsername());
+            response.put("email", currentUser.getEmail());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", e.getMessage());

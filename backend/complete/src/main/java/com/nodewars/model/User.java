@@ -1,5 +1,7 @@
 package com.nodewars.model;
 
+import java.sql.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,38 +22,44 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "email")
-    private String email;
     @Column(name = "username")
     private String username;
+
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "cognito_user_id")
     private String cognitoUserId;
+
     @Column(name = "profile_picture")
     private String profilePicture;
+
     @Column(name = "stats")
     private String stats;
 
-    public User(String email, String cognitoUserId, String username, String password, String stats) {
+    @Column(name = "preferred_username")
+    private String preferredUsername;
+
+    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
         this.password = password;
         this.stats = stats;
+        this.preferredUsername = preferredUsername;
+    }
+
+    public User(String email, String cognitoUserId, String username, String preferredUsername) {
+        this.email = email;
+        this.cognitoUserId = cognitoUserId;
+        this.username = username;
+        this.preferredUsername = preferredUsername;
     }
 
     public User() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getEmail() {
@@ -102,4 +110,11 @@ public class User {
         this.stats = stats;
     }
 
+    public String getPreferredUsername() {
+        return preferredUsername;
+    }
+
+    public void setPreferredUsername(String preferredUsername) {
+        this.preferredUsername = preferredUsername;
+    }
 }
