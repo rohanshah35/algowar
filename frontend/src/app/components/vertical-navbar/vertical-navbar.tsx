@@ -1,5 +1,9 @@
 'use client';
 
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], weight: ['300'] });
+
 import {
     IconUserCircle,
     IconSwords,
@@ -8,7 +12,6 @@ import {
     IconSettings,
     IconLock,
     IconChartBar,
-    IconPresentationAnalytics,
   } from '@tabler/icons-react';
   import {  Group, ScrollArea } from '@mantine/core';
   import { LinksGroup } from '../navbar-links-group/navbar-links-group';
@@ -56,7 +59,7 @@ import {
       <nav className={classes.navbar}>
         <div className={classes.header}>
           <Group justify="space-between">
-            <div style={{ color: '#d4d4d8', fontSize: '28px', fontWeight: 700 }}>
+            <div style={{ color: '#d4d4d8', fontSize: '22px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
               algowar.xyz
             </div>
           </Group>
