@@ -13,6 +13,7 @@ import java.util.Base64;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jwt.*;
+import com.nodewars.model.User;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -77,7 +78,7 @@ public class CognitoUtils {
      * @return true if the token is valid, false otherwise
      * @throws IOException
      */
-    public String verifyAndGetUsername(String token) throws IOException {
+    public User verifyAndGetUser(String token) throws IOException {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             
@@ -113,8 +114,8 @@ public class CognitoUtils {
                 throw new RuntimeException("Invalid issuer");
             }
 
-            logger.info("claims: " + claims.getStringClaim("cognito:username"));
-            return claims.getStringClaim("cognito:username");
+            User user = new User(claims.getStringClaim("email"), claims.getStringClaim("cognito:username"), claims.getStringClaim("cognito:username"), claims.getStringClaim("preferred_username"));
+            return user;
         } catch (JOSEException | java.text.ParseException | RuntimeException e) {
             e.printStackTrace();
             logger.error("Error verifying token", e);

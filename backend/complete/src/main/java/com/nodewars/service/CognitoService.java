@@ -115,6 +115,29 @@ public class CognitoService {
         return response.authenticationResult().idToken();
     }
 
+    public String getAccessToken(String username, String password) {
+        try {
+            String secretHash = CognitoUtils.calculateSecretHash(username, clientId, clientSecret);
+            AdminInitiateAuthRequest authRequest = AdminInitiateAuthRequest.builder()
+                    .authFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
+                    .clientId(clientId) // Replace with your app client ID
+                    .userPoolId(userPoolId) // Replace with your user pool ID
+                    .authParameters(Map.of(
+                            "USERNAME", username,
+                            "PASSWORD", password,
+                            "SECRET_HASH", secretHash
+                    ))
+                    .build();
+    
+            AdminInitiateAuthResponse authResponse = cognitoClient.adminInitiateAuth(authRequest);
+            logger.info("Access token: " + authResponse.authenticationResult().accessToken());
+            return authResponse.authenticationResult().accessToken();
+        } catch (CognitoIdentityProviderException e) {
+            System.err.println("Error during authentication: " + e.getMessage());
+            throw e;
+        }
+    }
+
     /**
      * Verifies the email of a user in AWS Cognito.
      *
@@ -244,9 +267,7 @@ public class CognitoService {
 
             AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
 
-            System.out.println("User retrieved from Cognito: " + getUserResponse.username());
-
-            String accessToken = "RETRIEVE_THE_ACCESS_TOKEN_FOR_THE_USER";
+            String accessToken = getAccessToken(username, oldPassword);
 
             ChangePasswordRequest request = ChangePasswordRequest.builder()
                     .accessToken(accessToken)

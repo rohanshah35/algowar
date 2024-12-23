@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.nodewars.service.UserService;
+import com.nodewars.model.User;
 import com.nodewars.service.CognitoService;
 import com.nodewars.utils.CognitoUtils;
 
@@ -109,12 +110,19 @@ public class UserController {
         Map<String, String> response = new HashMap<>();
         try {
             String token = authorizationHeader.replace("Bearer ", "");
-            String newUsername = request.get("newUsername");
+            String newPreferredUsername = request.get("newUsername");
 
-            String currentUsername = cognitoUtils.verifyAndGetUsername(token);
+            User currentUser = cognitoUtils.verifyAndGetUser(token);
+            String currentPreferredUsername = currentUser.getPreferredUsername();
+            logger.info("currentPreferredUsername: " + currentPreferredUsername);
+            logger.info("newPreferredUsername: " + newPreferredUsername);
+            if (userService.usernameExists(newPreferredUsername)) {
+                response.put("error", "Username already exists");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
 
-            cognitoService.updateUsername(currentUsername, newUsername);
-            userService.updateUsername(currentUsername, newUsername);
+            cognitoService.updateUsername(currentPreferredUsername, newPreferredUsername);
+            userService.updatePreferredUsername(currentPreferredUsername, newPreferredUsername);
 
             response.put("message", "Username updated successfully");
             return ResponseEntity.ok(response);
@@ -140,7 +148,9 @@ public class UserController {
             String token = authorizationHeader.replace("Bearer ", "");
             String newEmail = request.get("newEmail");
 
-            String currentUsername = cognitoUtils.verifyAndGetUsername(token);
+            User currentUser = cognitoUtils.verifyAndGetUser(token);
+            String currentUsername = currentUser.getUsername();
+
 
             cognitoService.updateEmail(currentUsername, newEmail);
             userService.updateEmail(currentUsername, newEmail);
@@ -171,7 +181,8 @@ public class UserController {
             String oldPassword = passwordRequest.get("oldPassword");
             String newPassword = passwordRequest.get("newPassword");
 
-            String currentUsername = cognitoUtils.verifyAndGetUsername(token);
+            User currentUser = cognitoUtils.verifyAndGetUser(token);
+            String currentUsername = currentUser.getUsername();
 
             cognitoService.changePassword(currentUsername, oldPassword, newPassword);
 
@@ -199,7 +210,8 @@ public class UserController {
         try {
             String token = authorizationHeader.replace("Bearer ", "");
 
-            String currentUsername = cognitoUtils.verifyAndGetUsername(token);
+            User currentUser = cognitoUtils.verifyAndGetUser(token);
+            String currentUsername = currentUser.getUsername();
 
             cognitoService.deleteUserFromCognito(currentUsername);
             userService.deleteUser(currentUsername);

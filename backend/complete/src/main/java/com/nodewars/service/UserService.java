@@ -18,8 +18,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(String email, String cognitoUserId, String username, String password, String stats) {
-        User user = new User(email, cognitoUserId, username, password, stats);
+    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername) {
+        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername);
 
         return userRepository.save(user);
     }
@@ -31,6 +31,24 @@ public class UserService {
      */
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    /**
+     * Gets a user by their preferred username.
+     * @param preferredUsername the preferred username of the user
+     * @return the user
+     */
+    public User getUserByPreferredUsername(String preferredUsername) {
+        return userRepository.findByPreferredUsername(preferredUsername);
+    }
+
+    /**
+     * Gets a user by their email.
+     * @param email the email of the user
+     * @return the user
+     */
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     /**
@@ -76,19 +94,17 @@ public class UserService {
      * @throws Exception if the username is already taken
      */
     @Transactional
-    public void updateUsername(String currentUsername, String newUsername) throws Exception {
-        User currentUser = userRepository.findByUsername(currentUsername);
+    public void updatePreferredUsername(String currentPreferredUsername, String newPreferredUsername) throws Exception {
+        User currentUser = userRepository.findByUsername(currentPreferredUsername);
         if (currentUser == null) {
             throw new Exception("User not found");
         }
 
-        if (userRepository.existsByUsername(newUsername)) {
+        if (userRepository.existsByUsername(newPreferredUsername)) {
             throw new Exception("Username already taken");
         }
 
-        userRepository.updateUsername(currentUsername, newUsername);
-
-        String updatedUsername = userRepository.findByUsername(newUsername).getUsername();
+        userRepository.updatePreferredUsername(currentPreferredUsername, newPreferredUsername);
     }
 
     /**
@@ -104,7 +120,7 @@ public class UserService {
             throw new Exception("User not found");
         }
 
-        userRepository.updateEmail(currentUser.getCognitoUserId(), newEmail);
+        userRepository.updateEmail(currentUser.getUsername(), newEmail);
     }
 
     /**
@@ -120,7 +136,7 @@ public class UserService {
             throw new Exception("User not found");
         }
 
-        userRepository.updatePassword(currentUser.getCognitoUserId(), newPassword);
+        userRepository.updatePassword(currentUser.getUsername(), newPassword);
     }
 
     /**
