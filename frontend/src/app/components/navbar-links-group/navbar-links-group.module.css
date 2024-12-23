@@ -1,0 +1,39 @@
+.control {
+    font-weight: 500;
+    display: block;
+    width: 100%;
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+    color: #d4d4d8;
+    font-size: var(--mantine-font-size-sm);
+    transition: background-color 150ms ease;
+    cursor: pointer;
+}
+   
+   .control:hover {
+    background-color: #27272a;
+    color: #d4d4d8;
+   }
+   
+   .link {
+    font-weight: 500;
+    display: block;
+    text-decoration: none;
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+    padding-left: var(--mantine-spacing-md);
+    margin-left: var(--mantine-spacing-xl);
+    font-size: var(--mantine-font-size-sm);
+    color: #a1a1aa;
+    border-left: 1px solid #27272a;
+    transition: background-color 150ms ease;
+    cursor: pointer;
+   }
+   
+   .link:hover {
+    background-color: #27272a;
+    color: #d4d4d8;
+   }
+   
+   .chevron {
+    transition: transform 200ms ease;
+   }
+   
