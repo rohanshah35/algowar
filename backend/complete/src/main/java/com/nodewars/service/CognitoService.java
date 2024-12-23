@@ -148,4 +148,119 @@ public class CognitoService {
 
         cognitoClient.resendConfirmationCode(request);
     }
+
+    /**
+     * Updates a user's preferred_username in Cognito using their current username.
+     *
+     * @param currentUsername the user's current username
+     * @param newUsername     the new preferred username
+     * @throws Exception if the update fails
+     */
+    public void updateUsername(String currentUsername, String newUsername) throws Exception {
+        try {
+            AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
+                    .username(currentUsername)
+                    .userPoolId(userPoolId)
+                    .build();
+
+            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+
+            System.out.println("User retrieved from Cognito: " + getUserResponse.username());
+
+            AttributeType usernameAttribute = AttributeType.builder()
+                    .name("preferred_username")
+                    .value(newUsername)
+                    .build();
+
+            AdminUpdateUserAttributesRequest updateRequest = AdminUpdateUserAttributesRequest.builder()
+                    .userPoolId(userPoolId)
+                    .username(currentUsername)
+                    .userAttributes(usernameAttribute)
+                    .build();
+
+            cognitoClient.adminUpdateUserAttributes(updateRequest);
+
+            System.out.println("Preferred username updated successfully to: " + newUsername);
+
+        } catch (Exception e) {
+            System.err.println("Error updating preferred username: " + e.getMessage());
+            throw new Exception("Failed to update preferred username in Cognito", e);
+        }
+    }
+
+    /**
+     * Updates a user's email in Cognito using their username.
+     *
+     * @param username the user's username
+     * @param newEmail the new email
+     * @throws Exception if the update fails
+     */
+    public void updateEmail(String username, String newEmail) throws Exception {
+        try {
+            AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
+                    .username(username)
+                    .userPoolId(userPoolId)
+                    .build();
+
+            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+
+            System.out.println("User retrieved from Cognito: " + getUserResponse.username());
+
+            AttributeType emailAttribute = AttributeType.builder()
+                    .name("email")
+                    .value(newEmail)
+                    .build();
+
+            AdminUpdateUserAttributesRequest updateRequest = AdminUpdateUserAttributesRequest.builder()
+                    .userPoolId(userPoolId)
+                    .username(username)
+                    .userAttributes(emailAttribute)
+                    .build();
+
+            cognitoClient.adminUpdateUserAttributes(updateRequest);
+
+            System.out.println("Email updated successfully to: " + newEmail);
+
+        } catch (Exception e) {
+            System.err.println("Error updating email: " + e.getMessage());
+            throw new Exception("Failed to update email in Cognito", e);
+        }
+    }
+
+    /**
+     * Changes a user's password in Cognito using their username.
+     *
+     * @param username the user's username
+     * @param oldPassword the current password
+     * @param newPassword the new password
+     * @throws Exception if the password change fails
+     */
+    public void changePassword(String username, String oldPassword, String newPassword) throws Exception {
+        try {
+            AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
+                    .username(username)
+                    .userPoolId(userPoolId)
+                    .build();
+
+            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+
+            System.out.println("User retrieved from Cognito: " + getUserResponse.username());
+
+            String accessToken = "RETRIEVE_THE_ACCESS_TOKEN_FOR_THE_USER";
+
+            ChangePasswordRequest request = ChangePasswordRequest.builder()
+                    .accessToken(accessToken)
+                    .previousPassword(oldPassword)
+                    .proposedPassword(newPassword)
+                    .build();
+
+            cognitoClient.changePassword(request);
+
+            System.out.println("Password changed successfully.");
+
+        } catch (Exception e) {
+            System.err.println("Error changing password: " + e.getMessage());
+            throw new Exception("Failed to change password in Cognito", e);
+        }
+    }
 }

@@ -1,7 +1,10 @@
 package com.nodewars.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nodewars.model.User;
 import com.nodewars.repository.UserRepository;
@@ -11,6 +14,7 @@ import com.nodewars.repository.UserRepository;
  */
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -63,5 +67,59 @@ public class UserService {
      */
     public String getUsernameByUserSub(String sub) {
         return userRepository.findUsernameByUsersub(sub);
+    }
+
+    /**
+     * Updates a user's username in the database.
+     * @param currentUsername the user's current username
+     * @param newUsername the new username
+     * @throws Exception if the username is already taken
+     */
+    @Transactional
+    public void updateUsername(String currentUsername, String newUsername) throws Exception {
+        User currentUser = userRepository.findByUsername(currentUsername);
+        if (currentUser == null) {
+            throw new Exception("User not found");
+        }
+
+        if (userRepository.existsByUsername(newUsername)) {
+            throw new Exception("Username already taken");
+        }
+
+        userRepository.updateUsername(currentUsername, newUsername);
+
+        String updatedUsername = userRepository.findByUsername(newUsername).getUsername();
+    }
+
+    /**
+     * Updates a user's email in the database.
+     * @param currentUsername the user's current username
+     * @param newEmail the new email
+     * @throws Exception if the user is not found
+     */
+    @Transactional
+    public void updateEmail(String currentUsername, String newEmail) throws Exception {
+        User currentUser = userRepository.findByUsername(currentUsername);
+        if (currentUser == null) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.updateEmail(currentUser.getCognitoUserId(), newEmail);
+    }
+
+    /**
+     * Updates a user's password in the database.
+     * @param currentUsername the user's current username
+     * @param newPassword the new password
+     * @throws Exception if the user is not found
+     */
+    @Transactional
+    public void updatePassword(String currentUsername, String newPassword) throws Exception {
+        User currentUser = userRepository.findByUsername(currentUsername);
+        if (currentUser == null) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.updatePassword(currentUser.getCognitoUserId(), newPassword);
     }
 }

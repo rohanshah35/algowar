@@ -1,9 +1,11 @@
 package com.nodewars.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nodewars.model.User;
 
@@ -27,4 +29,19 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.username FROM User u WHERE u.cognitoUserId = :cognitoUserId")
     String findUsernameByUsersub(@Param("cognitoUserId") String username);
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("UPDATE User u SET u.username = :newUsername WHERE u.username = :username")
+    void updateUsername(@Param("username") String username, @Param("newUsername") String newUsername);
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("UPDATE User u SET u.email = :newEmail WHERE u.username = :username")
+    void updateEmail(@Param("username") String username, @Param("newEmail") String newEmail);
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("UPDATE User u SET u.password = :newPassword WHERE u.username = :username")
+    void updatePassword(@Param("username") String username, @Param("newPassword") String newPassword);
 }
