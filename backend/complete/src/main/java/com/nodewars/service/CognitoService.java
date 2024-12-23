@@ -115,6 +115,29 @@ public class CognitoService {
         return response.authenticationResult().idToken();
     }
 
+    public String getAccessToken(String username, String password) {
+        try {
+            String secretHash = CognitoUtils.calculateSecretHash(username, clientId, clientSecret);
+            AdminInitiateAuthRequest authRequest = AdminInitiateAuthRequest.builder()
+                    .authFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
+                    .clientId(clientId) // Replace with your app client ID
+                    .userPoolId(userPoolId) // Replace with your user pool ID
+                    .authParameters(Map.of(
+                            "USERNAME", username,
+                            "PASSWORD", password,
+                            "SECRET_HASH", secretHash
+                    ))
+                    .build();
+    
+            AdminInitiateAuthResponse authResponse = cognitoClient.adminInitiateAuth(authRequest);
+            logger.info("Access token: " + authResponse.authenticationResult().accessToken());
+            return authResponse.authenticationResult().accessToken();
+        } catch (CognitoIdentityProviderException e) {
+            System.err.println("Error during authentication: " + e.getMessage());
+            throw e;
+        }
+    }
+
     /**
      * Verifies the email of a user in AWS Cognito.
      *
@@ -147,5 +170,137 @@ public class CognitoService {
             .build();
 
         cognitoClient.resendConfirmationCode(request);
+    }
+
+    /**
+     * Updates a user's preferred_username in Cognito using their current username.
+     *
+     * @param currentUsername the user's current username
+     * @param newUsername     the new preferred username
+     * @throws Exception if the update fails
+     */
+    public void updateUsername(String currentUsername, String newUsername) throws Exception {
+        try {
+            AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
+                    .username(currentUsername)
+                    .userPoolId(userPoolId)
+                    .build();
+
+            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+
+            System.out.println("User retrieved from Cognito: " + getUserResponse.username());
+
+            AttributeType usernameAttribute = AttributeType.builder()
+                    .name("preferred_username")
+                    .value(newUsername)
+                    .build();
+
+            AdminUpdateUserAttributesRequest updateRequest = AdminUpdateUserAttributesRequest.builder()
+                    .userPoolId(userPoolId)
+                    .username(currentUsername)
+                    .userAttributes(usernameAttribute)
+                    .build();
+
+            cognitoClient.adminUpdateUserAttributes(updateRequest);
+
+            System.out.println("Preferred username updated successfully to: " + newUsername);
+
+        } catch (Exception e) {
+            System.err.println("Error updating preferred username: " + e.getMessage());
+            throw new Exception("Failed to update preferred username in Cognito", e);
+        }
+    }
+
+    /**
+     * Updates a user's email in Cognito using their username.
+     *
+     * @param username the user's username
+     * @param newEmail the new email
+     * @throws Exception if the update fails
+     */
+    public void updateEmail(String username, String newEmail) throws Exception {
+        try {
+            AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
+                    .username(username)
+                    .userPoolId(userPoolId)
+                    .build();
+
+            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+
+            System.out.println("User retrieved from Cognito: " + getUserResponse.username());
+
+            AttributeType emailAttribute = AttributeType.builder()
+                    .name("email")
+                    .value(newEmail)
+                    .build();
+
+            AdminUpdateUserAttributesRequest updateRequest = AdminUpdateUserAttributesRequest.builder()
+                    .userPoolId(userPoolId)
+                    .username(username)
+                    .userAttributes(emailAttribute)
+                    .build();
+
+            cognitoClient.adminUpdateUserAttributes(updateRequest);
+
+            System.out.println("Email updated successfully to: " + newEmail);
+
+        } catch (Exception e) {
+            System.err.println("Error updating email: " + e.getMessage());
+            throw new Exception("Failed to update email in Cognito", e);
+        }
+    }
+
+    /**
+     * Changes a user's password in Cognito using their username.
+     *
+     * @param username the user's username
+     * @param oldPassword the current password
+     * @param newPassword the new password
+     * @throws Exception if the password change fails
+     */
+    public void changePassword(String username, String oldPassword, String newPassword) throws Exception {
+        try {
+            AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
+                    .username(username)
+                    .userPoolId(userPoolId)
+                    .build();
+
+            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+
+            String accessToken = getAccessToken(username, oldPassword);
+
+            ChangePasswordRequest request = ChangePasswordRequest.builder()
+                    .accessToken(accessToken)
+                    .previousPassword(oldPassword)
+                    .proposedPassword(newPassword)
+                    .build();
+
+            cognitoClient.changePassword(request);
+
+            System.out.println("Password changed successfully.");
+
+        } catch (Exception e) {
+            System.err.println("Error changing password: " + e.getMessage());
+            throw new Exception("Failed to change password in Cognito", e);
+        }
+    }
+
+     /**
+     * Deletes a user account from AWS Cognito.
+     * @param username the username of the account to delete
+     * @throws Exception if the deletion fails
+     */
+    public void deleteUserFromCognito(String username) throws Exception {
+        try {
+            AdminDeleteUserRequest deleteUserRequest = AdminDeleteUserRequest.builder()
+                    .userPoolId(userPoolId)
+                    .username(username)
+                    .build();
+
+            AdminDeleteUserResponse deleteUserResponse = cognitoClient.adminDeleteUser(deleteUserRequest);
+
+        } catch (CognitoIdentityProviderException e) {
+            throw new Exception("Failed to delete user from Cognito: " + e.awsErrorDetails().errorMessage(), e);
+        }
     }
 }
