@@ -1,15 +1,9 @@
 "use client";
 import {
-  Anchor,
-  Box,
-  Button,
-  Center,
   Container,
-  Group,
   Paper,
   Text,
   TextInput,
-  Title,
 } from '@mantine/core';
 import { useState } from 'react';
 import classes from './page-for-input.module.css';
@@ -45,7 +39,8 @@ export function ChangeUsername() {
       }
 
       setSuccess('Username updated successfully');
-      setNewUsername(''); // Clear the input
+      setNewUsername('');
+      window.location.reload();
     } catch (err: any) {
       setError(err.message);
     } finally {

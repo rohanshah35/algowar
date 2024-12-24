@@ -37,7 +37,7 @@ async function checkAuth() {
   
     return (
       <div className="app-layout" style={{ display: 'flex' }}>
-        <NavbarNested username={auth.username} email={auth.email} />
+        <NavbarNested />
         <main style={{ flex: 1 }}>{children}</main>
       </div>
     )

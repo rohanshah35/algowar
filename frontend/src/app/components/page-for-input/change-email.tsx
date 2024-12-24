@@ -1,15 +1,9 @@
 "use client";
 import {
-  Anchor,
-  Box,
-  Button,
-  Center,
   Container,
-  Group,
   Paper,
   Text,
   TextInput,
-  Title,
 } from '@mantine/core';
 import { useState } from 'react';
 import classes from './page-for-input.module.css';
@@ -46,6 +40,7 @@ export function ChangeEmail() {
 
       setSuccess('Email updated successfully');
       setNewEmail('');
+      window.location.reload();
     } catch (err: any) {
       setError(err.message);
     } finally {

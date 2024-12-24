@@ -218,7 +218,10 @@ public class AuthController {
                 response.put("error", "User is not authenticated");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(response);
-            }
+            }  
+            
+            logger.info("User is authenticated: " + currentUser.getEmail());
+
             
             response.put("username", currentUser.getPreferredUsername());
             response.put("email", currentUser.getEmail());

@@ -1,7 +1,9 @@
 package com.nodewars.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
@@ -112,19 +114,30 @@ public class UserController {
             String newPreferredUsername = request.get("newUsername");
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
-            String currentPreferredUsername = currentUser.getPreferredUsername();
-            logger.info("currentPreferredUsername: " + currentPreferredUsername);
-            logger.info("newPreferredUsername: " + newPreferredUsername);
+
             if (userService.usernameExists(newPreferredUsername)) {
                 response.put("error", "Username already exists");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
 
-            cognitoService.updateUsername(currentPreferredUsername, newPreferredUsername);
-            userService.updatePreferredUsername(currentPreferredUsername, newPreferredUsername);
+            cognitoService.updateUsername(currentUser.getUsername(), newPreferredUsername);
+            userService.updatePreferredUsername(currentUser.getPreferredUsername(), newPreferredUsername);
+
+            currentUser = userService.getUserByUsername(currentUser.getUsername());
+
+            String newIdToken = cognitoService.login(currentUser.getUsername(), currentUser.getPassword());
+
+            ResponseCookie cookie = ResponseCookie.from("idToken", newIdToken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .build();
 
             response.put("message", "Username updated successfully");
-            return ResponseEntity.ok(response);
+            response.put("cookie", cookie.toString());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(response);
         } catch (Exception e) {
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -153,8 +166,21 @@ public class UserController {
             cognitoService.updateEmail(currentUsername, newEmail);
             userService.updateEmail(currentUsername, newEmail);
 
+            currentUser = userService.getUserByUsername(currentUser.getUsername());
+
+            String newIdToken = cognitoService.login(currentUser.getUsername(), currentUser.getPassword());
+
+            ResponseCookie cookie = ResponseCookie.from("idToken", newIdToken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .build();
+
             response.put("message", "Email updated successfully");
-            return ResponseEntity.ok(response);
+            response.put("cookie", cookie.toString());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(response);
         } catch (Exception e) {
             logger.error("Error updating email: {}", e.getMessage());
             response.put("error", e.getMessage());
@@ -184,7 +210,7 @@ public class UserController {
             cognitoService.changePassword(currentUsername, oldPassword, newPassword);
 
             userService.updatePassword(currentUsername, newPassword);
-
+            
             response.put("message", "Password updated successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {

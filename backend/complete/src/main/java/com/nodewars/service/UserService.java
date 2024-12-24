@@ -95,7 +95,7 @@ public class UserService {
      */
     @Transactional
     public void updatePreferredUsername(String currentPreferredUsername, String newPreferredUsername) throws Exception {
-        User currentUser = userRepository.findByUsername(currentPreferredUsername);
+        User currentUser = userRepository.findByPreferredUsername(currentPreferredUsername);
         if (currentUser == null) {
             throw new Exception("User not found");
         }
@@ -104,7 +104,7 @@ public class UserService {
             throw new Exception("Username already taken");
         }
 
-        userRepository.updatePreferredUsername(currentPreferredUsername, newPreferredUsername);
+        userRepository.updatePreferredUsername(currentUser.getUsername(), newPreferredUsername);
     }
 
     /**
