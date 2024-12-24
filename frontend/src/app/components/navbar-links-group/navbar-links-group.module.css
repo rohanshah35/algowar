@@ -5,7 +5,7 @@
     padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
     color: #d4d4d8;
     font-size: var(--mantine-font-size-sm);
-    transition: background-color 800ms ease, color 800ms ease;
+    transition: background-color 200ms ease, color 200ms ease;
     cursor: pointer;
 }
    
@@ -24,7 +24,7 @@
     font-size: var(--mantine-font-size-sm);
     color: #a1a1aa;
     border-left: 1px solid #27272a;
-    transition: background-color 800ms ease, color 800ms ease;
+    transition: background-color 200ms ease, color 200ms ease;
     cursor: pointer;
    }
    
