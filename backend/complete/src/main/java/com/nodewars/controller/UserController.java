@@ -105,14 +105,13 @@ public class UserController {
      */
     @PutMapping("/update/username")
     public ResponseEntity<Map<String, String>> updateUsername(
-            @RequestHeader("Authorization") String authorizationHeader,
+            @CookieValue(name = "idToken", required = false) String idToken,
             @RequestBody Map<String, String> request) {
         Map<String, String> response = new HashMap<>();
         try {
-            String token = authorizationHeader.replace("Bearer ", "");
             String newPreferredUsername = request.get("newUsername");
 
-            User currentUser = cognitoUtils.verifyAndGetUser(token);
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
             String currentPreferredUsername = currentUser.getPreferredUsername();
             logger.info("currentPreferredUsername: " + currentPreferredUsername);
             logger.info("newPreferredUsername: " + newPreferredUsername);
@@ -141,14 +140,13 @@ public class UserController {
      */
     @PutMapping("/update/email")
     public ResponseEntity<Map<String, String>> updateEmail(
-            @RequestHeader("Authorization") String authorizationHeader,
+            @CookieValue(name = "idToken", required = false) String idToken,
             @RequestBody Map<String, String> request) {
         Map<String, String> response = new HashMap<>();
         try {
-            String token = authorizationHeader.replace("Bearer ", "");
             String newEmail = request.get("newEmail");
 
-            User currentUser = cognitoUtils.verifyAndGetUser(token);
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
             String currentUsername = currentUser.getUsername();
 
 
@@ -173,15 +171,14 @@ public class UserController {
      */
     @PutMapping("/update/password")
     public ResponseEntity<Map<String, String>> updatePassword(
-            @RequestHeader("Authorization") String authorizationHeader,
+            @CookieValue(name = "idToken", required = false) String idToken,
             @RequestBody Map<String, String> passwordRequest) {
         Map<String, String> response = new HashMap<>();
         try {
-            String token = authorizationHeader.replace("Bearer ", "");
             String oldPassword = passwordRequest.get("oldPassword");
             String newPassword = passwordRequest.get("newPassword");
 
-            User currentUser = cognitoUtils.verifyAndGetUser(token);
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
             String currentUsername = currentUser.getUsername();
 
             cognitoService.changePassword(currentUsername, oldPassword, newPassword);
@@ -205,12 +202,11 @@ public class UserController {
      */
     @DeleteMapping("/delete")
     public ResponseEntity<Map<String, String>> deleteUser(
-            @RequestHeader("Authorization") String authorizationHeader) {
+        @CookieValue(name = "idToken", required = false) String idToken) {
         Map<String, String> response = new HashMap<>();
         try {
-            String token = authorizationHeader.replace("Bearer ", "");
 
-            User currentUser = cognitoUtils.verifyAndGetUser(token);
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
             String currentUsername = currentUser.getUsername();
 
             cognitoService.deleteUserFromCognito(currentUsername);

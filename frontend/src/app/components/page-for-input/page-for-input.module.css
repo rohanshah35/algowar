@@ -1,0 +1,103 @@
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #d4d4d8;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.topContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  padding: 1.5rem;
+  border-radius: 0.375rem;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.6);
+  color: #f4f4f5;
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.control {
+  width: 100%;
+  background-color: #27272a;
+  color: #d4d4d8;
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.control:hover {
+  background-color: #3f3f46;
+}
+
+.control.active {
+  background-color: #3f3f46;
+  color: #f4f4f5;
+}
+
+.inputGroup {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  color: #d4d4d8;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.textInput {
+  background-color: #27272a;
+  color: #d4d4d8;
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.textInput::placeholder {
+  color: #a1a1aa;
+}
+
+.errorText {
+  color: #f87171;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.successText {
+  color: #34d399;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.signupText {
+  color: #a1a1aa;
+  font-size: 0.75rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.signupLink {
+  color: #3b82f6;
+  text-decoration: none;
+}

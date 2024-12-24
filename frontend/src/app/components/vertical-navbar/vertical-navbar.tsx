@@ -19,11 +19,10 @@ import {
   import classes from './vertical-navbar.module.css';
   
   const mockdata = [
-    { label: 'Profile', icon: IconUserCircle },
+    { label: 'Profile', icon: IconUserCircle, link: '/profile' },
     {
       label: 'Play',
       icon: IconSwords,
-      initiallyOpened: true,
       links: [
         { label: 'Join Queue', link: '/queue' },
         { label: 'Invite Friend', link: '/invite' },
