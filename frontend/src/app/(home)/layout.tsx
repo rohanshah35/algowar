@@ -25,17 +25,23 @@ async function checkAuth() {
     }
   }
 
-export default async function Home() {
+  export default async function HomeLayout({
+    children,
+  }: {
+    children: React.ReactNode
+  }) {
     const auth = await checkAuth();
     if (!auth) {
       redirect('/');
     }
+  
     return (
-      <div style={{ display: 'flex' }}>
-       <NavbarNested username={auth.username} email={auth.email} />
-       <div style={{ flex: 1 }}>
-         {/* Your main content goes here */}
-       </div>
-     </div>
+      <div className="app-layout" style={{ display: 'flex' }}>
+        <NavbarNested username={auth.username} email={auth.email} />
+        <main style={{ flex: 1 }}>{children}</main>
+      </div>
     )
   }
+
+
+
