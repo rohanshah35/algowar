@@ -18,8 +18,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername) {
-        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername);
+    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage) {
+        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername, preferredLanguage);
 
         return userRepository.save(user);
     }
@@ -80,12 +80,38 @@ public class UserService {
 
     /**
      * Fetches the profile picture for a given username.
-     * @param username the username
+     * @param sub the username
      * @return the profile picture as a string
      */
     public String getUsernameByUserSub(String sub) {
         return userRepository.findUsernameByUsersub(sub);
     }
+
+    /**
+     * Fetches the preferred language for a given preferred username.
+     * @param preferred_username the preferred username
+     * @return the preferred language as a string
+     */
+    public String getPreferredLanguageByPreferredUsername(String preferred_username) {
+        return userRepository.findByPreferredUsername(preferred_username).getPreferredLanguage();
+    }
+
+    /**
+     * Updates a user's preferred language in the database by their preferred username.
+     * @param preferredUsername the user's preferred username
+     * @param newPreferredLanguage the new preferred language
+     * @throws Exception if the user is not found
+     */
+    @Transactional
+    public void updatePreferredLanguage(String preferredUsername, String newPreferredLanguage) throws Exception {
+        User currentUser = userRepository.findByPreferredUsername(preferredUsername);
+        if (currentUser == null) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.updatePreferredLanguageByPreferredUsername(preferredUsername, newPreferredLanguage);
+    }
+
 
     /**
      * Updates a user's username in the database.

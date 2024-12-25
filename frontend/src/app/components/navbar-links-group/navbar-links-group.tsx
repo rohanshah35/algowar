@@ -61,7 +61,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link }: 
     <>
       <UnstyledButton
         onClick={handleClick}
-        className={`${classes.control} ${link && isActive(link) ? classes.active : ''}`} // Highlight parent if its link matches
+        className={`${classes.control} ${link && isActive(link) ? classes.active : ''}`}
         style={{ cursor: link || hasLinks ? 'pointer' : 'default' }}
       >
         <Group justify="space-between" gap={0}>

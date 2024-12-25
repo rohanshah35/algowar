@@ -3,16 +3,16 @@ import {
   Container,
   Paper,
   Text,
-  TextInput,
+  TextInput
 } from '@mantine/core';
 import { useState } from 'react';
-import classes from './page-for-input.module.css';
+import classes from './account-forms.module.css';
 
-export function ChangeEmail() {
+export function ChangeUsername() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [newEmail, setNewEmail] = useState<string>(''); 
+  const [newUsername, setNewUsername] = useState<string>('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,25 +21,25 @@ export function ChangeEmail() {
     setSuccess(null);
 
     try {
-      const response = await fetch('http://localhost:8080/user/update/email', {
+      const response = await fetch('http://localhost:8080/user/update/username', {
         method: 'PUT',
         credentials: "include",
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          newEmail: newEmail
+          newUsername: newUsername
         })
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update email');
+        throw new Error(data.error || 'Failed to update username');
       }
 
-      setSuccess('Email updated successfully');
-      setNewEmail('');
+      setSuccess('Username updated successfully');
+      setNewUsername('');
       window.location.reload();
     } catch (err: any) {
       setError(err.message);
@@ -52,17 +52,14 @@ export function ChangeEmail() {
     <Container className={classes.topContainer} size={460} my={30}>
       <Paper className={classes.container} withBorder shadow="md" p={30} radius="md" mt="xl">
         <form onSubmit={handleSubmit}>
-          <div className={classes.inputGroup}>
-            <label className={classes.label}>New email</label>
-            <TextInput
-              type="text"
-              classNames={{ input: classes.textInput }}
-              placeholder="Enter new email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              required
-            />
-          </div>
+          <TextInput
+            label="New username"
+            placeholder="Enter new username"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+            required
+            classNames={{ input: classes.textInput }}
+          />
 
           {error && (
             <Text className={classes.errorText}>
@@ -82,7 +79,7 @@ export function ChangeEmail() {
               className={classes.control}
               disabled={loading}
             >
-              {loading ? 'Updating...' : 'Change Email'}
+              {loading ? 'Updating...' : 'Change Username'}
             </button>
           </div>
         </form>

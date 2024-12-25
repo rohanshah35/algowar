@@ -2,17 +2,18 @@
 import {
   Container,
   Paper,
-  Text,
-  TextInput,
+  PasswordInput,
+  Text
 } from '@mantine/core';
 import { useState } from 'react';
-import classes from './page-for-input.module.css';
+import classes from './account-forms.module.css';
 
-export function ChangeUsername() {
+export function ChangePassword() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null); // Error can be a string or null
-  const [success, setSuccess] = useState<string | null>(null); // Success can be a string or null
-  const [newUsername, setNewUsername] = useState<string>(''); // newUsername is a string
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [oldPassword, setOldPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,26 +22,27 @@ export function ChangeUsername() {
     setSuccess(null);
 
     try {
-      const response = await fetch('http://localhost:8080/user/update/username', {
+      const response = await fetch('http://localhost:8080/user/update/password', {
         method: 'PUT',
         credentials: "include",
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          newUsername: newUsername
+          oldPassword: oldPassword,
+          newPassword: newPassword
         })
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update username');
+        throw new Error(data.error || 'Failed to update password');
       }
 
-      setSuccess('Username updated successfully');
-      setNewUsername('');
-      window.location.reload();
+      setSuccess('Password updated successfully');
+      setOldPassword('');
+      setNewPassword('');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -52,17 +54,24 @@ export function ChangeUsername() {
     <Container className={classes.topContainer} size={460} my={30}>
       <Paper className={classes.container} withBorder shadow="md" p={30} radius="md" mt="xl">
         <form onSubmit={handleSubmit}>
-          <div className={classes.inputGroup}>
-            <label className={classes.label}>New username</label>
-            <TextInput
-              type="text"
-              classNames={{ input: classes.textInput }}
-              placeholder="Enter new username"
-              value={newUsername}
-              onChange={(e) => setNewUsername(e.target.value)}
-              required
-            />
-          </div>
+          <PasswordInput
+            label="Current password"
+            classNames={{ input: classes.textInput }}
+            placeholder="Enter current password"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+            required
+          />
+
+          <PasswordInput
+            label="New password"
+            classNames={{ input: classes.textInput }}
+            placeholder="Enter new password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+            mt="md"
+          />
 
           {error && (
             <Text className={classes.errorText}>
@@ -82,7 +91,7 @@ export function ChangeUsername() {
               className={classes.control}
               disabled={loading}
             >
-              {loading ? 'Updating...' : 'Change Username'}
+              {loading ? 'Updating...' : 'Change Password'}
             </button>
           </div>
         </form>

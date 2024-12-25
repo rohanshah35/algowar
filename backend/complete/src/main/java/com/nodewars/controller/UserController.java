@@ -100,6 +100,55 @@ public class UserController {
     }
 
     /**
+     * Endpoint to fetch the preferred language for a given username.
+     * @param username the username
+     * @return the preferred language
+     */
+    @GetMapping("/language/{username}")
+    public ResponseEntity<Map<String, String>> getPreferredLanguage(@PathVariable String username) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            String language = userService.getPreferredLanguageByPreferredUsername(username);
+            response.put("preferred_language", language);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(response);
+        }
+    }
+
+    /**
+     * Endpoint to update a user's preferred language.
+     *
+     * @param idToken contains the JWT token
+     * @param request contains the new preferred language
+     * @return success/error message
+     */
+    @PutMapping("/update/language")
+    public ResponseEntity<Map<String, String>> updatePreferredLanguage(
+            @CookieValue(name = "idToken", required = false) String idToken,
+            @RequestBody Map<String, String> request) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            String newPreferredLanguage = request.get("newPreferredLanguage");
+
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String currentPreferredUsername = currentUser.getPreferredUsername();
+
+            userService.updatePreferredLanguage(currentPreferredUsername, newPreferredLanguage);
+
+            response.put("message", "Preferred language updated successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error updating preferred language: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+
+    /**
      * Endpoint to update a user's username.
      * @param authorizationHeader contains the JWT token
      * @param request contains the new username

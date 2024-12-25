@@ -43,13 +43,17 @@ public class User {
     @Column(name = "preferred_username")
     private String preferredUsername;
 
-    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername) {
+    @Column(name = "preferred_language")
+    private String preferredLanguage;
+
+    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
         this.password = password;
         this.stats = stats;
         this.preferredUsername = preferredUsername;
+        this.preferredLanguage = preferredLanguage;
     }
 
     public User(String email, String cognitoUserId, String username, String preferredUsername) {
@@ -116,5 +120,13 @@ public class User {
 
     public void setPreferredUsername(String preferredUsername) {
         this.preferredUsername = preferredUsername;
+    }
+
+    public String getPreferredLanguage() {
+        return preferredLanguage;
+    }
+
+    public void setPreferredLanguage(String preferredUsername) {
+        this.preferredUsername = preferredLanguage;
     }
 }

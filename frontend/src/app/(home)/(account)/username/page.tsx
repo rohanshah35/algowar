@@ -1,4 +1,4 @@
-import { ChangeUsername } from "@/components/page-for-input/change-username";
+import { ChangeUsername } from "@/components/account-forms/change-username";
 
 export default async function Username() {
   return (
