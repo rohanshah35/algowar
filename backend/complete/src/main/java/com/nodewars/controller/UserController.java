@@ -60,11 +60,11 @@ public class UserController {
      * @param username the username
      * @return the stats JSON
      */
-    @GetMapping("/stats/{username}")
-    public ResponseEntity<Map<String, String>>  getStats(@PathVariable String username) {
+    @GetMapping("/stats/{preferredUsername}")
+    public ResponseEntity<Map<String, String>>  getStats(@PathVariable String preferredUsername) {
         Map<String, String> response = new HashMap<>();
         try {
-            String stats = userService.getStatsByUsername(username);
+            String stats = userService.getStatsByPreferredUsername(preferredUsername);
 
             if (stats == null) {
                 response.put("stats", "{}");
@@ -85,11 +85,11 @@ public class UserController {
      * @param username the username
      * @return the profile picture
      */
-    @GetMapping("/pfp/{username}")
-    public ResponseEntity<Map<String, String>> getPfp(@PathVariable String username) {
+    @GetMapping("/pfp/{preferredUsername}")
+    public ResponseEntity<Map<String, String>> getPfp(@PathVariable String preferredUsername) {
         Map<String, String> response = new HashMap<>();
         try {
-            String pfp = userService.getPfpByUsername(username);
+            String pfp = userService.getPfpByPreferredUsername(preferredUsername);
             response.put("pfp", pfp);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -104,12 +104,12 @@ public class UserController {
      * @param username the username
      * @return the preferred language
      */
-    @GetMapping("/language/{username}")
-    public ResponseEntity<Map<String, String>> getPreferredLanguage(@PathVariable String username) {
+    @GetMapping("/language/{preferredUsername}")
+    public ResponseEntity<Map<String, String>> getPreferredLanguage(@PathVariable String preferredUsername) {
         Map<String, String> response = new HashMap<>();
         try {
-            String language = userService.getPreferredLanguageByPreferredUsername(username);
-            response.put("preferred_language", language);
+            String language = userService.getPreferredLanguageByPreferredUsername(preferredUsername);
+            response.put("preferredLanguage", language);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", e.getMessage());
@@ -169,7 +169,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
 
-            cognitoService.updateUsername(currentUser.getUsername(), newPreferredUsername);
+            cognitoService.updatePreferredUsername(currentUser.getUsername(), newPreferredUsername);
             userService.updatePreferredUsername(currentUser.getPreferredUsername(), newPreferredUsername);
 
             currentUser = userService.getUserByUsername(currentUser.getUsername());
@@ -283,9 +283,10 @@ public class UserController {
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
             String currentUsername = currentUser.getUsername();
+            String currentPreferredUsername = currentUser.getPreferredUsername();
 
             cognitoService.deleteUserFromCognito(currentUsername);
-            userService.deleteUser(currentUsername);
+            userService.deleteUser(currentPreferredUsername);
 
             response.put("message", "User account deleted successfully");
             return ResponseEntity.ok(response);

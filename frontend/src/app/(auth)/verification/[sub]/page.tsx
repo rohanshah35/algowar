@@ -34,9 +34,9 @@ async function checkAuth() {
 export default async function LoginPage({ params }: Props) {
   const auth = await checkAuth();
 
-  if (auth) {
-    redirect('/');
-  }
+  // if (auth) {
+  //   redirect('/');
+  // }
   console.log(auth);
 
   return <VerificationForm sub={params.sub} />;

@@ -30,8 +30,6 @@ export function VerificationForm({ sub }: { sub: string }) {
         }
 
         const data = await response.json();
-        localStorage.setItem("username", data.username);
-        router.push("/");
       } catch (err: any) {
         console.log(err);
       }
@@ -65,7 +63,7 @@ export function VerificationForm({ sub }: { sub: string }) {
 
       setSuccess("Verification successful! Redirecting...");
       setTimeout(() => {
-        router.push("/");
+        // router.push("/");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
@@ -80,14 +78,13 @@ export function VerificationForm({ sub }: { sub: string }) {
     setSuccess(null);
 
     try {
-      const payload = { username };
 
       const response = await fetch(
         "http://localhost:8080/auth/resend-verification-code",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ userSub: sub }),
         }
       );
 

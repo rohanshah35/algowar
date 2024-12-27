@@ -114,7 +114,9 @@ public class CognitoUtils {
                 throw new RuntimeException("Invalid issuer");
             }
 
-            User user = new User(claims.getStringClaim("email"), claims.getStringClaim("cognito:username"), claims.getStringClaim("cognito:username"), claims.getStringClaim("preferred_username"));
+            logger.info("Token verified: " + claims.toString());
+
+            User user = new User(claims.getStringClaim("email"), claims.getStringClaim("sub"), claims.getStringClaim("cognito:username"), claims.getStringClaim("preferred_username"), claims.getBooleanClaim("email_verified"));
             return user;
         } catch (JOSEException | java.text.ParseException | RuntimeException e) {
             e.printStackTrace();

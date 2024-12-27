@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * Represents a user entity with various attributes such as email, username, password, 
@@ -46,6 +47,9 @@ public class User {
     @Column(name = "preferred_language")
     private String preferredLanguage;
 
+    @Transient
+    private boolean isVerified; 
+
     public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
@@ -56,11 +60,12 @@ public class User {
         this.preferredLanguage = preferredLanguage;
     }
 
-    public User(String email, String cognitoUserId, String username, String preferredUsername) {
+    public User(String email, String cognitoUserId, String username, String preferredUsername, Boolean isVerified) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
         this.preferredUsername = preferredUsername;
+        this.isVerified = isVerified;
     }
 
     public User() {
@@ -128,5 +133,28 @@ public class User {
 
     public void setPreferredLanguage(String preferredUsername) {
         this.preferredUsername = preferredLanguage;
+    }
+
+    public boolean getIsVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", cognitoUserId='" + cognitoUserId + '\'' +
+                ", profilePicture='" + profilePicture + '\'' +
+                ", stats='" + stats + '\'' +
+                ", preferredUsername='" + preferredUsername + '\'' +
+                ", preferredLanguage='" + preferredLanguage + '\'' +
+                ", isVerified=" + isVerified +
+                '}';
     }
 }

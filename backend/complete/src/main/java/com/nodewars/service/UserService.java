@@ -65,8 +65,8 @@ public class UserService {
      * @param username the username
      * @return the stats JSON as a string
      */
-    public String getStatsByUsername(String username) {
-        return userRepository.findStatsByUsername(username);
+    public String getStatsByPreferredUsername(String preferredUsername) {
+        return getUserByPreferredUsername(preferredUsername).getStats();
     }
 
     /**
@@ -74,8 +74,8 @@ public class UserService {
      * @param username the username
      * @return the profile picture as a string
      */
-    public String getPfpByUsername(String username) {
-        return userRepository.findPfpByUsername(username);
+    public String getPfpByPreferredUsername(String preferredUsername) {
+        return getUserByPreferredUsername(preferredUsername).getProfilePicture();
     }
 
     /**
@@ -92,8 +92,8 @@ public class UserService {
      * @param preferred_username the preferred username
      * @return the preferred language as a string
      */
-    public String getPreferredLanguageByPreferredUsername(String preferred_username) {
-        return userRepository.findByPreferredUsername(preferred_username).getPreferredLanguage();
+    public String getPreferredLanguageByPreferredUsername(String preferredUsername) {
+        return userRepository.findByPreferredUsername(preferredUsername).getPreferredLanguage();
     }
 
     /**
@@ -115,13 +115,13 @@ public class UserService {
 
     /**
      * Updates a user's username in the database.
-     * @param currentUsername the user's current username
+     * @param preferredUsername the user's preferred username
      * @param newUsername the new username
      * @throws Exception if the username is already taken
      */
     @Transactional
-    public void updatePreferredUsername(String currentPreferredUsername, String newPreferredUsername) throws Exception {
-        User currentUser = userRepository.findByPreferredUsername(currentPreferredUsername);
+    public void updatePreferredUsername(String preferredUsername, String newPreferredUsername) throws Exception {
+        User currentUser = userRepository.findByPreferredUsername(preferredUsername);
         if (currentUser == null) {
             throw new Exception("User not found");
         }
@@ -135,47 +135,48 @@ public class UserService {
 
     /**
      * Updates a user's email in the database.
-     * @param currentUsername the user's current username
+     * @param preferredUsername the user's preferred username
      * @param newEmail the new email
      * @throws Exception if the user is not found
      */
     @Transactional
-    public void updateEmail(String currentUsername, String newEmail) throws Exception {
-        User currentUser = userRepository.findByUsername(currentUsername);
+    public void updateEmail(String preferredUsername, String newEmail) throws Exception {
+        User currentUser = getUserByPreferredUsername(preferredUsername);
         if (currentUser == null) {
             throw new Exception("User not found");
         }
 
-        userRepository.updateEmail(currentUser.getUsername(), newEmail);
+        userRepository.updateEmail(preferredUsername, newEmail);
     }
 
     /**
      * Updates a user's password in the database.
-     * @param currentUsername the user's current username
+     * @param preferredUsername the user's preferred username
      * @param newPassword the new password
      * @throws Exception if the user is not found
      */
     @Transactional
-    public void updatePassword(String currentUsername, String newPassword) throws Exception {
-        User currentUser = userRepository.findByUsername(currentUsername);
+    public void updatePassword(String preferredUsername, String newPassword) throws Exception {
+        User currentUser = getUserByPreferredUsername(preferredUsername);
         if (currentUser == null) {
             throw new Exception("User not found");
         }
 
-        userRepository.updatePassword(currentUser.getUsername(), newPassword);
+        userRepository.updatePassword(preferredUsername, newPassword);
     }
 
     /**
      * Deletes a user by their username.
-     * @param username the username of the user to delete
+     * @param preferredUsername the preferred username of the user to delete
      * @throws Exception if the user does not exist
      */
     @Transactional
-    public void deleteUser(String username) throws Exception {
-        if (!userRepository.existsByUsername(username)) {
+    public void deleteUser(String preferredUsername) throws Exception {
+        User currentUser = getUserByPreferredUsername(preferredUsername);
+        if (currentUser == null) {
             throw new Exception("User not found");
         }
 
-        userRepository.deleteByUsername(username);
+        userRepository.deleteByPreferredUsername(preferredUsername);
     }
 }

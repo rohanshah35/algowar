@@ -88,7 +88,7 @@ public class AuthController {
      * @return the ID token of the authenticated user
      */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>>  login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto request) {
         Map<String, String> response = new HashMap<>();
         try {
             String idToken;
@@ -226,6 +226,8 @@ public class AuthController {
             
             response.put("username", currentUser.getPreferredUsername());
             response.put("email", currentUser.getEmail());
+            response.put("sub", currentUser.getCognitoUserId());
+            response.put("isVerified", currentUser.getIsVerified() ? "true" : "false");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", e.getMessage());

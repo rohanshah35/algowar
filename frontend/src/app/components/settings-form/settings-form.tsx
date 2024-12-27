@@ -28,7 +28,7 @@ export function Settings() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const authResponse = await fetch('http://localhost:8080/check-auth', {
+        const authResponse = await fetch('http://localhost:8080/auth/check-auth', {
           method: 'POST',
           credentials: 'include',
         });
@@ -39,7 +39,7 @@ export function Settings() {
         }
 
         setUsername(authData.username);
-        // console.log(authData.username);
+        console.log("hi", authData);
 
         const languageResponse = await fetch(`http://localhost:8080/user/language/${authData.username}`);
         const languageData = await languageResponse.json();
@@ -49,6 +49,7 @@ export function Settings() {
         }
 
         setPreferredLanguage(languageData.preferredLanguage);
+        console.log("preferred language", languageData.preferredLanguage);
       } catch (err: any) {
         setError(err.message);
       }
@@ -68,13 +69,13 @@ export function Settings() {
       }
 
       const response = await fetch('http://localhost:8080/user/update/language', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
-          username,
-          preferredLanguage,
+          newPreferredLanguage : preferredLanguage,
         }),
       });
 
@@ -116,8 +117,12 @@ export function Settings() {
             placeholder="Select your preferred language"
             value={preferredLanguage}
             onChange={(value) => setPreferredLanguage(value)}
-            data={availableLanguages}
-            className={classes.selectInput}
+            data={availableLanguages.map((lang) => ({ value: lang, label: lang }))}
+            classNames={{
+              input: classes.selectInput,
+              dropdown: classes.selectDropdown,
+              option: classes.selectOption,
+            }}
             disabled={loading || !username}
           />
         </div>

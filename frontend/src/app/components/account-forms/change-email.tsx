@@ -4,16 +4,17 @@ import {
   Paper,
   Text,
   TextInput,
+  Button,
 } from '@mantine/core';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import classes from './account-forms.module.css';
 
 export function ChangeEmail() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [newEmail, setNewEmail] = useState<string>(''); 
-
+  const [newEmail, setNewEmail] = useState<string>('');
+  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -23,13 +24,9 @@ export function ChangeEmail() {
     try {
       const response = await fetch('http://localhost:8080/user/update/email', {
         method: 'PUT',
-        credentials: "include",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          newEmail: newEmail
-        })
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newEmail }),
       });
 
       const data = await response.json();

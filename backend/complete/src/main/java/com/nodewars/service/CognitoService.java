@@ -156,6 +156,36 @@ public class CognitoService {
         cognitoClient.confirmSignUp(request);
     }
 
+    public void setEmailVerified(String username) {
+        try {
+            AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
+                    .username(username)
+                    .userPoolId(userPoolId)
+                    .build();
+    
+            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+            logger.info("User retrieved from Cognito: " + getUserResponse.username());
+    
+            AttributeType emailVerifiedAttribute = AttributeType.builder()
+                    .name("email_verified")
+                    .value("true")
+                    .build();
+    
+            AdminUpdateUserAttributesRequest updateRequest = AdminUpdateUserAttributesRequest.builder()
+                    .userPoolId(userPoolId)
+                    .username(username)
+                    .userAttributes(emailVerifiedAttribute)
+                    .build();
+    
+            cognitoClient.adminUpdateUserAttributes(updateRequest);
+            logger.info("Email verification status updated to true for user: " + username);
+    
+        } catch (Exception e) {
+            logger.error("Error setting email_verified attribute: " + e.getMessage(), e);
+        }
+    }
+    
+
     /**
      * Resends the verification code to a user in AWS Cognito.
      *
@@ -179,7 +209,7 @@ public class CognitoService {
      * @param newUsername     the new preferred username
      * @throws Exception if the update fails
      */
-    public void updateUsername(String currentUsername, String newUsername) throws Exception {
+    public void updatePreferredUsername(String currentUsername, String newPreferredUsername) throws Exception {
         try {
             AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
                     .username(currentUsername)
@@ -192,7 +222,7 @@ public class CognitoService {
 
             AttributeType usernameAttribute = AttributeType.builder()
                     .name("preferred_username")
-                    .value(newUsername)
+                    .value(newPreferredUsername)
                     .build();
 
             AdminUpdateUserAttributesRequest updateRequest = AdminUpdateUserAttributesRequest.builder()
@@ -203,7 +233,7 @@ public class CognitoService {
 
             cognitoClient.adminUpdateUserAttributes(updateRequest);
 
-            System.out.println("Preferred username updated successfully to: " + newUsername);
+            System.out.println("Preferred username updated successfully to: " + newPreferredUsername);
 
         } catch (Exception e) {
             System.err.println("Error updating preferred username: " + e.getMessage());
