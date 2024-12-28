@@ -56,7 +56,7 @@ public class CognitoService {
             secretAccessKey
         );
         this.cognitoClient = CognitoIdentityProviderClient.builder()
-            .region(Region.of(region)) // Change to your region
+            .region(Region.of(region))
             .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
             .build();
     }
@@ -117,8 +117,8 @@ public class CognitoService {
             String secretHash = CognitoUtils.calculateSecretHash(username, clientId, clientSecret);
             AdminInitiateAuthRequest authRequest = AdminInitiateAuthRequest.builder()
                     .authFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
-                    .clientId(clientId) // Replace with your app client ID
-                    .userPoolId(userPoolId) // Replace with your user pool ID
+                    .clientId(clientId)
+                    .userPoolId(userPoolId)
                     .authParameters(Map.of(
                             "USERNAME", username,
                             "PASSWORD", password,

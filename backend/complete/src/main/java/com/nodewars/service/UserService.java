@@ -1,8 +1,6 @@
 package com.nodewars.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +12,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    // @Autowired
-    // private S3Service s3Service;
 
     public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage) {
         User user = new User(email, cognitoUserId, username, password, stats, preferredUsername, preferredLanguage);

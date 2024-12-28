@@ -12,8 +12,8 @@ export function ChangePfp() {
   const [success, setSuccess] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [profilePicture, setProfilePicture] = useState<string | null>(null); // For storing the user's current profile picture URL
-  const [fetchingPfp, setFetchingPfp] = useState<boolean>(true); // To track if profile picture is being fetched
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [fetchingPfp, setFetchingPfp] = useState<boolean>(true);
   const openRef = useRef<() => void>(null);
 
   useEffect(() => {
@@ -25,11 +25,11 @@ export function ChangePfp() {
         });
         if (!response.ok) throw new Error('Failed to fetch user profile');
         const data = await response.json();
-        setProfilePicture(data.pfp); // Assuming the backend returns the profile picture URL
+        setProfilePicture(data.pfp);
       } catch (error) {
         console.error('Error fetching profile:', error);
       } finally {
-        setFetchingPfp(false); // Set to false once the fetch is done
+        setFetchingPfp(false);
       }
     };
 
