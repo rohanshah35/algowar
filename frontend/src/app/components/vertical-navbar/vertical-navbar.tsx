@@ -17,7 +17,7 @@ import {  Group, ScrollArea } from '@mantine/core';
 import { LinksGroup } from '../navbar-links-group/navbar-links-group';
 import { UserButton } from '../user-button/user-button';
 import classes from './vertical-navbar.module.css';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
   
   const mockdata = [
     { label: 'Profile', icon: IconUserCircle, link: '/profile' },
@@ -76,16 +76,16 @@ import { useEffect, useState } from 'react';
   }
   
   export function NavbarNested() {
-    const [userData, setUserData] = useState<{ username: string; email: string } | null>(null);
+    const [userData, setUserData] = useState<{ username: string; email: string, profilePicture: string } | null>(null);
 
     useEffect(() => {
       const fetchUserData = async () => {
         const data = await checkAuth();
-        console.log(data);
         if (data) {
-          setUserData({ username: data.username, email: data.email });
+          setUserData({ username: data.username, email: data.email, profilePicture: data.profilePicture });
         }
       };
+
 
       fetchUserData();
     }, []);
@@ -107,7 +107,7 @@ import { useEffect, useState } from 'react';
           </ScrollArea>
     
           <div className={classes.footer}>
-            <UserButton username={"Loading..."} email={"Loading..."} />
+            <UserButton username={"Loading..."} email={"Loading..."} profilePicture={""} />
           </div>
         </nav>
       );
@@ -128,7 +128,7 @@ import { useEffect, useState } from 'react';
         </ScrollArea>
   
         <div className={classes.footer}>
-          <UserButton username={userData.username} email={userData.email} />
+          <UserButton username={userData.username} email={userData.email} profilePicture={userData.profilePicture} />
         </div>
       </nav>
     );

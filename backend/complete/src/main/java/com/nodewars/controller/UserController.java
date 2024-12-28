@@ -18,7 +18,7 @@ import java.util.Map;
 import com.nodewars.service.UserService;
 import com.nodewars.model.User;
 import com.nodewars.service.CognitoService;
-// import com.nodewars.service.S3Service;
+import com.nodewars.service.S3Service;
 import com.nodewars.utils.CognitoUtils;
 
 @RestController
@@ -34,8 +34,8 @@ public class UserController {
     @Autowired
     private CognitoService cognitoService;
 
-    // @Autowired
-    // private S3Service s3Service;
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     private CognitoUtils cognitoUtils;
@@ -92,13 +92,34 @@ public class UserController {
      * @param username the username
      * @return the profile picture
      */
-    @GetMapping("/pfp/{preferredUsername}")
+    @GetMapping("/pfp")
     public ResponseEntity<Map<String, String>> getPfp(@PathVariable String preferredUsername) {
         Map<String, String> response = new HashMap<>();
-
         try {
             String pfp = userService.getPfpByPreferredUsername(preferredUsername);
-            response.put("pfp", pfp);
+            String preSignedUrl = s3Service.getPreSignedUrl(pfp);
+            response.put("pfp", preSignedUrl);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error checking if username exists: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(response);
+        }
+    }
+
+        /**
+     * Endpoint to fetch the profile picture for a given username.
+     * @param username the username
+     * @return the profile picture
+     */
+    @GetMapping("/pfp-with-cookie")
+    public ResponseEntity<Map<String, String>> getPfpWithCookie(@CookieValue(name = "idToken", required = false) String idToken) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String pfp = userService.getPfpByPreferredUsername(currentUser.getPreferredUsername());
+            response.put("pfp", s3Service.getPreSignedUrl(pfp));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error checking if username exists: {}", e.getMessage());
@@ -286,27 +307,29 @@ public class UserController {
         }
     }
 
-    // @PutMapping("/update/pfp")
-    // public ResponseEntity<Map<String, String>> updatePfp(
-    //         @CookieValue(name = "idToken", required = false) String idToken,
-    //         @RequestParam("file") MultipartFile file) {
-    //     Map<String, String> response = new HashMap<>();
-    //     try {
-    //         User currentUser = cognitoUtils.verifyAndGetUser(idToken);
-    //         String currentPreferredUsername = currentUser.getPreferredUsername();
+    @PutMapping("/update/pfp")
+    public ResponseEntity<Map<String, String>> updatePfp(
+            @CookieValue(name = "idToken", required = false) String idToken,
+            @RequestParam("file") MultipartFile file) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String currentPreferredUsername = currentUser.getPreferredUsername();
 
-    //         String s3Key = s3Service.uploadProfilePicture(currentPreferredUsername, file);
-    //         userService.updateProfilePicture(currentPreferredUsername, s3Key);
+            String s3Key = s3Service.uploadProfilePicture(currentPreferredUsername, file);
+            userService.updateProfilePicture(currentPreferredUsername, s3Key);
 
-    //         response.put("message", "Profile picture updated successfully");
-    //         response.put("s3Key", s3Key);
-    //         return ResponseEntity.ok(response);
-    //     } catch (Exception e) {
-    //         logger.error("Error updating profile picture: {}", e.getMessage());
-    //         response.put("error", e.getMessage());
-    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    //     }
-    // }
+            String preSignedUrl = s3Service.getPreSignedUrl(s3Key);
+
+            response.put("message", "Profile picture updated successfully");
+            response.put("s3Key", preSignedUrl);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error updating profile picture: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 
     /**
      * Endpoint to delete a user's account.

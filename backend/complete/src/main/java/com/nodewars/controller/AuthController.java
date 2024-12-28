@@ -22,6 +22,7 @@ import com.nodewars.dto.SignUpRequestDto;
 import com.nodewars.dto.VerificationRequestDto;
 import com.nodewars.model.User;
 import com.nodewars.service.CognitoService;
+import com.nodewars.service.S3Service;
 import com.nodewars.service.UserService;
 import com.nodewars.utils.CognitoUtils;
 
@@ -41,7 +42,8 @@ public class AuthController {
     @Autowired
     private CognitoUtils cognitoUtils;
 
-
+    @Autowired
+    private S3Service s3Service;
 
     /**
      * Registers a new user and saves the user data to the database. 
@@ -214,13 +216,13 @@ public class AuthController {
                         .body(response);
             }  
             
-            logger.info("User is authenticated: " + currentUser.getEmail());
-
+            String s3Key = userService.getPfpByPreferredUsername(currentUser.getPreferredUsername());
             
             response.put("username", currentUser.getPreferredUsername());
             response.put("email", currentUser.getEmail());
             response.put("sub", currentUser.getCognitoUserId());
             response.put("isVerified", currentUser.getIsVerified() ? "true" : "false");
+            response.put("profilePicture", s3Service.getPreSignedUrl(s3Key));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error checking authentication: " + e.getMessage());
