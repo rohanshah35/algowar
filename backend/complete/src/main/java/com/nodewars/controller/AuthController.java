@@ -24,19 +24,7 @@ import com.nodewars.model.User;
 import com.nodewars.service.CognitoService;
 import com.nodewars.service.UserService;
 import com.nodewars.utils.CognitoUtils;
-/**
- * AuthController handles authentication-related requests such as user signup, login, and email verification.
- * It uses UserService for user management and CognitoService for interacting with AWS Cognito.
- * 
- * Endpoints:
- * - POST /auth/signup: Registers a new user.
- * - POST /auth/login: Authenticates a user and returns an ID token.
- * - POST /auth/verify-email: Verifies a user's email address.
- * 
- * Dependencies:
- * - UserService: Manages user data.
- * - CognitoService: Handles AWS Cognito operations.
- */
+
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -65,6 +53,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequestDto request) {
         Map<String, String> response = new HashMap<>();
+
         try {
             String userSub = cognitoService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
             String stats = "{\"wins\": 0, \"losses\": 0}";
@@ -75,9 +64,9 @@ public class AuthController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(response);
+            logger.error("Error signing up user: " + e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -90,6 +79,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto request) {
         Map<String, String> response = new HashMap<>();
+
         try {
             String idToken;
             if (request.getUsername().contains("@")) {
@@ -110,9 +100,9 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(response);
+            logger.error("Error logging in user: " + e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -126,6 +116,7 @@ public class AuthController {
     @PostMapping("/verify-email")
     public ResponseEntity<Map<String, String>> verifyEmail(@RequestBody VerificationRequestDto request) {
         Map<String, String> response = new HashMap<>();
+
         try {
             String username = userService.getUsernameByUserSub(request.getUserSub());
             cognitoService.verifyEmail(username, request.getVerificationCode());
@@ -143,9 +134,9 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(response);
+            logger.error("Error verifying email: " + e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -158,15 +149,16 @@ public class AuthController {
     @PostMapping("/resend-verification-code")
     public ResponseEntity<Map<String, String>> resendVerificationCode(@RequestBody VerificationRequestDto request) {
         Map<String, String> response = new HashMap<>();
+
         try {
             String username = userService.getUsernameByUserSub(request.getUserSub());
             cognitoService.resendVerificationCode(username);
             response.put("message", "Successfully resent");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(response);
+            logger.error("Error resending verification code: " + e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -177,6 +169,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout() {
         Map<String, String> response = new HashMap<>();
+
         try {
             ResponseCookie cookie = ResponseCookie.from("idToken", "")
                     .httpOnly(true)
@@ -190,9 +183,9 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(response);
+            logger.error("Error logging out user: " + e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -204,7 +197,7 @@ public class AuthController {
     @PostMapping("/check-auth")
     public ResponseEntity<Map<String, String>> checkAuth(@CookieValue(name = "idToken", required = false) String idToken) {
         Map<String, String> response = new HashMap<>();
-
+        
         try {
             if (idToken == null) {
                 response.put("error", "User is not authenticated");
@@ -230,9 +223,9 @@ public class AuthController {
             response.put("isVerified", currentUser.getIsVerified() ? "true" : "false");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(response);
+            logger.error("Error checking authentication: " + e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 }

@@ -17,9 +17,6 @@ import org.springframework.stereotype.Service;
 
 import com.nodewars.utils.CognitoUtils;
 
-/**
- * Service class for handling AWS Cognito operations such as sign-up, login, and email verification.
- */
 @Service
 public class CognitoService {
 

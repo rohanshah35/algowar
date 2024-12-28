@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import java.util.Map;
 import com.nodewars.service.UserService;
 import com.nodewars.model.User;
 import com.nodewars.service.CognitoService;
+// import com.nodewars.service.S3Service;
 import com.nodewars.utils.CognitoUtils;
 
 @RestController
@@ -31,6 +33,9 @@ public class UserController {
 
     @Autowired
     private CognitoService cognitoService;
+
+    // @Autowired
+    // private S3Service s3Service;
 
     @Autowired
     private CognitoUtils cognitoUtils;
@@ -49,7 +54,8 @@ public class UserController {
             response.put("exists", String.valueOf(exists));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
+            logger.error("Error checking if username exists: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
         }
@@ -74,7 +80,8 @@ public class UserController {
             response.put("stats", stats);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
+            logger.error("Error checking if username exists: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
         }
@@ -88,12 +95,14 @@ public class UserController {
     @GetMapping("/pfp/{preferredUsername}")
     public ResponseEntity<Map<String, String>> getPfp(@PathVariable String preferredUsername) {
         Map<String, String> response = new HashMap<>();
+
         try {
             String pfp = userService.getPfpByPreferredUsername(preferredUsername);
             response.put("pfp", pfp);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
+            logger.error("Error checking if username exists: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
         }
@@ -107,12 +116,14 @@ public class UserController {
     @GetMapping("/language/{preferredUsername}")
     public ResponseEntity<Map<String, String>> getPreferredLanguage(@PathVariable String preferredUsername) {
         Map<String, String> response = new HashMap<>();
+
         try {
             String language = userService.getPreferredLanguageByPreferredUsername(preferredUsername);
             response.put("preferredLanguage", language);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
+            logger.error("Error checking if username exists: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
         }
@@ -130,6 +141,7 @@ public class UserController {
             @CookieValue(name = "idToken", required = false) String idToken,
             @RequestBody Map<String, String> request) {
         Map<String, String> response = new HashMap<>();
+        
         try {
             String newPreferredLanguage = request.get("newPreferredLanguage");
 
@@ -142,7 +154,7 @@ public class UserController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error updating preferred language: {}", e.getMessage());
-            response.put("error", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
@@ -159,6 +171,7 @@ public class UserController {
             @CookieValue(name = "idToken", required = false) String idToken,
             @RequestBody Map<String, String> request) {
         Map<String, String> response = new HashMap<>();
+
         try {
             String newPreferredUsername = request.get("newUsername");
 
@@ -188,8 +201,10 @@ public class UserController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            logger.error("Error updating username: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(response);
         }
     }
 
@@ -205,15 +220,16 @@ public class UserController {
             @CookieValue(name = "idToken", required = false) String idToken,
             @RequestBody Map<String, String> request) {
         Map<String, String> response = new HashMap<>();
+        
         try {
             String newEmail = request.get("newEmail");
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
-            String currentUsername = currentUser.getUsername();
+            String currentPreferredUsername = currentUser.getPreferredUsername();
 
 
-            cognitoService.updateEmail(currentUsername, newEmail);
-            userService.updateEmail(currentUsername, newEmail);
+            cognitoService.updateEmail(currentPreferredUsername, newEmail);
+            userService.updateEmail(currentPreferredUsername, newEmail);
 
             currentUser = userService.getUserByUsername(currentUser.getUsername());
 
@@ -249,16 +265,17 @@ public class UserController {
             @CookieValue(name = "idToken", required = false) String idToken,
             @RequestBody Map<String, String> passwordRequest) {
         Map<String, String> response = new HashMap<>();
+        
         try {
             String oldPassword = passwordRequest.get("oldPassword");
             String newPassword = passwordRequest.get("newPassword");
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
-            String currentUsername = currentUser.getUsername();
+            String currentPreferredUsername = currentUser.getPreferredUsername();
 
-            cognitoService.changePassword(currentUsername, oldPassword, newPassword);
+            cognitoService.changePassword(currentUser.getUsername(), oldPassword, newPassword);
 
-            userService.updatePassword(currentUsername, newPassword);
+            userService.updatePassword(currentPreferredUsername, newPassword);
             
             response.put("message", "Password updated successfully");
             return ResponseEntity.ok(response);
@@ -268,6 +285,28 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+    // @PutMapping("/update/pfp")
+    // public ResponseEntity<Map<String, String>> updatePfp(
+    //         @CookieValue(name = "idToken", required = false) String idToken,
+    //         @RequestParam("file") MultipartFile file) {
+    //     Map<String, String> response = new HashMap<>();
+    //     try {
+    //         User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+    //         String currentPreferredUsername = currentUser.getPreferredUsername();
+
+    //         String s3Key = s3Service.uploadProfilePicture(currentPreferredUsername, file);
+    //         userService.updateProfilePicture(currentPreferredUsername, s3Key);
+
+    //         response.put("message", "Profile picture updated successfully");
+    //         response.put("s3Key", s3Key);
+    //         return ResponseEntity.ok(response);
+    //     } catch (Exception e) {
+    //         logger.error("Error updating profile picture: {}", e.getMessage());
+    //         response.put("error", e.getMessage());
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    //     }
+    // }
 
     /**
      * Endpoint to delete a user's account.
@@ -279,6 +318,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> deleteUser(
         @CookieValue(name = "idToken", required = false) String idToken) {
         Map<String, String> response = new HashMap<>();
+        
         try {
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
@@ -292,7 +332,7 @@ public class UserController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error deleting user: {}", e.getMessage());
-            response.put("error", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }

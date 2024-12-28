@@ -9,14 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nodewars.model.User;
 import com.nodewars.repository.UserRepository;
 
-/**
- * Service class for managing users.
- */
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    // @Autowired
+    // private S3Service s3Service;
 
     public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage) {
         User user = new User(email, cognitoUserId, username, password, stats, preferredUsername, preferredLanguage);
@@ -66,7 +66,7 @@ public class UserService {
      * @return the stats JSON as a string
      */
     public String getStatsByPreferredUsername(String preferredUsername) {
-        return getUserByPreferredUsername(preferredUsername).getStats();
+        return userRepository.findByPreferredUsername(preferredUsername).getStats();
     }
 
     /**
@@ -75,7 +75,7 @@ public class UserService {
      * @return the profile picture as a string
      */
     public String getPfpByPreferredUsername(String preferredUsername) {
-        return getUserByPreferredUsername(preferredUsername).getProfilePicture();
+        return userRepository.findByPreferredUsername(preferredUsername).getProfilePicture();
     }
 
     /**
@@ -84,7 +84,7 @@ public class UserService {
      * @return the profile picture as a string
      */
     public String getUsernameByUserSub(String sub) {
-        return userRepository.findUsernameByUsersub(sub);
+        return userRepository.findUserByUsersub(sub).getUsername();
     }
 
     /**
@@ -104,14 +104,12 @@ public class UserService {
      */
     @Transactional
     public void updatePreferredLanguage(String preferredUsername, String newPreferredLanguage) throws Exception {
-        User currentUser = userRepository.findByPreferredUsername(preferredUsername);
-        if (currentUser == null) {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
             throw new Exception("User not found");
         }
 
-        userRepository.updatePreferredLanguageByPreferredUsername(preferredUsername, newPreferredLanguage);
+        userRepository.updatePreferredLanguage(preferredUsername, newPreferredLanguage);
     }
-
 
     /**
      * Updates a user's username in the database.
@@ -126,7 +124,7 @@ public class UserService {
             throw new Exception("User not found");
         }
 
-        if (userRepository.existsByUsername(newPreferredUsername)) {
+        if (userRepository.existsByPreferredUsername(newPreferredUsername)) {
             throw new Exception("Username already taken");
         }
 
@@ -141,8 +139,7 @@ public class UserService {
      */
     @Transactional
     public void updateEmail(String preferredUsername, String newEmail) throws Exception {
-        User currentUser = getUserByPreferredUsername(preferredUsername);
-        if (currentUser == null) {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
             throw new Exception("User not found");
         }
 
@@ -157,12 +154,41 @@ public class UserService {
      */
     @Transactional
     public void updatePassword(String preferredUsername, String newPassword) throws Exception {
-        User currentUser = getUserByPreferredUsername(preferredUsername);
-        if (currentUser == null) {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
             throw new Exception("User not found");
         }
 
         userRepository.updatePassword(preferredUsername, newPassword);
+    }
+
+    /**
+     * Updates a user's stats in the database.
+     * @param preferredUsername the user's preferred username
+     * @param newStats the new stats
+     * @throws Exception if the user is not found
+     */
+    @Transactional
+    public void updateStats(String preferredUsername, String newStats) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.updateStats(preferredUsername, newStats);
+    }
+
+    /**
+     * Updates a user's profile picture in the database.
+     * @param preferredUsername the user's preferred username
+     * @param newProfilePicture the new profile picture s3 key
+     * @throws Exception if the user is not found
+     */
+    @Transactional
+    public void updateProfilePicture(String preferredUsername, String newProfilePicture) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.updatePfp(preferredUsername, newProfilePicture);
     }
 
     /**
@@ -172,11 +198,10 @@ public class UserService {
      */
     @Transactional
     public void deleteUser(String preferredUsername) throws Exception {
-        User currentUser = getUserByPreferredUsername(preferredUsername);
-        if (currentUser == null) {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
             throw new Exception("User not found");
         }
 
-        userRepository.deleteByPreferredUsername(preferredUsername);
+        userRepository.deleteUser(preferredUsername);
     }
 }

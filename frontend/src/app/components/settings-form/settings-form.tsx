@@ -39,7 +39,6 @@ export function Settings() {
         }
 
         setUsername(authData.username);
-        console.log("hi", authData);
 
         const languageResponse = await fetch(`http://localhost:8080/user/language/${authData.username}`);
         const languageData = await languageResponse.json();
@@ -49,7 +48,6 @@ export function Settings() {
         }
 
         setPreferredLanguage(languageData.preferredLanguage);
-        console.log("preferred language", languageData.preferredLanguage);
       } catch (err: any) {
         setError(err.message);
       }
@@ -122,6 +120,11 @@ export function Settings() {
               input: classes.selectInput,
               dropdown: classes.selectDropdown,
               option: classes.selectOption,
+            }}
+            styles={{
+              input: {
+                backgroundColor: '#27272a',
+              }
             }}
             disabled={loading || !username}
           />
