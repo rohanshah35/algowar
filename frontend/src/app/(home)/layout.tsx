@@ -38,7 +38,15 @@ async function checkAuth() {
     return (
       <div className="app-layout" style={{ display: 'flex' }}>
         <NavbarNested />
-        <main style={{ flex: 1 }}>{children}</main>
+        <main style={{ 
+          flex: 1,
+          marginLeft: '250px',
+          padding: '20px',
+          minHeight: '100vh',
+          width: 'calc(100% - 250px)'
+        }}>
+          {children}
+        </main>
       </div>
     )
   }
