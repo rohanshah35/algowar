@@ -20,7 +20,7 @@ export function SocialCard({ username }: SocialCardProps) {
         mx="auto"
       />
       <Text ta="center" fz="lg" fw={500} mt="sm" c="#d4d4d8">
-        {username} {/* Dynamically displays the username */}
+        {username}
       </Text>
 
       <Button
