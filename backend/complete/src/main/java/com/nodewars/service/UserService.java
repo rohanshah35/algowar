@@ -7,6 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nodewars.model.User;
 import com.nodewars.repository.UserRepository;
 
+/**
+ * Service class for managing user-related operations.
+ * This class provides methods for user creation, retrieval, and updates.
+ * It also includes methods for checking username existence, fetching user statistics, and updating user attributes.
+ */
+
 @Service
 public class UserService {
 

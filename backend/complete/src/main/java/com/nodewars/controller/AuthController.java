@@ -26,6 +26,26 @@ import com.nodewars.service.S3Service;
 import com.nodewars.service.UserService;
 import com.nodewars.utils.CognitoUtils;
 
+/**
+ * REST controller that handles all authentication-related endpoints including user registration,
+ * login, logout, email verification, and authentication status checks.
+ * 
+ * This controller integrates with AWS Cognito for user authentication and management.
+ * It handles:
+ * - User registration (signup)
+ * - User login with email or username
+ * - Email verification
+ * - Resending verification codes
+ * - User logout
+ * - Authentication status checks
+ * 
+ * All endpoints return appropriate HTTP status codes and response messages:
+ * - 200 OK for successful operations
+ * - 201 Created for successful user registration
+ * - 400 Bad Request for validation errors or operation failures
+ * - 401 Unauthorized for authentication failures
+ */
+
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")

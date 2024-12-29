@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Paper, Avatar, Group, Text, Loader } from '@mantine/core'; // Import Loader component
+import { Container, Paper, Avatar, Group, Text, Loader } from '@mantine/core';
 import { useRef, useState, useEffect } from 'react';
 import { IconCloudUpload, IconDownload, IconX } from '@tabler/icons-react';
 import { Dropzone } from '@mantine/dropzone';
@@ -141,7 +141,7 @@ export function ChangePfp() {
               className={classes.control}
               disabled={loading || !file}
             >
-              {loading ? 'Updating...' : 'Confirm Changes'}
+              {loading ? 'Updating...' : 'Save Changes'}
             </button>
           </div>
         </form>

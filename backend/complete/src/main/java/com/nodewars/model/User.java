@@ -6,6 +6,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+/**
+ * Represents a user entity in the database.
+ * This class contains user information such as username, email, password, and profile picture.
+ * It also includes fields for user statistics, preferred username, preferred language, and verification status.
+ */
+
 @Entity
 @Table(name = "users")
 public class User {

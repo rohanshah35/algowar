@@ -1,7 +1,7 @@
 package com.nodewars.dto;
 
 /**
- * A Data Transfer Object for handling verification requests.
+ * Data Transfer Object for handling verification requests.
  * This class contains the verification code and the username associated with the request.
  */
 public class VerificationRequestDto {

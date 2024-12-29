@@ -17,6 +17,14 @@ import org.springframework.stereotype.Service;
 
 import com.nodewars.utils.CognitoUtils;
 
+/**
+ * Service class for managing user authentication and management with AWS Cognito.
+ * This class provides methods for user signup, login, email verification, and password changes.
+ * It also includes methods for updating user attributes such as preferred username and email.
+ * 
+ * All operations are performed using the AWS Cognito API.
+ */
+
 @Service
 public class CognitoService {
 

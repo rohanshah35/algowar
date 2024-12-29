@@ -15,6 +15,12 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import java.time.Duration;
 
+/**
+ * Service class for managing S3 storage operations.
+ * This class provides methods for uploading, deleting, and generating presigned URLs for profile pictures.
+ * It uses AWS S3 for storing and retrieving profile pictures.
+ */
+
 @Service
 public class S3Service {
     private static final Logger logger = LoggerFactory.getLogger(S3Service.class);

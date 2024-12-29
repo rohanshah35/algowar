@@ -4,8 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration;
 
-
-
 /**
  * The main entry point for the NodeWars application.
  * This class is annotated with @SpringBootApplication to indicate a Spring Boot application.

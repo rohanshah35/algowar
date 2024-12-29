@@ -19,6 +19,28 @@ import com.nodewars.service.CognitoService;
 import com.nodewars.service.S3Service;
 import com.nodewars.utils.CognitoUtils;
 
+/**
+ * REST controller that handles user profile management and information retrieval operations.
+ * 
+ * This controller provides endpoints for managing user profiles and accessing user-specific data.
+ * It integrates with AWS Cognito for user management and S3 for profile picture storage.
+ * 
+ * Key functionalities include:
+ * - Username existence checking
+ * - User statistics retrieval
+ * - Profile picture management
+ * - User preferences management (language settings)
+ * - Profile updates (username, email, password)
+ * - Account deletion
+ * 
+ * All endpoints require authentication via JWT token (passed as a cookie) unless specifically noted.
+ * Endpoints return appropriate HTTP status codes:
+ * - 200 OK for successful operations
+ * - 400 Bad Request for validation errors or operation failures
+ * - 401 Unauthorized for authentication failures
+ * - 404 Not Found for missing resources
+ */
+
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")

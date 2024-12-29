@@ -9,6 +9,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nodewars.model.User;
 
+/**
+ * JPA Repository interface for User entity operations.
+ * 
+ * This repository provides database operations for user management, with methods grouped into three categories:
+ * 1. Operations using internal username (used by Cognito)
+ * 2. Operations using preferred username (displayed username)
+ * 3. Operations using other identifiers (email, Cognito user ID)
+ * 
+ * The repository supports:
+ * - CRUD operations for user accounts
+ * - User lookup by various identifiers (username, email, Cognito ID)
+ * - Profile updates (username, email, password, language preferences)
+ * - Statistics and profile picture management
+ * 
+ * All update operations are transactional and automatically clear the persistence context
+ * to ensure consistency.
+ */
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
