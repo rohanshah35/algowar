@@ -1,13 +1,17 @@
-import { Avatar, Button, Paper, Text } from '@mantine/core';
+import { Avatar, Button, Paper, Text } from "@mantine/core";
 
-export function SocialCard() {
+type SocialCardProps = {
+  username: string;
+};
+
+export function SocialCard({ username }: SocialCardProps) {
   return (
-    <Paper 
-      radius="md" 
-      withBorder 
-      p="md" 
+    <Paper
+      radius="md"
+      withBorder
+      p="md"
       bg="#27272a"
-      style={{ border: '1px solid #3f3f46' }}
+      style={{ border: "1px solid #3f3f46" }}
     >
       <Avatar
         src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
@@ -16,22 +20,22 @@ export function SocialCard() {
         mx="auto"
       />
       <Text ta="center" fz="lg" fw={500} mt="sm" c="#d4d4d8">
-        Jane Fingerlicker
+        {username} {/* Dynamically displays the username */}
       </Text>
 
-      <Button 
-        variant="default" 
-        fullWidth 
+      <Button
+        variant="default"
+        fullWidth
         mt="sm"
         styles={{
           root: {
-            backgroundColor: '#27272a',
-            borderColor: '#3f3f46',
-            color: '#d4d4d8',
-            '&:hover': {
-              backgroundColor: '#3f3f46'
-            }
-          }
+            backgroundColor: "#27272a",
+            borderColor: "#3f3f46",
+            color: "#d4d4d8",
+            "&:hover": {
+              backgroundColor: "#3f3f46",
+            },
+          },
         }}
       >
         Send message
