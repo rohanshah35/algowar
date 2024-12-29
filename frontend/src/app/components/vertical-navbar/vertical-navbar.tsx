@@ -44,10 +44,10 @@ import { use, useEffect, useState } from 'react';
       label: 'Account',
       icon: IconLock,
       links: [
+        { label: 'Change Profile Picture', link: '/pfp' },
         { label: 'Change Username', link: '/username' },
         { label: 'Change Email', link: '/email' },
         { label: 'Change Password', link: '/password' },
-        { label: 'Change Profile Picture', link: '/pfp' },
         { label: 'Logout', link: '/', isLogout: true },
       ],
     },

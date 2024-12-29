@@ -80,7 +80,8 @@ public class AuthController {
             String userSub = cognitoService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
             String stats = "{\"wins\": 0, \"losses\": 0}";
             String preferred_language = "python3";
-            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats, request.getUsername(), preferred_language);
+            String[] friends = new String[0];
+            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats, request.getUsername(), preferred_language, friends);
 
             response.put("sub", userSub);
 

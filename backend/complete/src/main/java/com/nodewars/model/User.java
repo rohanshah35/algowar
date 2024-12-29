@@ -40,10 +40,13 @@ public class User {
     @Column(name = "preferred_language")
     private String preferredLanguage;
 
+    @Column(name = "friends")
+    private String[] friends;
+
     @Transient
     private boolean isVerified; 
 
-    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage) {
+    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage, String[] friends) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
@@ -51,6 +54,7 @@ public class User {
         this.stats = stats;
         this.preferredUsername = preferredUsername;
         this.preferredLanguage = preferredLanguage;
+        this.friends = friends;
     }
 
     public User(String email, String cognitoUserId, String username, String preferredUsername, Boolean isVerified) {
@@ -126,6 +130,14 @@ public class User {
 
     public void setPreferredLanguage(String preferredUsername) {
         this.preferredUsername = preferredLanguage;
+    }
+
+    public String[] getFriends() {
+        return friends;
+    }
+
+    public void setFriends(String[] friends) {
+        this.friends = friends;
     }
 
     public boolean getIsVerified() {

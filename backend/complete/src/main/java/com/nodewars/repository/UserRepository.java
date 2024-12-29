@@ -74,6 +74,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE users SET friends = array_append(friends, :newFriend) WHERE preferred_username = :preferredUsername AND NOT (:newFriend = ANY(friends))", nativeQuery = true)
+    void addFriend(@Param("preferredUsername") String preferredUsername, @Param("newFriend") String newFriend);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE users SET friends = array_remove(friends, :friendToRemove) WHERE preferred_username = :preferredUsername", nativeQuery = true)
+    void deleteFriend(@Param("preferredUsername") String preferredUsername, @Param("friendToRemove") String friendToRemove);
+
+    @Modifying
+    @Transactional
     @Query("DELETE FROM User u WHERE u.preferredUsername = :preferredUsername")
     void deleteUser(@Param("preferredUsername") String preferredUsername);
 

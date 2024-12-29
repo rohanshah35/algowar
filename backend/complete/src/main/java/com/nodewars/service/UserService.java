@@ -1,5 +1,7 @@
 package com.nodewars.service;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +21,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage) {
-        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername, preferredLanguage);
+    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage, String[] friends) {
+        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername, preferredLanguage, friends);
 
         return userRepository.save(user);
     }
@@ -95,6 +97,15 @@ public class UserService {
      */
     public String getPreferredLanguageByPreferredUsername(String preferredUsername) {
         return userRepository.findByPreferredUsername(preferredUsername).getPreferredLanguage();
+    }
+
+    /**
+     * Fetches the friends for a given preferred username.
+     * @param preferredUsername the preferred username
+     * @return the friends as a string array
+     */
+    public String[] getFriendsByPreferredUsername(String preferredUsername) {
+        return userRepository.findByPreferredUsername(preferredUsername).getFriends();
     }
 
     /**
@@ -191,6 +202,48 @@ public class UserService {
 
         userRepository.updatePfp(preferredUsername, newProfilePicture);
     }
+
+    /**
+     * Adds a friend to the user's friends array in the database.
+     * @param preferredUsername the user's preferred username
+     * @param newFriend the friend to add
+    * @throws Exception if the user is not found
+    */
+    @Transactional
+    public void addFriend(String preferredUsername, String newFriend) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        String[] currentFriends = userRepository.findByPreferredUsername(preferredUsername).getFriends();
+        if (Arrays.asList(currentFriends).contains(newFriend)) {
+            throw new Exception("Friend already exists");
+        }
+
+        userRepository.addFriend(preferredUsername, newFriend);
+    }
+
+    /**
+     * Removes a friend from the user's friends array in the database.
+     * @param preferredUsername the user's preferred username
+     * @param friendToDelete the friend to remove
+     * @throws Exception if the user is not found or the friend does not exist
+     */
+    @Transactional
+    public void deleteFriend(String preferredUsername, String friendToDelete) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        String[] currentFriends = userRepository.findByPreferredUsername(preferredUsername).getFriends();
+
+        if (currentFriends == null || !Arrays.asList(currentFriends).contains(friendToDelete)) {
+            throw new Exception("Friend not found");
+        }
+
+        userRepository.deleteFriend(preferredUsername, friendToDelete);
+    }
+    
 
     /**
      * Deletes a user by their username.

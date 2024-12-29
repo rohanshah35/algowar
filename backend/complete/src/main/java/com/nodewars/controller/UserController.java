@@ -171,6 +171,71 @@ public class UserController {
     }
 
     /**
+     * Endpoint to fetch the friends for a given username.
+     * @param username the username
+     * @return the friends
+     */
+    @GetMapping("/friends/{preferredUsername}")
+    public ResponseEntity<Map<String, Object>> getFriends(@PathVariable String preferredUsername) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String[] friends = userService.getFriendsByPreferredUsername(preferredUsername);
+            response.put("friends", friends);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error fetching friends: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(response);
+        }
+    }
+
+    /**
+     * Endpoint to add a friend to the user's friends array.
+     * @param preferredUsername the user's preferred username
+     * @param newFriend the friend to add
+     * @return success/error message
+     */
+    @PostMapping("/friends/add/{preferredUsername}")
+    public ResponseEntity<Map<String, String>> addFriend(@PathVariable String preferredUsername, @RequestBody Map<String, String> request) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String newFriend = request.get("newFriend");
+            userService.addFriend(preferredUsername, newFriend);
+            response.put("message", "Friend added successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error adding friend: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    /**
+     * Endpoint to delete a friend from the user's friends array.
+     * @param preferredUsername the user's preferred username
+     * @param friendToDelete the friend to delete
+     * @return success/error message
+     */
+    @DeleteMapping("/friends/delete/{preferredUsername}")
+    public ResponseEntity<Map<String, String>> deleteFriend(@PathVariable String preferredUsername, @RequestBody Map<String, String> request) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String friendToDelete = request.get("friendToDelete");
+            userService.deleteFriend(preferredUsername, friendToDelete);
+            response.put("message", "Friend deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error removing friend: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    /**
      * Endpoint to update a user's preferred language.
      *
      * @param idToken contains the JWT token
@@ -327,11 +392,18 @@ public class UserController {
         }
     }
 
+    /**
+     * Endpoint to update a user's profile picture.
+     * @param idToken contains the JWT token
+     * @param file contains the new profile picture
+     * @return success/error message
+     */
     @PutMapping("/update/pfp")
     public ResponseEntity<Map<String, String>> updatePfp(
             @CookieValue(name = "idToken", required = false) String idToken,
             @RequestParam("file") MultipartFile file) {
         Map<String, String> response = new HashMap<>();
+
         try {
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
             String currentPreferredUsername = currentUser.getPreferredUsername();
