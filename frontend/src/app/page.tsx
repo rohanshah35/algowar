@@ -2,6 +2,7 @@ import { Container } from "@mantine/core";
 import AppNavbar from "./components/navbar";
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { Footer } from "./components/footer";
 
 async function checkAuth() {
   try {
@@ -33,10 +34,15 @@ export default async function Home() {
   } 
 
   return (
-    <>
+    <div style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
       <AppNavbar />
-      <Container style={{ marginTop: '2rem', textAlign: 'center' }}>
+      <Container style={{ marginTop: '2rem', textAlign: 'center', flex: 1 }}>
       </Container>
-    </>
+      <Footer />
+    </div>
   );
 }

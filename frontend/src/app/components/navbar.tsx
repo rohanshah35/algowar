@@ -12,7 +12,7 @@ const AppNavbar = () => {
 
   return (
     <AppShell.Header style={{ 
-      backgroundColor: '#18181b',
+      backgroundColor: '#1A1B1E',
       borderBottom: '1px solid #27272a',
     }}>
       <Box style={{ 
