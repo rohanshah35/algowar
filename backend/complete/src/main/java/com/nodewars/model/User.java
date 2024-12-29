@@ -34,6 +34,9 @@ public class User {
     @Column(name = "stats")
     private String stats;
 
+    @Column(name = "elo")
+    private double elo;
+
     @Column(name = "preferred_username")
     private String preferredUsername;
 
@@ -46,12 +49,13 @@ public class User {
     @Transient
     private boolean isVerified; 
 
-    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
+    public User(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
         this.password = password;
         this.stats = stats;
+        this.elo = elo;
         this.preferredUsername = preferredUsername;
         this.preferredLanguage = preferredLanguage;
         this.friends = friends;
@@ -115,6 +119,14 @@ public class User {
 
     public void setStats(String stats) {
         this.stats = stats;
+    }
+
+    public double getElo() {
+        return elo;
+    }
+
+    public void setElo(double elo) {
+        this.elo = elo;
     }
 
     public String getPreferredUsername() {

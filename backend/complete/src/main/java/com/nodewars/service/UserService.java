@@ -22,8 +22,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
-        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername, preferredLanguage, friends, profilePicture);
+    public User createUser(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
+        User user = new User(email, cognitoUserId, username, password, stats, elo, preferredUsername, preferredLanguage, friends, profilePicture);
 
         return userRepository.save(user);
     }
@@ -34,6 +34,14 @@ public class UserService {
      */
     public List<Object[]> getAllUsernamesAndPfps() {
         return userRepository.findPreferredUsernamesAndProfilePictures();
+    }
+
+    /**
+     * Gets the top users with their preferred usernames, wins, and ELO.
+     * @return a list of Object arrays containing preferred_username, wins, and ELO
+     */
+    public List<Object[]> getTopUsersWithWinsAndElo() {
+        return userRepository.findTopUsersWithWinsAndElo();
     }
 
     /**

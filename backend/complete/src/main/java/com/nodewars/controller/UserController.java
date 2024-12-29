@@ -334,7 +334,6 @@ public class UserController {
         }
     }
 
-
     /**
      * Endpoint to update a user's username.
      * @param authorizationHeader contains the JWT token
@@ -518,6 +517,28 @@ public class UserController {
             logger.error("Error deleting user: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    /**
+     * Endpoint to get the top users with their preferred usernames, wins, and ELO.
+     * @return a list of Object arrays containing preferred_username, wins, and ELO
+     */
+    @GetMapping("/leaderboard")
+    public ResponseEntity<List<Map<String, Object>>> getLeaderboard() {
+        try {
+            List<Object[]> leaderboard = userService.getTopUsersWithWinsAndElo();
+            List<Map<String, Object>> jsonResponse = leaderboard.stream().map(user -> {
+                Map<String, Object> userMap = new HashMap<>();
+                userMap.put("preferredUsername", user[0]);
+                userMap.put("wins", user[1]);
+                userMap.put("elo", user[2]);
+                return userMap;
+            }).toList();
+
+            return ResponseEntity.ok(jsonResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
