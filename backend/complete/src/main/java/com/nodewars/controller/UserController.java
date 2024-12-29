@@ -67,14 +67,16 @@ public class UserController {
      * @return ResponseEntity containing a list of users, each with a username and profile picture (presigned URL).
      */
     @GetMapping("/all")
-    public ResponseEntity<Map<String, List<Map<String, String>>>> getAllUsers() {
+    public ResponseEntity<Map<String, List<Map<String, String>>>> getAllUsers(@CookieValue(name = "idToken", required = false) String idToken) {
         Map<String, List<Map<String, String>>> response = new HashMap<>();
 
         try {
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String currentPreferredUsername = currentUser.getPreferredUsername();
             List<Object[]> usernamesAndPfps = userService.getAllUsernamesAndPfps();
 
-            // Transform Object[] into a list of maps with "username" and "profilePicture" (presigned URL)
             List<Map<String, String>> users = usernamesAndPfps.stream()
+                    .filter(entry -> !entry[0].equals(currentPreferredUsername))
                     .map(entry -> {
                         String username = (String) entry[0];
                         String profilePicturePath = (String) entry[1];
@@ -95,8 +97,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-
 
     /**
      * Endpoint to check if a username exists.
@@ -231,12 +231,25 @@ public class UserController {
      * @param username the username
      * @return the friends
      */
-    @GetMapping("/friends/{preferredUsername}")
-    public ResponseEntity<Map<String, Object>> getFriends(@PathVariable String preferredUsername) {
+    @GetMapping({"/friends", "/friends/{preferredUsername}"})
+    public ResponseEntity<Map<String, Object>> getFriends(
+        @PathVariable(required = false) String preferredUsername,
+        @CookieValue(name = "idToken", required = false) String idToken
+    ) {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            String[] friends = userService.getFriendsByPreferredUsername(preferredUsername);
+            String username;
+
+            if (preferredUsername != null) {
+                username = preferredUsername;
+            } else if (idToken != null) {
+                username = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
+            } else {
+                throw new IllegalArgumentException("Username not provided in PathVariable or JWT.");
+            }
+
+            String[] friends = userService.getFriendsByPreferredUsername(username);
             response.put("friends", friends);
             return ResponseEntity.ok(response);
         } catch (Exception e) {

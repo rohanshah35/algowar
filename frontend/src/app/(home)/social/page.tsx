@@ -1,14 +1,13 @@
 "use client";
 
 import { SocialCard } from "@/components/social-card/social-card";
-import { Autocomplete } from "@mantine/core";
+import { Autocomplete, AutocompleteProps, Avatar, Group, Text } from "@mantine/core";
 import { useState, useEffect } from "react";
 
 export default function Social() {
-  const [allUsers, setAllUsers] = useState<string[]>([]);
+  const [allUsers, setAllUsers] = useState<{ username: string; profilePicture: string }[]>([]);
   const [friends, setFriends] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const preferredUsername = "test"; 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,13 +19,11 @@ export default function Social() {
           throw new Error(`Error fetching all users: ${allUsersResponse.statusText}`);
         }
         const allUsersData = await allUsersResponse.json();
-        setAllUsers(allUsersData.usernames || []);
+        setAllUsers(allUsersData.users || []);
 
         const friendsResponse = await fetch(
-          `http://localhost:8080/user/friends/${preferredUsername}`,
-          {
-            credentials: "include",
-          }
+          `http://localhost:8080/user/friends`,
+          { credentials: "include" }
         );
         if (!friendsResponse.ok) {
           throw new Error(`Error fetching friends: ${friendsResponse.statusText}`);
@@ -41,7 +38,19 @@ export default function Social() {
     };
 
     fetchData();
-  }, [preferredUsername]);
+  }, []);
+
+  const renderAutocompleteOption: AutocompleteProps["renderOption"] = ({ option }) => {
+    const user = allUsers.find(user => user.username === option.value);
+    return (
+      <Group gap="sm">
+        {user?.profilePicture && <Avatar src={user.profilePicture} size={36} radius="xl" />}
+        <div>
+          <Text size="sm">{option.value}</Text>
+        </div>
+      </Group>
+    );
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -57,20 +66,11 @@ export default function Social() {
       >
         <div style={{ flex: 1, maxWidth: "500px" }}>
           <Autocomplete
-            label={
-              <span
-                style={{
-                  color: "#d4d4d8",
-                  fontSize: "11px",
-                  fontWeight: "700",
-                }}
-              >
-              </span>
-            }
-            name="identifier"
-            mb="md"
+            data={allUsers.map(user => user.username)}
+            renderOption={renderAutocompleteOption}
+            limit={20}
+            maxDropdownHeight={300}
             placeholder="Search for users"
-            data={allUsers}
             styles={{
               input: {
                 backgroundColor: "#27272a",
