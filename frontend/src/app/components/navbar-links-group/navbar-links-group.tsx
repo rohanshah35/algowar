@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import classes from './navbar-links-group.module.css';
-import { redirect, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface LinksGroupProps {
   icon: React.FC<any>;
@@ -18,12 +18,13 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link }: 
   const pathname = usePathname();
   const hasLinks = Array.isArray(links);
   const [opened, setOpened] = useState(initiallyOpened || false);
+  const router = useRouter()
 
   const isActive = (url: string) => pathname === url;
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     if (link) {
-      redirect(link);
+      router.push(link);
     } else if (hasLinks) {
       setOpened((o) => !o);
     }
@@ -47,9 +48,9 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link }: 
         e.preventDefault();
         if (link.isLogout) {
           handleLogout();
-          redirect('/');
+          router.push('/');
         } else {
-          redirect(link.link);
+          router.push(link.link);
         }
       }}
     >

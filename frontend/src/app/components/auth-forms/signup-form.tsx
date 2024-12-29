@@ -11,13 +11,13 @@ import {
   Box,
 } from "@mantine/core";
 import { useState } from "react";
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
+  const router = useRouter()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -48,7 +48,7 @@ export function SignupForm() {
       setSuccess("Signup successful! Redirecting...");
       const responseData = await response.json();
       setTimeout(() => {
-        redirect(`/verification/${responseData.sub}`);
+        router.push(`/verification/${responseData.sub}`);
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");

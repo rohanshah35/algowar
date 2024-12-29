@@ -93,23 +93,7 @@ import { use, useEffect, useState } from 'react';
     
     if (!userData) {
       return (
-        <nav className={classes.navbar}>
-          <div className={classes.header}>
-            <Group justify="space-between">
-              <div style={{ color: '#d4d4d8', fontSize: '22px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
-                algowar.xyz
-              </div>
-            </Group>
-          </div>
-    
-          <ScrollArea className={classes.links}>
-            <div className={classes.linksInner}>{links}</div>
-          </ScrollArea>
-    
-          <div className={classes.footer}>
-            <UserButton username={"Loading..."} email={"Loading..."} profilePicture={""} />
-          </div>
-        </nav>
+        <div></div>
       );
     }
     

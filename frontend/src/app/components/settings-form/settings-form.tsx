@@ -81,6 +81,10 @@ export function Settings() {
     }
   };
 
+  if (!preferredLanguage) {
+    return null;
+  }
+  
   return (
     <Container className={classes.topContainer} size={460} my={30}>
       <Paper className={classes.container} withBorder shadow="md" p={30} radius="md" mt="xl">

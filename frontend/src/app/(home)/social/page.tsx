@@ -3,11 +3,13 @@
 import { SocialCard } from "@/components/social-card/social-card";
 import { Autocomplete, AutocompleteProps, Avatar, Group, Text } from "@mantine/core";
 import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function Social() {
   const [allUsers, setAllUsers] = useState<{ username: string; profilePicture: string }[]>([]);
   const [friends, setFriends] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +24,7 @@ export default function Social() {
         setAllUsers(allUsersData.users || []);
 
         const friendsResponse = await fetch(
-          `http://localhost:8080/user/friends`,
+          "http://localhost:8080/user/friends",
           { credentials: "include" }
         );
         if (!friendsResponse.ok) {
@@ -52,8 +54,13 @@ export default function Social() {
     );
   };
 
+  const handleAutocompleteChange = (value: string) => {
+    // Navigate to the selected user's page (replace with your desired route)
+    router.push(`/u/${value}`);
+  };
+
   if (loading) {
-    return <p>Loading...</p>;
+    return <div></div>
   }
 
   return (
@@ -71,6 +78,7 @@ export default function Social() {
             limit={20}
             maxDropdownHeight={300}
             placeholder="Search for users"
+            onOptionSubmit={handleAutocompleteChange}  // Trigger onChange event for navigation
             styles={{
               input: {
                 backgroundColor: "#27272a",

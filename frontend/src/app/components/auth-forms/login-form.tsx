@@ -10,13 +10,15 @@ import {
   Button,
   Box,
 } from "@mantine/core";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+
 
 export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const router = useRouter()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,7 +48,7 @@ export function LoginForm() {
       setSuccess("Login successful! Redirecting...");
 
       setTimeout(() => {
-        redirect("/home");
+        router.push("/home");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
