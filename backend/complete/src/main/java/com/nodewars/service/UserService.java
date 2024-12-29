@@ -28,6 +28,14 @@ public class UserService {
     }
 
     /**
+     * Gets all usernames from the database.
+     * @return the usernames as a list of strings
+     */
+    public String[] getAllUsernames() {
+        return userRepository.findAllUsernames();
+    }
+
+    /**
      * Gets a user by their username.
      * @param username the username of the user
      * @return the user

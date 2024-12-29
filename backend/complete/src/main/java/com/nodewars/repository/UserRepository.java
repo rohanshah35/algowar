@@ -94,4 +94,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.cognitoUserId = :cognitoUserId")
     User findUserByUsersub(@Param("cognitoUserId") String cognitoUserId);
+
+    @Query("SELECT u.preferredUsername FROM User u")
+    String[] findAllUsernames();    
+    
 }

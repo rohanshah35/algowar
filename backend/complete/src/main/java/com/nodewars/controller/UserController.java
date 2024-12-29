@@ -61,6 +61,24 @@ public class UserController {
     private CognitoUtils cognitoUtils;
 
     /**
+     * Endpoint to get all usernames.
+     * @return array of all usernames
+     */
+    @GetMapping("/all")
+    public ResponseEntity<Map<String, String[]>> getAllUsers() {
+        Map<String, String[]> response = new HashMap<>();
+        
+        try {
+            String[] usernames = userService.getAllUsernames();
+            response.put("usernames", usernames);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error fetching all usernames: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
      * Endpoint to check if a username exists.
      * @param username the username
      * @return true if the username exists, false otherwise
