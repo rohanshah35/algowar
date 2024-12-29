@@ -1,34 +1,46 @@
+'use client';
+
 import { Table, TableData } from '@mantine/core';
-
-const generateLeaderboardData = () => {
-  const usernames = [
-    'GrandMaster42', 'ChessWhiz99', 'QueenSlayer', 'KnightRider', 'BishopBoss',
-    'PawnStars', 'RookieKing', 'CheckMate365', 'TacticalGenius', 'EndGamePro',
-    'ChessNinja', 'StrategicMind', 'BoardMaster', 'CasualChamp', 'PuzzlePro',
-    'BlitzKing', 'OpeningMaster', 'DefenseGuru', 'AttackMode', 'MidGameQueen',
-    'ChessWizard', 'KingHunter', 'PawnCrusher', 'RookMaster', 'BishopElite'
-  ];
-
-  const data = usernames.map(username => {
-    const wins = Math.floor(Math.random() * (500 - 50) + 50);
-    const elo = Math.floor(Math.random() * (2400 - 800) + 800);
-    return { username, wins, elo };
-  });
-
-  return data
-    .sort((a, b) => b.elo - a.elo)
-    .map((player, index) => {
-      const rank = index + 1;
-      return [rank, player.username, player.wins, player.elo];
-    });
-};
-
-const tableData: TableData = {
-  head: ['RANK', 'USERNAME', 'WINS', 'ELO'],
-  body: generateLeaderboardData(),
-};
+import { useEffect, useState } from 'react';
 
 export function LeaderboardTable() {
+  const [tableData, setTableData] = useState<TableData>({
+    head: ['RANK', 'USERNAME', 'WINS', 'ELO'],
+    body: [],
+  });
+
+  useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/user/leaderboard', {
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          console.error(`API error: ${response.statusText}`);
+          return;
+        }
+
+        const data = await response.json();
+
+        const body = data
+          .sort((a: { elo: number }, b: { elo: number }) => b.elo - a.elo)
+          .map((player: { preferredUsername: string; wins: number; elo: number }, index: number) => [
+            index + 1,
+            player.preferredUsername,
+            player.wins,
+            player.elo,
+          ]);
+
+        setTableData((prev) => ({ ...prev, body }));
+      } catch (error) {
+        console.error('Error fetching leaderboard data:', error);
+      }
+    };
+
+    fetchLeaderboardData();
+  }, []);
+
   return (
     <Table
       data={tableData}
