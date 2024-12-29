@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.nodewars.service.UserService;
@@ -61,22 +62,41 @@ public class UserController {
     private CognitoUtils cognitoUtils;
 
     /**
-     * Endpoint to get all usernames.
-     * @return array of all usernames
+     * Endpoint to get all users with their usernames and profile pictures.
+     * The profile pictures are provided as presigned URLs.
+     * @return ResponseEntity containing a list of users, each with a username and profile picture (presigned URL).
      */
     @GetMapping("/all")
-    public ResponseEntity<Map<String, String[]>> getAllUsers() {
-        Map<String, String[]> response = new HashMap<>();
-        
+    public ResponseEntity<Map<String, List<Map<String, String>>>> getAllUsers() {
+        Map<String, List<Map<String, String>>> response = new HashMap<>();
+
         try {
-            String[] usernames = userService.getAllUsernames();
-            response.put("usernames", usernames);
+            List<Object[]> usernamesAndPfps = userService.getAllUsernamesAndPfps();
+
+            // Transform Object[] into a list of maps with "username" and "profilePicture" (presigned URL)
+            List<Map<String, String>> users = usernamesAndPfps.stream()
+                    .map(entry -> {
+                        String username = (String) entry[0];
+                        String profilePicturePath = (String) entry[1];
+                        String profilePictureUrl = s3Service.getPreSignedUrl(profilePicturePath);
+                        return Map.of(
+                                "username", username,
+                                "profilePicture", profilePictureUrl
+                        );
+                    })
+                    .toList();
+
+            // Add the list of users to the response map
+            response.put("users", users);
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error fetching all usernames: {}", e.getMessage());
+            logger.error("Error fetching all users: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
 
     /**
      * Endpoint to check if a username exists.
@@ -104,11 +124,24 @@ public class UserController {
      * @param username the username
      * @return the stats JSON
      */
-    @GetMapping("/stats/{preferredUsername}")
-    public ResponseEntity<Map<String, String>>  getStats(@PathVariable String preferredUsername) {
+    @GetMapping({"/stats", "/stats/{preferredUsername}"})
+    public ResponseEntity<Map<String, String>>  getStats(
+        @PathVariable(required = false) String preferredUsername,
+        @CookieValue(name = "idToken", required = false) String idToken) {
         Map<String, String> response = new HashMap<>();
+
         try {
-            String stats = userService.getStatsByPreferredUsername(preferredUsername);
+            String username;
+
+            if (preferredUsername != null) {
+                username = preferredUsername;
+            } else if (idToken != null) {
+                username = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
+            } else {
+                throw new IllegalArgumentException("Username not provided in PathVariable or JWT.");
+            }
+
+            String stats = userService.getStatsByPreferredUsername(username);
 
             if (stats == null) {
                 response.put("stats", "{}");
@@ -127,43 +160,36 @@ public class UserController {
 
     /**
      * Endpoint to fetch the profile picture for a given username.
-     * @param username the username
+     * If a PathVariable is provided, it takes precedence over the username in the JWT cookie.
+     * @param preferredUsername (optional) the username as a path variable
      * @return the profile picture
      */
-    @GetMapping("/pfp")
-    public ResponseEntity<Map<String, String>> getPfp(@PathVariable String preferredUsername) {
+    @GetMapping({"/pfp", "/pfp/{preferredUsername}"})
+    public ResponseEntity<Map<String, String>> getPfp(
+            @PathVariable(required = false) String preferredUsername,
+            @CookieValue(name = "idToken", required = false) String idToken) {
         Map<String, String> response = new HashMap<>();
         try {
-            String pfp = userService.getPfpByPreferredUsername(preferredUsername);
+            String username;
+
+            if (preferredUsername != null) {
+                username = preferredUsername;
+            } else if (idToken != null) {
+                username = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
+            } else {
+                throw new IllegalArgumentException("Username not provided in PathVariable or JWT.");
+            }
+
+            // Fetch profile picture and pre-signed URL
+            String pfp = userService.getPfpByPreferredUsername(username);
             String preSignedUrl = s3Service.getPreSignedUrl(pfp);
             response.put("pfp", preSignedUrl);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Error checking if username exists: {}", e.getMessage());
-            response.put("error", "An error has occurred, please try again.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(response);
-        }
-    }
 
-        /**
-     * Endpoint to fetch the profile picture for a given username.
-     * @param username the username
-     * @return the profile picture
-     */
-    @GetMapping("/pfp-with-cookie")
-    public ResponseEntity<Map<String, String>> getPfpWithCookie(@CookieValue(name = "idToken", required = false) String idToken) {
-        Map<String, String> response = new HashMap<>();
-        try {
-            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
-            String pfp = userService.getPfpByPreferredUsername(currentUser.getPreferredUsername());
-            response.put("pfp", s3Service.getPreSignedUrl(pfp));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error checking if username exists: {}", e.getMessage());
+            logger.error("Error fetching profile picture: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -172,12 +198,24 @@ public class UserController {
      * @param username the username
      * @return the preferred language
      */
-    @GetMapping("/language/{preferredUsername}")
-    public ResponseEntity<Map<String, String>> getPreferredLanguage(@PathVariable String preferredUsername) {
+    @GetMapping({"/language", "/language/{preferredUsername}"})
+    public ResponseEntity<Map<String, String>> getPreferredLanguage(
+        @PathVariable(required = false) String preferredUsername,
+        @CookieValue(name = "idToken", required = false) String idToken) {
         Map<String, String> response = new HashMap<>();
 
         try {
-            String language = userService.getPreferredLanguageByPreferredUsername(preferredUsername);
+            String username;
+
+            if (preferredUsername != null) {
+                username = preferredUsername;
+            } else if (idToken != null) {
+                username = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
+            } else {
+                throw new IllegalArgumentException("Username not provided in PathVariable or JWT.");
+            }
+
+            String language = userService.getPreferredLanguageByPreferredUsername(username);
             response.put("preferredLanguage", language);
             return ResponseEntity.ok(response);
         } catch (Exception e) {

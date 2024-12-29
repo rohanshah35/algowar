@@ -38,7 +38,7 @@ export function SocialCard({ username }: SocialCardProps) {
           },
         }}
       >
-        Send message
+        Invite+
       </Button>
     </Paper>
   );

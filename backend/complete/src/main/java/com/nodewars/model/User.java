@@ -46,7 +46,7 @@ public class User {
     @Transient
     private boolean isVerified; 
 
-    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage, String[] friends) {
+    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
@@ -55,6 +55,7 @@ public class User {
         this.preferredUsername = preferredUsername;
         this.preferredLanguage = preferredLanguage;
         this.friends = friends;
+        this.profilePicture = profilePicture;
     }
 
     public User(String email, String cognitoUserId, String username, String preferredUsername, Boolean isVerified) {

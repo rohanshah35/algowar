@@ -1,6 +1,7 @@
 package com.nodewars.service;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage, String[] friends) {
-        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername, preferredLanguage, friends);
+    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
+        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername, preferredLanguage, friends, profilePicture);
 
         return userRepository.save(user);
     }
@@ -31,8 +32,8 @@ public class UserService {
      * Gets all usernames from the database.
      * @return the usernames as a list of strings
      */
-    public String[] getAllUsernames() {
-        return userRepository.findAllUsernames();
+    public List<Object[]> getAllUsernamesAndPfps() {
+        return userRepository.findPreferredUsernamesAndProfilePictures();
     }
 
     /**

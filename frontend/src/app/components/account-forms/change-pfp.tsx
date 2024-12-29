@@ -19,7 +19,7 @@ export function ChangePfp() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch('http://localhost:8080/user/pfp-with-cookie', {
+        const response = await fetch('http://localhost:8080/user/pfp', {
           method: 'GET',
           credentials: 'include',
         });

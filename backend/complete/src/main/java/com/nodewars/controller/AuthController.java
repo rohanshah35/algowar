@@ -81,7 +81,8 @@ public class AuthController {
             String stats = "{\"wins\": 0, \"losses\": 0}";
             String preferred_language = "python3";
             String[] friends = new String[0];
-            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats, request.getUsername(), preferred_language, friends);
+            String profilePicture = "profile-pictures/default.jpg";
+            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats, request.getUsername(), preferred_language, friends, profilePicture);
 
             response.put("sub", userSub);
 

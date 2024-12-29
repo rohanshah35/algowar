@@ -23,24 +23,14 @@ export function Settings() {
     'C++',
     'C#',
   ]);
-  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const authResponse = await fetch('http://localhost:8080/auth/check-auth', {
-          method: 'POST',
+        const languageResponse = await fetch('http://localhost:8080/user/language', {
+          method: 'GET',
           credentials: 'include',
         });
-        const authData = await authResponse.json();
-
-        if (!authResponse.ok) {
-          throw new Error(authData.error || 'Failed to authenticate user');
-        }
-
-        setUsername(authData.username);
-
-        const languageResponse = await fetch(`http://localhost:8080/user/language/${authData.username}`);
         const languageData = await languageResponse.json();
 
         if (!languageResponse.ok) {
@@ -62,7 +52,7 @@ export function Settings() {
     setSuccess(null);
 
     try {
-      if (!username || !preferredLanguage) {
+      if (!preferredLanguage) {
         throw new Error('User information is incomplete');
       }
 
@@ -126,7 +116,7 @@ export function Settings() {
                 backgroundColor: '#27272a',
               }
             }}
-            disabled={loading || !username}
+            disabled={loading}
           />
         </div>
 
@@ -135,7 +125,7 @@ export function Settings() {
             className={classes.control}
             onClick={handleSaveChanges}
             loading={loading}
-            disabled={!preferredLanguage || !username}
+            disabled={!preferredLanguage}
           >
             Save Changes
           </Button>
