@@ -55,7 +55,7 @@ export default function Social() {
   };
 
   const handleAutocompleteChange = (value: string) => {
-    // Navigate to the selected user's page (replace with your desired route)
+
     router.push(`/u/${value}`);
   };
 
@@ -78,7 +78,7 @@ export default function Social() {
             limit={20}
             maxDropdownHeight={300}
             placeholder="Search for users"
-            onOptionSubmit={handleAutocompleteChange}  // Trigger onChange event for navigation
+            onOptionSubmit={handleAutocompleteChange}
             styles={{
               input: {
                 backgroundColor: "#27272a",

@@ -48,7 +48,7 @@ export function LoginForm() {
       setSuccess("Login successful! Redirecting...");
 
       setTimeout(() => {
-        router.push("/home");
+        router.push("/profile");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
