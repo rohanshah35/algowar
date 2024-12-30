@@ -10,6 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 80vh;
 }
 
 .container {
@@ -35,7 +36,8 @@
   border: 1px solid #3f3f46;
   border-radius: 4px;
   padding: 0.5rem 1rem;
-  font-weight: 500;
+  font-weight: 200;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -113,5 +115,20 @@
 
 .dropzone:hover {
   border-color: #3b82f6;
+}
+
+.redButton {
+  background-color: #c04f4f;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+  text-align: center;
+}
+
+.redButton:hover {
+  background-color: #dc2626;
 }
 

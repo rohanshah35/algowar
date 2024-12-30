@@ -145,7 +145,7 @@ export function ChangePfp() {
               className={classes.control}
               disabled={loading || !file}
             >
-              {loading ? 'Updating...' : 'Save Changes'}
+              {loading ? 'Updating...' : 'Change Profile Picture'}
             </button>
           </div>
         </form>

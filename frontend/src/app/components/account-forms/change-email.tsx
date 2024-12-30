@@ -49,7 +49,6 @@ export function ChangeEmail() {
     <Container className={classes.topContainer} size={460} my={30}>
       <Paper className={classes.container} withBorder shadow="md" p={30} radius="md" mt="xl">
         <form onSubmit={handleSubmit}>
-          <div className={classes.inputGroup}>
             <TextInput
               label="New email"
               name="newEmail"
@@ -59,7 +58,6 @@ export function ChangeEmail() {
               onChange={(e) => setNewEmail(e.target.value)}
               classNames={{ input: classes.textInput }}
             />
-          </div>
 
           {error && (
             <Text className={classes.errorText}>

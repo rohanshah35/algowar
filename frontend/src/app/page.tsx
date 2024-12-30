@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 import { Footer } from "./components/footer";
 
 import { Button, Container, Group, Text } from '@mantine/core';
-import { IconBrandInstagram, IconBrandGithub, IconBrandYoutube } from '@tabler/icons-react';
 import classes from './landing-page.module.css';
 
 async function checkAuth() {

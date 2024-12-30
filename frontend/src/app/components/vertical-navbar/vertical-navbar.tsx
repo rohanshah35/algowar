@@ -37,8 +37,8 @@ import { use, useEffect, useState } from 'react';
         { label: 'By Topic', link: '/bytopic' },
       ],
     },
-    { label: 'Leaderboard', icon: IconChartBar, link: '/leaderboard' },
     { label: 'Social', icon: IconUsersGroup, link: '/social' },
+    { label: 'Leaderboard', icon: IconChartBar, link: '/leaderboard' },
     { label: 'Settings', icon: IconSettings, link: '/settings' },
     {
       label: 'Account',
@@ -48,6 +48,7 @@ import { use, useEffect, useState } from 'react';
         { label: 'Change Username', link: '/username' },
         { label: 'Change Email', link: '/email' },
         { label: 'Change Password', link: '/password' },
+        { label: 'Delete Account', link: '/delete' },
         { label: 'Logout', link: '/', isLogout: true },
       ],
     },
