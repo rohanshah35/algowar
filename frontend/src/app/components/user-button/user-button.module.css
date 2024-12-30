@@ -3,9 +3,6 @@
     width: 100%;
     padding: var(--mantine-spacing-md);
     color: #d4d4d8;
-    transition: background-color 150ms ease;
-    cursor: pointer;
+    cursor: default;
 }
-    .user:hover {
-      background-color: #27272a;
-    }
+
