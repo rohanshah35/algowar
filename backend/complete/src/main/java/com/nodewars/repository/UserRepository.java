@@ -106,4 +106,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT preferred_username, CAST((stats::JSONB)->>'wins' AS INTEGER) AS wins, elo FROM users ORDER BY elo DESC LIMIT 100", nativeQuery = true)
     List<Object[]> findTopUsersWithWinsAndElo();
     
+    @Query(value = "SELECT f.preferred_username, f.profile_picture " +
+               "FROM users u " +
+               "JOIN users f ON f.username = ANY(u.friends) " +
+               "WHERE u.preferred_username = :preferredUsername", 
+       nativeQuery = true)
+    List<Object[]> findFriendsByPreferredUsername(@Param("preferredUsername") String preferredUsername);
+
 }

@@ -228,8 +228,9 @@ public class UserController {
 
     /**
      * Endpoint to fetch the friends for a given username.
-     * @param username the username
-     * @return the friends
+     * @param preferredUsername the preferred username (optional, via path variable)
+     * @param idToken the ID token (optional, via cookie)
+     * @return the friends' details
      */
     @GetMapping({"/friends", "/friends/{preferredUsername}"})
     public ResponseEntity<Map<String, Object>> getFriends(
@@ -249,29 +250,47 @@ public class UserController {
                 throw new IllegalArgumentException("Username not provided in PathVariable or JWT.");
             }
 
-            String[] friends = userService.getFriendsByPreferredUsername(username);
+            List<Object[]> friendsData = userService.getFriendsByPreferredUsername(username);
+
+            List<Map<String, String>> friends = friendsData.stream()
+                .map(entry -> {
+                    String friendPreferredUsername = (String) entry[0];
+                    String profilePicturePath = (String) entry[1];
+                    String profilePictureUrl = s3Service.getPreSignedUrl(profilePicturePath);
+                    return Map.of(
+                        "username", friendPreferredUsername,
+                        "profilePicture", profilePictureUrl
+                    );
+                })
+                .toList();
+
             response.put("friends", friends);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error fetching friends: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
 
+
     /**
      * Endpoint to add a friend to the user's friends array.
-     * @param preferredUsername the user's preferred username
-     * @param newFriend the friend to add
+     * @param newFriend the friend to add (preferred username)
      * @return success/error message
      */
-    @PostMapping("/friends/add/{preferredUsername}")
-    public ResponseEntity<Map<String, String>> addFriend(@PathVariable String preferredUsername, @RequestBody Map<String, String> request) {
+    @PostMapping("/friends/add/{newFriend}")
+    public ResponseEntity<Map<String, String>> addFriend(
+        @CookieValue(name = "idToken", required = false) String idToken,
+        @PathVariable String newFriend) {
         Map<String, String> response = new HashMap<>();
 
         try {
-            String newFriend = request.get("newFriend");
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String preferredUsername = currentUser.getPreferredUsername();
+
+            newFriend = userService.getUserByPreferredUsername(newFriend).getPreferredUsername();
+
             userService.addFriend(preferredUsername, newFriend);
             response.put("message", "Friend added successfully");
             return ResponseEntity.ok(response);
@@ -285,16 +304,22 @@ public class UserController {
     /**
      * Endpoint to delete a friend from the user's friends array.
      * @param preferredUsername the user's preferred username
-     * @param friendToDelete the friend to delete
+     * @param friendToDelete the friend to delete (preferred username)
      * @return success/error message
      */
-    @DeleteMapping("/friends/delete/{preferredUsername}")
-    public ResponseEntity<Map<String, String>> deleteFriend(@PathVariable String preferredUsername, @RequestBody Map<String, String> request) {
+    @DeleteMapping("/friends/{friendToDelete}")
+    public ResponseEntity<Map<String, String>> deleteFriend(
+        @CookieValue(name = "idToken", required = false) String idToken,
+        @PathVariable String friendToDelete) {
         Map<String, String> response = new HashMap<>();
 
         try {
-            String friendToDelete = request.get("friendToDelete");
-            userService.deleteFriend(preferredUsername, friendToDelete);
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String preferredUsername = currentUser.getPreferredUsername();
+
+            String friendPreferredUsername = userService.getUserByPreferredUsername(friendToDelete).getPreferredUsername();
+
+            userService.deleteFriend(preferredUsername, friendPreferredUsername);
             response.put("message", "Friend deleted successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {

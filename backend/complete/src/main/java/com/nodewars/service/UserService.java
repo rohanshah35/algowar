@@ -30,7 +30,7 @@ public class UserService {
 
     /**
      * Gets all usernames from the database.
-     * @return the usernames as a list of strings
+     * @return a list of Object arrays containing preferred_username and profile_picture
      */
     public List<Object[]> getAllUsernamesAndPfps() {
         return userRepository.findPreferredUsernamesAndProfilePictures();
@@ -119,10 +119,10 @@ public class UserService {
     /**
      * Fetches the friends for a given preferred username.
      * @param preferredUsername the preferred username
-     * @return the friends as a string array
+     * @return a list of Object arrays containing preferred_username and profile_picture
      */
-    public String[] getFriendsByPreferredUsername(String preferredUsername) {
-        return userRepository.findByPreferredUsername(preferredUsername).getFriends();
+    public List<Object[]> getFriendsByPreferredUsername(String preferredUsername) {
+        return userRepository.findFriendsByPreferredUsername(preferredUsername);
     }
 
     /**

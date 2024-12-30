@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Social() {
   const [allUsers, setAllUsers] = useState<{ username: string; profilePicture: string }[]>([]);
-  const [friends, setFriends] = useState<string[]>([]);
+  const [friends, setFriends] = useState<{ username: string; profilePicture: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter()
 
@@ -41,6 +41,28 @@ export default function Social() {
 
     fetchData();
   }, []);
+
+  const handleRemoveFriend = async (friendToDelete: string) => {
+    try {
+      const response = await fetch(`http://localhost:8080/user/friends/${friendToDelete}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error deleting friend: ${response.statusText}`);
+      }
+  
+      setFriends(currentFriends => 
+        currentFriends.filter(friend => friend.username !== friendToDelete)
+      );
+    } catch (error) {
+      console.error("Error removing friend:", error);
+    }
+  };
 
   const renderAutocompleteOption: AutocompleteProps["renderOption"] = ({ option }) => {
     const user = allUsers.find(user => user.username === option.value);
@@ -121,7 +143,11 @@ export default function Social() {
             }}
           >
             {friends.map((friend, index) => (
-              <SocialCard key={index} username={friend} />
+              <SocialCard key={index} 
+              username={friend.username} 
+              profilePicture={friend.profilePicture} 
+              onRemoveFriend={handleRemoveFriend}
+              />
             ))}
           </div>
         </div>
