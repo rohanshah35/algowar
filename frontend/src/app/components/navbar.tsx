@@ -10,6 +10,10 @@ const AppNavbar = () => {
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
 
+  const handleTextClick = () => {
+    router.push('/');
+  };
+
   return (
     <AppShell.Header style={{ 
       backgroundColor: '#1A1B1E',
@@ -23,13 +27,22 @@ const AppNavbar = () => {
         padding: '0 1rem'
       }}>
         <Box style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Text style={{ color: '#d4d4d8', fontSize: '23px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
+          <div 
+            onClick={handleTextClick} 
+            style={{ 
+              cursor: 'pointer',
+              color: '#d4d4d8', 
+              fontSize: '23px', 
+              letterSpacing: '3px', 
+              fontFamily: inter.style.fontFamily 
+            }}
+          >
             algowar.xyz
-          </Text>
+          </div>
           <Group gap="md">
           </Group>
         </Box>
-          <Button 
+        <Button 
           variant="filled" 
           size="xs" 
           onClick={() => router.push('/login')}
