@@ -23,7 +23,7 @@ const AppNavbar = () => {
         padding: '0 1rem'
       }}>
         <Box style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Text style={{ color: '#d4d4d8', fontSize: '24px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
+          <Text style={{ color: '#d4d4d8', fontSize: '23px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
             algowar.xyz
           </Text>
           <Group gap="md">
@@ -31,23 +31,18 @@ const AppNavbar = () => {
         </Box>
           <Button 
           variant="filled" 
-          size="sm" 
+          size="xs" 
           onClick={() => router.push('/login')}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           style={{
-            backgroundColor: isHovered ? '#3f3f46' : '#27272a',
-            color: isHovered ? '#ffffff' : '#d4d4d8',
-            border: '1px solid #3f3f46',
-            borderRadius: '10px',
+            backgroundColor: isHovered ? '#2c2c30' : '#27272a',
+            borderRadius: '4px',
             fontFamily: inter.style.fontFamily,
-            fontSize: '14px',
-            fontWeight: 'bold',
-            letterSpacing: '2.5px',
-            textTransform: 'uppercase',
-            textShadow: isHovered ? '0px 0px 1px #ffffff' : 'none',
+            fontSize: '13px',
+            fontWeight: 300,
+            letterSpacing: '2px',
             transition: 'all 0.3s ease-in-out',
-            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
           }}
         >
           LOGIN
