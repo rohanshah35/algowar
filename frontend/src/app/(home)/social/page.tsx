@@ -9,7 +9,8 @@ export default function Social() {
   const [allUsers, setAllUsers] = useState<{ username: string; profilePicture: string }[]>([]);
   const [friends, setFriends] = useState<{ username: string; profilePicture: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter()
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,12 +52,12 @@ export default function Social() {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error deleting friend: ${response.statusText}`);
       }
-  
-      setFriends(currentFriends => 
+
+      setFriends(currentFriends =>
         currentFriends.filter(friend => friend.username !== friendToDelete)
       );
     } catch (error) {
@@ -77,23 +78,30 @@ export default function Social() {
   };
 
   const handleAutocompleteChange = (value: string) => {
-
     router.push(`/u/${value}`);
   };
 
   if (loading) {
-    return <div></div>
+    return <div></div>;
   }
 
   return (
-    <div>
+    <div className={`container ${isDropdownOpen ? "blurred" : ""}`}>
       <div
         style={{
           display: "flex",
           justifyContent: "center",
+          position: "relative",
         }}
       >
-        <div style={{ flex: 1, maxWidth: "500px" }}>
+        <div
+          style={{
+            flex: 1,
+            maxWidth: "500px",
+            position: "relative",
+            zIndex: 10,
+          }}
+        >
           <Autocomplete
             data={allUsers.map(user => user.username)}
             renderOption={renderAutocompleteOption}
@@ -101,12 +109,17 @@ export default function Social() {
             maxDropdownHeight={300}
             placeholder="Search for users"
             onOptionSubmit={handleAutocompleteChange}
+            onDropdownOpen={() => setIsDropdownOpen(true)}
+            onDropdownClose={() => setIsDropdownOpen(false)}
             styles={{
               input: {
                 backgroundColor: "#27272a",
                 color: "#d4d4d8",
                 border: "1px solid #3f3f46",
                 borderRadius: "4px",
+                height: isDropdownOpen ? "43px" : "40px",
+                fontSize: isDropdownOpen ? "17px" : "16px",
+                transition: "height 0.4s, font-size 0.4s",
               },
               label: { color: "#f4f4f5" },
               dropdown: {
@@ -141,17 +154,34 @@ export default function Social() {
               gridTemplateColumns: "repeat(4, 1fr)",
               gap: "30px",
             }}
+            className="friends-list"
           >
             {friends.map((friend, index) => (
-              <SocialCard key={index} 
-              username={friend.username} 
-              profilePicture={friend.profilePicture} 
-              onRemoveFriend={handleRemoveFriend}
+              <SocialCard
+                key={index}
+                username={friend.username}
+                profilePicture={friend.profilePicture}
+                onRemoveFriend={handleRemoveFriend}
               />
             ))}
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .container {
+          position: relative;
+        }
+        .friends-list {
+          position: relative;
+          z-index: 1;
+          transition: filter 0.4s;
+        }
+        .blurred .friends-list {
+          filter: blur(4px);
+          pointer-events: none;
+        }
+      `}</style>
     </div>
   );
 }
