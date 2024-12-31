@@ -1,28 +1,64 @@
 'use client';
 
-import { Container, Grid, SimpleGrid, Skeleton } from '@mantine/core';
+import { Grid, SimpleGrid, Skeleton } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 
-const PRIMARY_COL_HEIGHT = '300px';
+const PRIMARY_COL_HEIGHT = '850px';
 
 export function ProfileGrid() {
   const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - var(--mantine-spacing-md) / 2)`;
+  const isMobile = useMediaQuery('(max-width: 1200px)');
 
   return (
-    <Container my="md">
-      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-        <Skeleton height={PRIMARY_COL_HEIGHT} radius="md" animate={false} />
-        <Grid gutter="md">
-          <Grid.Col>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" animate={false} />
-          </Grid.Col>
-          <Grid.Col span={6}>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" animate={false} />
-          </Grid.Col>
-          <Grid.Col span={6}>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" animate={false} />
-          </Grid.Col>
-        </Grid>
-      </SimpleGrid>
-    </Container>
+    <div style={{ 
+      padding: '0 2rem', 
+      maxWidth: '1600px', 
+      margin: '0 auto', 
+      width: '100%' 
+    }}>
+      <div style={{ 
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: '2rem',
+        alignItems: isMobile ? 'center' : 'stretch'
+      }}>
+        <Skeleton 
+          height={PRIMARY_COL_HEIGHT} 
+          radius="md" 
+          animate={false}
+          style={{ 
+            width: '300px',
+            flexShrink: 0
+          }} 
+        />
+        
+        <div style={{ width: isMobile ? 'calc(100% - 300px - 2rem)' : 'calc(100% - 300px - 2rem)', minWidth: '300px' }}>
+          <Skeleton 
+            height={SECONDARY_COL_HEIGHT} 
+            radius="md" 
+            animate={false}
+            style={{ marginBottom: '1rem' }}
+          />
+          <div style={{ 
+            display: 'flex', 
+            gap: '1rem',
+            width: '100%'
+          }}>
+            <Skeleton 
+              height={SECONDARY_COL_HEIGHT} 
+              radius="md" 
+              animate={false}
+              style={{ flex: 1 }}
+            />
+            <Skeleton 
+              height={SECONDARY_COL_HEIGHT} 
+              radius="md" 
+              animate={false}
+              style={{ flex: 1 }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

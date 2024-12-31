@@ -2,6 +2,7 @@ import AppNavbar from '@/components/navbar';
 import { NavbarNested } from '@/components/vertical-navbar/vertical-navbar';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
+import { ProfileGrid } from '@/components/profile-grid/profile-grid';
 
 async function checkAuth() {
   try {
@@ -55,7 +56,7 @@ const UserProfile = async ({ params }: { params: { username: string } }) => {
     <div style={{ 
       display: 'flex', 
       minHeight: '100vh', 
-      flexDirection: 'column' 
+      flexDirection: 'column', 
     }}>
       {auth ? <NavbarNested /> : <AppNavbar />}
 
@@ -66,12 +67,12 @@ const UserProfile = async ({ params }: { params: { username: string } }) => {
           padding: '20px',
           flex: 1,
           marginLeft: auth ? '250px' : '0',
-          marginTop: auth ? '0' : '50px',
-          width: auth ? 'calc(100% - 250px)' : '100%'
+          marginTop: auth ? '10px' : '60px',
+          width: auth ? 'calc(100vw - 250px)' : '100vw',
+          maxWidth: '100%',
         }}
       >
-        <h1>Profile page for: {username}</h1>
-        <pre>{JSON.stringify(stats, null, 2)}</pre>
+        <ProfileGrid />
       </main>
     </div>
   );
