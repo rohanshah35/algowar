@@ -4,6 +4,7 @@ import { SocialCard } from "@/components/social-card/social-card";
 import { Autocomplete, AutocompleteProps, Avatar, Group, Text } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
+import styles from './Autocomplete.module.css';
 
 export default function Social() {
   const [allUsers, setAllUsers] = useState<{ username: string; profilePicture: string }[]>([]);
@@ -106,11 +107,15 @@ export default function Social() {
             data={allUsers.map(user => user.username)}
             renderOption={renderAutocompleteOption}
             limit={20}
+            classNames={{
+              option: styles.option,
+            }}
             maxDropdownHeight={300}
             placeholder="Search for users"
             onOptionSubmit={handleAutocompleteChange}
             onDropdownOpen={() => setIsDropdownOpen(true)}
             onDropdownClose={() => setIsDropdownOpen(false)}
+            comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
             styles={{
               input: {
                 backgroundColor: "#27272a",
@@ -128,10 +133,8 @@ export default function Social() {
               },
               option: {
                 color: "#C5C5C5",
-                "&:hover": {
-                  backgroundColor: "#3f3f46 !important",
-                },
               },
+
               
             }}
           />
