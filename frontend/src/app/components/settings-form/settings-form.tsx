@@ -10,6 +10,10 @@ import {
 import { useEffect, useState } from 'react';
 import classes from './settings-form.module.css';
 
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], weight: ['300'] });
+
 export function Settings() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -118,6 +122,7 @@ export function Settings() {
             styles={{
               input: {
                 backgroundColor: '#27272a',
+                fontFamily: inter.style.fontFamily,
               }
             }}
             disabled={loading}

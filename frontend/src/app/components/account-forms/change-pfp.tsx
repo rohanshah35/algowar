@@ -121,8 +121,13 @@ export function ChangePfp() {
                 <Dropzone.Idle>Upload profile picture</Dropzone.Idle>
               </Text>
               <Text ta="center" fz="sm" mt="xs" className={classes.label}>
-                Drag&apos;n&apos;drop files here to upload. We can accept only <i>.jpg</i> and <i>.png</i> files that
-                are less than 5mb in size.
+                Select or drag files here to upload
+              </Text>
+              <Text ta="center" fz="sm" mt="xs" className={classes.label}>
+              <i>.jpg</i> or <i>.png</i>
+              </Text>
+              <Text ta="center" fz="sm" mt="xs" className={classes.label}>
+              &lt; 5MB
               </Text>
             </div>
           </Dropzone>
