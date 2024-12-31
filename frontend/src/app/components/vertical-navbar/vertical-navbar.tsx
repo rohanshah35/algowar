@@ -72,6 +72,7 @@ import { use, useEffect, useState } from 'react';
           { label: 'Change Username', link: '/username' },
           { label: 'Change Email', link: '/email' },
           { label: 'Change Password', link: '/password' },
+          { label: 'Delete Account', link: '/delete' },
           { label: 'Logout', link: '/', isLogout: true },
         ],
       },
