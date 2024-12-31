@@ -128,7 +128,11 @@ export default function Social() {
               },
               option: {
                 color: "#C5C5C5",
+                "&:hover": {
+                  backgroundColor: "#3f3f46 !important",
+                },
               },
+              
             }}
           />
         </div>

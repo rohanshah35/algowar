@@ -1,51 +1,77 @@
-import { Avatar, Button, Card, Group, Text } from '@mantine/core';
-import classes from './UserCardImage.module.css';
+import { Avatar, Button, Card, Group, Text } from "@mantine/core";
+import classes from "./UserCardImage.module.css";
 
 const stats = [
-  { value: '34K', label: 'Followers' },
-  { value: '187', label: 'Follows' },
-  { value: '1.6K', label: 'Posts' },
+  { value: "34K", label: "Followers" },
+  { value: "187", label: "Follows" },
+  { value: "1.6K", label: "Posts" },
 ];
 
 export function UserCardImage() {
   const items = stats.map((stat) => (
     <div key={stat.label}>
-      <Text ta="center" fz="lg" fw={500}>
+      <Text ta="center" fz="lg" fw={500} style={{ color: "#f4f4f5" }}>
         {stat.value}
       </Text>
-      <Text ta="center" fz="sm" c="dimmed" lh={1}>
+      <Text ta="center" fz="sm" c="dimmed" lh={1} style={{ color: "#a1a1aa" }}>
         {stat.label}
       </Text>
     </div>
   ));
 
   return (
-    <Card withBorder padding="xl" radius="md" className={classes.card}>
-      <Card.Section
-        h={140}
-        style={{
-          backgroundImage:
-            'url(https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80)',
-        }}
-      />
+    <Card
+      withBorder
+      padding="xl"
+      radius="md"
+      className={classes.card}
+      style={{
+        backgroundColor: "#18181b",
+        borderColor: "#27272a",
+        color: "#f4f4f5",
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.6)",
+      }}
+    >
       <Avatar
         src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
         size={80}
         radius={80}
         mx="auto"
-        mt={-30}
+        mt={-10}
         className={classes.avatar}
       />
-      <Text ta="center" fz="lg" fw={500} mt="sm">
+      <Text
+        ta="center"
+        fz="lg"
+        fw={500}
+        mt="sm"
+        style={{ color: "#f4f4f5" }}
+      >
         Bill Headbanger
       </Text>
-      <Text ta="center" fz="sm" c="dimmed">
+      <Text
+        ta="center"
+        fz="sm"
+        c="dimmed"
+        style={{ color: "#a1a1aa", marginBottom: "1rem" }}
+      >
         Fullstack engineer
       </Text>
       <Group mt="md" justify="center" gap={30}>
         {items}
       </Group>
-      <Button fullWidth radius="md" mt="xl" size="md" variant="default">
+      <Button
+        fullWidth
+        radius="md"
+        mt="xl"
+        size="md"
+        variant="default"
+        style={{
+          backgroundColor: "#27272a",
+          color: "#f4f4f5",
+          borderColor: "#3f3f46",
+        }}
+      >
         Follow
       </Button>
     </Card>
