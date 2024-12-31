@@ -1,10 +1,12 @@
 import { Avatar, Button, Card, Group, Text } from "@mantine/core";
+import { Inter } from 'next/font/google';
 import classes from "./UserCardImage.module.css";
+import { IconUserPlus } from "@tabler/icons-react";
+
+const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 const stats = [
-  { value: "34K", label: "Followers" },
-  { value: "187", label: "Follows" },
-  { value: "1.6K", label: "Posts" },
+  { value: "2", label: "Friends" },
 ];
 
 export function UserCardImage() {
@@ -30,6 +32,7 @@ export function UserCardImage() {
         borderColor: "#27272a",
         color: "#f4f4f5",
         boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.6)",
+        fontFamily: inter.style.fontFamily,
       }}
     >
       <Avatar
@@ -47,13 +50,13 @@ export function UserCardImage() {
         mt="sm"
         style={{ color: "#f4f4f5" }}
       >
-        Bill Headbanger
+        LeBron James
       </Text>
       <Text
         ta="center"
         fz="sm"
         c="dimmed"
-        style={{ color: "#a1a1aa", marginBottom: "1rem" }}
+        style={{ color: "#a1a1aa"}}
       >
         Fullstack engineer
       </Text>
@@ -64,7 +67,7 @@ export function UserCardImage() {
         fullWidth
         radius="md"
         mt="xl"
-        size="md"
+        size="sm"
         variant="default"
         style={{
           backgroundColor: "#27272a",
@@ -72,7 +75,7 @@ export function UserCardImage() {
           borderColor: "#3f3f46",
         }}
       >
-        Follow
+        <IconUserPlus size={25} />
       </Button>
     </Card>
   );

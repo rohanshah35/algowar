@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { Badge, Group, Text, Button } from "@mantine/core";
+import { Badge, Text, UnstyledButton } from "@mantine/core";
+
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 export function Skills() {
   const skills = [
@@ -18,25 +22,24 @@ export function Skills() {
     <div>
       <Text
         ta="center"
-        fz="lg"
-        fw={500}
-        style={{ color: "#f4f4f5", marginBottom: "1rem" }}
+        fz="sm"
+        style={{ color: "#f4f4f5", marginBottom: "1.2rem", fontFamily: inter.style.fontFamily }}
       >
-        Skills
+        SKILLS
       </Text>
       <div
         style={{
           display: "flex",
           flexWrap: "wrap",
           gap: "0.5rem",
-          maxWidth: "300px", // Limit container width for 2 items per row
-          margin: "0 auto", // Center the pills container
+          maxWidth: "300px",
+          margin: "0 auto",
         }}
       >
         {visibleSkills.map((skill) => (
           <Badge
             key={skill.name}
-            size="lg"
+            size="md"
             radius="md"
             style={{
               backgroundColor: "#27272a",
@@ -45,22 +48,26 @@ export function Skills() {
               padding: "0.25rem 0.75rem",
               boxSizing: "border-box",
               textAlign: "center",
-              width: "auto", // Ensure two items per row
+              width: "auto",
+              fontFamily: inter.style.fontFamily,
+              textTransform: "none",
             }}
           >
-            {skill.name}: {skill.count}
+            <span style={{ textTransform: "uppercase" }}>{skill.name}</span>
+            <span style={{ fontWeight: "normal" }}> x{skill.count}</span>
           </Badge>
         ))}
       </div>
       {skills.length > 4 && (
-        <Button
+        <UnstyledButton
           variant="subtle"
           size="xs"
           onClick={() => setShowAll(!showAll)}
-          style={{ color: "#f4f4f5", marginTop: "1rem" }}
+          fw={500}
+          style={{ color: "#f4f4f5", marginTop: "1rem", fontFamily: inter.style.fontFamily, fontSize: "0.65rem" }}
         >
           {showAll ? "Show Less" : "Show More"}
-        </Button>
+      </UnstyledButton>
       )}
     </div>
   );

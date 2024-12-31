@@ -75,6 +75,16 @@ export default async function Home() {
                 Play As Guest
               </Button>
 
+              <Button
+                component="a"
+                href="http://localhost:3000/signup"
+                size="xl"
+                variant="default"
+                className={classes.control}
+              >
+                Sign Up
+              </Button>
+
         </Group>
       </Container>
     </div>

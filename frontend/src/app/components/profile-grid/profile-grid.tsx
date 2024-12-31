@@ -2,7 +2,7 @@
 
 import { Grid, SimpleGrid, Skeleton } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { ProfileBox } from '../profile-box/page';
+import { ProfileBox } from '../profile-box/profile-box';
 import { SparklineGraph } from '../graphs/sparkline'
 import { DonutGraph } from '../graphs/donut'
 
