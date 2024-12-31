@@ -34,7 +34,7 @@ async function checkAuth() {
 export default async function Home() {
   const auth = await checkAuth();
   if (auth) {
-    redirect('/profile')
+    redirect(`/u/${auth.username}`);
   } 
 
   return (

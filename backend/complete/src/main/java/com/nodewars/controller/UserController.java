@@ -100,7 +100,7 @@ public class UserController {
 
     /**
      * Endpoint to check if a username exists.
-     * @param username the username
+     * @param username the username (preferred username) to check
      * @return true if the username exists, false otherwise
      */
     @GetMapping("/exists/{username}")
@@ -108,7 +108,7 @@ public class UserController {
         Map<String, String> response = new HashMap<>();
 
         try {
-            boolean exists = userService.usernameExists(username);
+            boolean exists = userService.preferredUsernameExists(username);
             response.put("exists", String.valueOf(exists));
             return ResponseEntity.ok(response);
         } catch (Exception e) {

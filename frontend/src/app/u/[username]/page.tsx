@@ -27,17 +27,18 @@ async function checkAuth() {
 }
 
 const UserProfile = async ({ params }: { params: { username: string } }) => {
-  const { username } = params;
+  const { username } = await params;
 
   const response = await fetch(`http://localhost:8080/user/exists/${username}`);
   const data = await response.json();
 
+  if (data.exists !== 'true') {
+    notFound();
+  }
+
   const statsResponse = await fetch(`http://localhost:8080/user/stats/${username}`);
   const statsData = await statsResponse.json();
 
-  if (!data.exists) {
-    notFound();
-  }
 
   let stats = {};
   if (statsData.stats) {
@@ -48,7 +49,7 @@ const UserProfile = async ({ params }: { params: { username: string } }) => {
     }
   }
 
-  const auth = await checkAuth(); // Check if the user is logged in
+  const auth = await checkAuth();
 
   return (
     <div style={{ 
@@ -64,9 +65,9 @@ const UserProfile = async ({ params }: { params: { username: string } }) => {
           flexDirection: 'column',
           padding: '20px',
           flex: 1,
-          marginLeft: auth ? '250px' : '0', // Adjust for vertical navbar if logged in
-          marginTop: auth ? '0' : '50px', // Adjust for vertical navbar if logged in
-          width: auth ? 'calc(100% - 250px)' : '100%'  // Adjust content width for vertical navbar
+          marginLeft: auth ? '250px' : '0',
+          marginTop: auth ? '0' : '50px',
+          width: auth ? 'calc(100% - 250px)' : '100%'
         }}
       >
         <h1>Profile page for: {username}</h1>

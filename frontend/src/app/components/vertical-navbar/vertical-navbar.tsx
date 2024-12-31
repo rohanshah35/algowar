@@ -18,40 +18,6 @@ import { LinksGroup } from '../navbar-links-group/navbar-links-group';
 import { UserButton } from '../user-button/user-button';
 import classes from './vertical-navbar.module.css';
 import { use, useEffect, useState } from 'react';
-  
-  const mockdata = [
-    { label: 'Profile', icon: IconUserCircle, link: '/profile' },
-    {
-      label: 'Play',
-      icon: IconSwords,
-      links: [
-        { label: 'Join Queue', link: '/queue' },
-        { label: 'Invite Friend', link: '/invite' },
-      ],
-    },
-    {
-      label: 'Puzzles',
-      icon: IconPuzzle,
-      links: [
-        { label: 'Daily Puzzle', link: '/daily' },
-        { label: 'By Topic', link: '/bytopic' },
-      ],
-    },
-    { label: 'Leaderboard', icon: IconChartBar, link: '/leaderboard' },
-    { label: 'Social', icon: IconUsersGroup, link: '/social' },
-    { label: 'Settings', icon: IconSettings, link: '/settings' },
-    {
-      label: 'Account',
-      icon: IconLock,
-      links: [
-        { label: 'Change Profile Picture', link: '/pfp' },
-        { label: 'Change Username', link: '/username' },
-        { label: 'Change Email', link: '/email' },
-        { label: 'Change Password', link: '/password' },
-        { label: 'Logout', link: '/', isLogout: true },
-      ],
-    },
-  ];
 
   async function checkAuth() {
     try {
@@ -77,6 +43,39 @@ import { use, useEffect, useState } from 'react';
   
   export function NavbarNested() {
     const [userData, setUserData] = useState<{ username: string; email: string, profilePicture: string } | null>(null);
+    const mockdata = userData ? [
+      { label: 'Profile', icon: IconUserCircle, link: `/u/${userData.username}` },
+      {
+        label: 'Play',
+        icon: IconSwords,
+        links: [
+          { label: 'Join Queue', link: '/queue' },
+          { label: 'Invite Friend', link: '/invite' },
+        ],
+      },
+      {
+        label: 'Puzzles',
+        icon: IconPuzzle,
+        links: [
+          { label: 'Daily Puzzle', link: '/daily' },
+          { label: 'By Topic', link: '/bytopic' },
+        ],
+      },
+      { label: 'Leaderboard', icon: IconChartBar, link: '/leaderboard' },
+      { label: 'Social', icon: IconUsersGroup, link: '/social' },
+      { label: 'Settings', icon: IconSettings, link: '/settings' },
+      {
+        label: 'Account',
+        icon: IconLock,
+        links: [
+          { label: 'Change Profile Picture', link: '/pfp' },
+          { label: 'Change Username', link: '/username' },
+          { label: 'Change Email', link: '/email' },
+          { label: 'Change Password', link: '/password' },
+          { label: 'Logout', link: '/', isLogout: true },
+        ],
+      },
+    ] : [];
 
     useEffect(() => {
       const fetchUserData = async () => {

@@ -31,7 +31,6 @@ export function LoginForm() {
       password: formData.get("password"),
     };
     try {
-      console.log("All cookies from the current domain:", document.cookie);
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,7 +47,7 @@ export function LoginForm() {
       setSuccess("Login successful! Redirecting...");
 
       setTimeout(() => {
-        router.push("/profile");
+        router.push(`/u/${payload.username}`);
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");

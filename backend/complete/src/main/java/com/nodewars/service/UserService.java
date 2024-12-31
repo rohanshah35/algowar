@@ -81,6 +81,15 @@ public class UserService {
     }
 
     /**
+     * Checks if a preferred username exists in the database.
+     * @param preferredUsername the preferred username to check
+     * @return true if the preferred username exists, false otherwise
+     */
+    public boolean preferredUsernameExists(String preferredUsername) {
+        return userRepository.existsByPreferredUsername(preferredUsername);
+    }
+
+    /**
      * Fetches the stats for a given username.
      * @param username the username
      * @return the stats JSON as a string
