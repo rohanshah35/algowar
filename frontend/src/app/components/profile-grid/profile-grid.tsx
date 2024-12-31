@@ -2,6 +2,9 @@
 
 import { Grid, SimpleGrid, Skeleton } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { ProfileBox } from '../profile-box/page';
+import { SparklineGraph } from '../graphs/sparkline'
+import { DonutGraph } from '../graphs/donut'
 
 const PRIMARY_COL_HEIGHT = '850px';
 
@@ -10,53 +13,47 @@ export function ProfileGrid() {
   const isMobile = useMediaQuery('(max-width: 1200px)');
 
   return (
+
     <div style={{ 
       padding: '0 2rem', 
       maxWidth: '1600px', 
       margin: '0 auto', 
       width: '100%' 
     }}>
+
       <div style={{ 
         display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
         gap: '2rem',
         alignItems: isMobile ? 'center' : 'stretch'
       }}>
-        <Skeleton 
-          height={PRIMARY_COL_HEIGHT} 
-          radius="md" 
-          animate={false}
-          style={{ 
-            width: '300px',
-            flexShrink: 0
-          }} 
-        />
+        <ProfileBox />
         
         <div style={{ width: isMobile ? 'calc(100% - 300px - 2rem)' : 'calc(100% - 300px - 2rem)', minWidth: '300px' }}>
-          <Skeleton 
-            height={SECONDARY_COL_HEIGHT} 
-            radius="md" 
-            animate={false}
-            style={{ marginBottom: '1rem' }}
-          />
           <div style={{ 
-            display: 'flex', 
-            gap: '1rem',
-            width: '100%'
-          }}>
+              display: 'flex', 
+              gap: '1rem',
+              width: '100%'
+            }}>
+              <Skeleton 
+                height={SECONDARY_COL_HEIGHT} 
+                radius="md" 
+                animate={false}
+                style={{ flex: 1,  marginBottom: '1rem' }}
+              />
+              <Skeleton 
+                height={SECONDARY_COL_HEIGHT} 
+                radius="md" 
+                animate={false}
+                style={{ flex: 1,  marginBottom: '1rem' }}
+              />
+            </div>
             <Skeleton 
-              height={SECONDARY_COL_HEIGHT} 
-              radius="md" 
-              animate={false}
-              style={{ flex: 1 }}
-            />
-            <Skeleton 
-              height={SECONDARY_COL_HEIGHT} 
-              radius="md" 
-              animate={false}
-              style={{ flex: 1 }}
-            />
-          </div>
+                height={SECONDARY_COL_HEIGHT} 
+                radius="md" 
+                animate={false}
+                style={{ }}
+              />
         </div>
       </div>
     </div>

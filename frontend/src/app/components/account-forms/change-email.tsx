@@ -83,5 +83,6 @@ export function ChangeEmail() {
         </form>
       </Paper>
     </Container>
+
   );
 }

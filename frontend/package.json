@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/charts": "^7.15.2",
     "@mantine/core": "^7.15.1",
     "@mantine/dropzone": "^7.15.2",
     "@mantine/form": "^7.15.1",
@@ -19,6 +20,7 @@
     "next": "15.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "recharts": "^2.15.0",
     "sass": "^1.83.0"
   },
   "devDependencies": {
