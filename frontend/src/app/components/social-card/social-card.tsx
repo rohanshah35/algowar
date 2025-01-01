@@ -1,6 +1,9 @@
 import { Avatar, Button, Paper, Text, ActionIcon, Modal } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useState } from "react";
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 type SocialCardProps = {
   username: string;
@@ -22,7 +25,7 @@ export function SocialCard({
         withBorder
         p="md"
         bg="#27272a"
-        style={{ border: "1px solid #3f3f46", position: "relative" }}
+        style={{ border: "1px solid #3f3f46", position: "relative", boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.5)" }}
       >
         <ActionIcon
           variant="transparent"
@@ -55,7 +58,7 @@ export function SocialCard({
         mx="auto"
       />
       
-      <Text ta="center" fz="lg" fw={500} mt="sm" c="#d4d4d8">
+      <Text ta="center" fz="md" fw={500} mt="sm" c="#d4d4d8" style={{ fontFamily: inter.style.fontFamily }}>
         {username}
       </Text>
 
@@ -68,9 +71,8 @@ export function SocialCard({
               backgroundColor: "#27272a",
               borderColor: "#3f3f46",
               color: "#d4d4d8",
-              "&:hover": {
-                backgroundColor: "#3f3f46",
-              },
+              fontFamily: inter.style.fontFamily,
+              fontSize: "0.75rem",
             },
           }}
         >

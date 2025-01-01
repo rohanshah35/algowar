@@ -11,7 +11,8 @@ export default async function Leaderboard() {
           className="rounded-xl shadow-lg p-8"
           style={{ 
             backgroundColor: '#27272a',
-            border: '1px solid #3f3f46'
+            border: '1px solid #3f3f46',
+            boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.5)'
           }}
         >
           <LeaderboardTable />
