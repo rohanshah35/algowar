@@ -1,4 +1,4 @@
-import { NavbarNested } from "@/components/vertical-navbar/vertical-navbar";
+import { NavbarNested } from "@/components/Navbars/vertical-navbar/vertical-navbar";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 

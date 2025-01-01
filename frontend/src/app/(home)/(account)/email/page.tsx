@@ -1,4 +1,4 @@
-import { ChangeEmail } from "@/components/account-forms/change-email";
+import { ChangeEmail } from "@/components/Account/account-forms/change-email";
 
 export default async function Email() {
   return (

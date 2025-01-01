@@ -1,6 +1,6 @@
 "use client";
 
-import { SocialCard } from "@/components/social-card/social-card";
+import { SocialCard } from "@/components/Social/social-card/social-card";
 import { Autocomplete, AutocompleteProps, Avatar, Group, Text } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';

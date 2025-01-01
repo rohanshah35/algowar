@@ -1,6 +1,6 @@
 import { Card } from "@mantine/core";
 import { UserCardImage } from "../user-card/user-card";
-import { Languages } from "../language-box/languages-box";
+import { Languages } from "../language-box/language-box";
 import { Skills } from "../skills-box/skills-box";
 
 export function ProfileBox() {

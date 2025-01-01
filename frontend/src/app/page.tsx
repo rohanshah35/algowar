@@ -1,8 +1,8 @@
 // import { Container } from "@mantine/core";
-import AppNavbar from "./components/navbar";
+import AppNavbar from "./components/Navbars/navbar";
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Footer } from "./components/footer";
+import { Footer } from "./components/Footer/footer";
 
 import { Button, Container, Group, Text } from '@mantine/core';
 import classes from './landing-page.module.css';

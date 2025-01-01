@@ -1,4 +1,4 @@
-import { DeleteAccount } from "@/components/account-forms/delete-account";
+import { DeleteAccount } from "@/components/Account/account-forms/delete-account";
 
 export default async function Email() {
   return (

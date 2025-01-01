@@ -1,4 +1,4 @@
-import { LeaderboardTable } from "@/components/leaderboard-table/leaderboard-table";
+import { LeaderboardTable } from "@/components/Leaderboard/leaderboard-table/leaderboard-table";
 
 export default async function Leaderboard() {
   return (

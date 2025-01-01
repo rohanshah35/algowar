@@ -1,8 +1,8 @@
-import AppNavbar from '@/components/navbar';
-import { NavbarNested } from '@/components/vertical-navbar/vertical-navbar';
+import AppNavbar from '@/components/Navbars/navbar';
+import { NavbarNested } from '@/components/Navbars/vertical-navbar/vertical-navbar';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { ProfileGrid } from '@/components/profile-grid/profile-grid';
+import { ProfileGrid } from '@/components/Profile/profile-grid/profile-grid';
 
 async function checkAuth() {
   try {

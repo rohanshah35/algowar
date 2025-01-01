@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SignupForm } from '@/components/auth-forms/signup-form';
+import { SignupForm } from '@/components/Authentication/auth-forms/signup-form';
 
 async function checkAuth() {
   try {

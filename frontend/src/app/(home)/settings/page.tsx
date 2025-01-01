@@ -1,4 +1,4 @@
-import { Settings } from "@/components/settings-form/settings-form";
+import { Settings } from "@/components/Settings/settings-form/settings-form";
 
 export default async function SettingsPage() {
   return (

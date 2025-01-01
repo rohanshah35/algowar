@@ -1,4 +1,4 @@
-import { ChangePassword } from "@/components/account-forms/change-password";
+import { ChangePassword } from "@/components/Account/account-forms/change-password";
 
 export default async function Password() {
   return (

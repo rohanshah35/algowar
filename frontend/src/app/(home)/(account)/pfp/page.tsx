@@ -1,4 +1,4 @@
-import { ChangePfp } from "@/components/account-forms/change-pfp";
+import { ChangePfp } from "@/components/Account/account-forms/change-pfp";
 
 export default async function Pfp() {
   return (
