@@ -64,7 +64,7 @@ export function Languages() {
           size="xs"
           onClick={() => setShowAll(!showAll)}
           fw={500}
-          style={{ color: "#f4f4f5", marginTop: "1rem", fontFamily: inter.style.fontFamily, fontSize: "0.65rem" }}
+          style={{ color: "#c4c4c7 ", marginTop: "1rem", fontFamily: inter.style.fontFamily, fontSize: "0.65rem" }}
         >
           {showAll ? "Show Less" : "Show More"}
         </UnstyledButton>
