@@ -1,7 +1,11 @@
-import { Container } from "@mantine/core";
-import AppNavbar from "./components/navbar";
+// import { Container } from "@mantine/core";
+import AppNavbar from "./components/Navbars/navbar";
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { Footer } from "./components/Footer/footer";
+
+import { Button, Container, Group, Text } from '@mantine/core';
+import classes from './landing-page.module.css';
 
 async function checkAuth() {
   try {
@@ -29,14 +33,63 @@ async function checkAuth() {
 export default async function Home() {
   const auth = await checkAuth();
   if (auth) {
-    redirect('/home')
+    redirect(`/u/${auth.username}`);
   } 
 
   return (
-    <>
+    <div style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
       <AppNavbar />
-      <Container style={{ marginTop: '2rem', textAlign: 'center' }}>
+      <Container size="lg" style={{ flex: 1 }}>
+        <div className={classes.wrapper}>
+          <Container size={1100} className={classes.inner}>
+              <h1 className={classes.title}>
+                A{' '}
+                <Text 
+                  component="span" 
+                  variant="gradient" 
+                  gradient={{ from: '#ff4d4d', to: '#ff8080' }}
+                  inherit
+                >
+                competitive platform 
+                </Text>{' '}
+                to master coding skills
+              </h1>
+
+            <Text className={classes.description} color="dimmed">
+              Take your coding preparation to the next level with algowar.xyz – engage in head-to-head coding
+              battles with friends, climb the leaderboard, and tackle interview-style problems in an exciting
+              and interactive way.
+            </Text>
+
+            <Group className={classes.controls}>
+              <Button
+                size="xl"
+                className={classes.control}
+                variant="gradient"
+                gradient={{ from: '#ff4d4d', to: '#ff8080' }}
+              >
+                Play As Guest
+              </Button>
+
+              <Button
+                component="a"
+                href="http://localhost:3000/signup"
+                size="xl"
+                variant="default"
+                className={classes.control}
+              >
+                Sign Up
+              </Button>
+
+        </Group>
       </Container>
-    </>
+    </div>
+      </Container>
+      <Footer />
+    </div>
   );
 }

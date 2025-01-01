@@ -1,23 +1,17 @@
 package com.nodewars.model;
 
-import java.sql.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
- * Represents a user entity with various attributes such as email, username, password, 
- * Cognito user ID, profile picture, and stats.
- * 
- * This class is annotated with JPA annotations to map it to a database table named "users". 
- * It includes fields for the user's ID, email, username, password, Cognito user ID, profile picture, 
- * and stats, along with their respective getters and setters.
- * 
+ * Represents a user entity in the database.
+ * This class contains user information such as username, email, password, and profile picture.
+ * It also includes fields for user statistics, preferred username, preferred language, and verification status.
  */
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -40,23 +34,40 @@ public class User {
     @Column(name = "stats")
     private String stats;
 
+    @Column(name = "elo")
+    private double elo;
+
     @Column(name = "preferred_username")
     private String preferredUsername;
 
-    public User(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername) {
+    @Column(name = "preferred_language")
+    private String preferredLanguage;
+
+    @Column(name = "friends")
+    private String[] friends;
+
+    @Transient
+    private boolean isVerified; 
+
+    public User(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
         this.password = password;
         this.stats = stats;
+        this.elo = elo;
         this.preferredUsername = preferredUsername;
+        this.preferredLanguage = preferredLanguage;
+        this.friends = friends;
+        this.profilePicture = profilePicture;
     }
 
-    public User(String email, String cognitoUserId, String username, String preferredUsername) {
+    public User(String email, String cognitoUserId, String username, String preferredUsername, Boolean isVerified) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
         this.preferredUsername = preferredUsername;
+        this.isVerified = isVerified;
     }
 
     public User() {
@@ -110,11 +121,58 @@ public class User {
         this.stats = stats;
     }
 
+    public double getElo() {
+        return elo;
+    }
+
+    public void setElo(double elo) {
+        this.elo = elo;
+    }
+
     public String getPreferredUsername() {
         return preferredUsername;
     }
 
     public void setPreferredUsername(String preferredUsername) {
         this.preferredUsername = preferredUsername;
+    }
+
+    public String getPreferredLanguage() {
+        return preferredLanguage;
+    }
+
+    public void setPreferredLanguage(String preferredUsername) {
+        this.preferredUsername = preferredLanguage;
+    }
+
+    public String[] getFriends() {
+        return friends;
+    }
+
+    public void setFriends(String[] friends) {
+        this.friends = friends;
+    }
+
+    public boolean getIsVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", cognitoUserId='" + cognitoUserId + '\'' +
+                ", profilePicture='" + profilePicture + '\'' +
+                ", stats='" + stats + '\'' +
+                ", preferredUsername='" + preferredUsername + '\'' +
+                ", preferredLanguage='" + preferredLanguage + '\'' +
+                ", isVerified=" + isVerified +
+                '}';
     }
 }

@@ -18,8 +18,13 @@ import org.springframework.stereotype.Service;
 import com.nodewars.utils.CognitoUtils;
 
 /**
- * Service class for handling AWS Cognito operations such as sign-up, login, and email verification.
+ * Service class for managing user authentication and management with AWS Cognito.
+ * This class provides methods for user signup, login, email verification, and password changes.
+ * It also includes methods for updating user attributes such as preferred username and email.
+ * 
+ * All operations are performed using the AWS Cognito API.
  */
+
 @Service
 public class CognitoService {
 
@@ -59,7 +64,7 @@ public class CognitoService {
             secretAccessKey
         );
         this.cognitoClient = CognitoIdentityProviderClient.builder()
-            .region(Region.of(region)) // Change to your region
+            .region(Region.of(region))
             .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
             .build();
     }
@@ -120,8 +125,8 @@ public class CognitoService {
             String secretHash = CognitoUtils.calculateSecretHash(username, clientId, clientSecret);
             AdminInitiateAuthRequest authRequest = AdminInitiateAuthRequest.builder()
                     .authFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
-                    .clientId(clientId) // Replace with your app client ID
-                    .userPoolId(userPoolId) // Replace with your user pool ID
+                    .clientId(clientId)
+                    .userPoolId(userPoolId)
                     .authParameters(Map.of(
                             "USERNAME", username,
                             "PASSWORD", password,
@@ -156,6 +161,36 @@ public class CognitoService {
         cognitoClient.confirmSignUp(request);
     }
 
+    public void setEmailVerified(String username) {
+        try {
+            AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
+                    .username(username)
+                    .userPoolId(userPoolId)
+                    .build();
+    
+            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+            logger.info("User retrieved from Cognito: " + getUserResponse.username());
+    
+            AttributeType emailVerifiedAttribute = AttributeType.builder()
+                    .name("email_verified")
+                    .value("true")
+                    .build();
+    
+            AdminUpdateUserAttributesRequest updateRequest = AdminUpdateUserAttributesRequest.builder()
+                    .userPoolId(userPoolId)
+                    .username(username)
+                    .userAttributes(emailVerifiedAttribute)
+                    .build();
+    
+            cognitoClient.adminUpdateUserAttributes(updateRequest);
+            logger.info("Email verification status updated to true for user: " + username);
+    
+        } catch (Exception e) {
+            logger.error("Error setting email_verified attribute: " + e.getMessage(), e);
+        }
+    }
+    
+
     /**
      * Resends the verification code to a user in AWS Cognito.
      *
@@ -179,7 +214,7 @@ public class CognitoService {
      * @param newUsername     the new preferred username
      * @throws Exception if the update fails
      */
-    public void updateUsername(String currentUsername, String newUsername) throws Exception {
+    public void updatePreferredUsername(String currentUsername, String newPreferredUsername) throws Exception {
         try {
             AdminGetUserRequest getUserRequest = AdminGetUserRequest.builder()
                     .username(currentUsername)
@@ -192,7 +227,7 @@ public class CognitoService {
 
             AttributeType usernameAttribute = AttributeType.builder()
                     .name("preferred_username")
-                    .value(newUsername)
+                    .value(newPreferredUsername)
                     .build();
 
             AdminUpdateUserAttributesRequest updateRequest = AdminUpdateUserAttributesRequest.builder()
@@ -203,7 +238,7 @@ public class CognitoService {
 
             cognitoClient.adminUpdateUserAttributes(updateRequest);
 
-            System.out.println("Preferred username updated successfully to: " + newUsername);
+            System.out.println("Preferred username updated successfully to: " + newPreferredUsername);
 
         } catch (Exception e) {
             System.err.println("Error updating preferred username: " + e.getMessage());

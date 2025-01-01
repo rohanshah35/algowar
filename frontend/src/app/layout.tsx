@@ -14,8 +14,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Note: metadata needs to be moved to a separate layout file since it can't be used
-// in client components
 export default function RootLayout({
   children,
 }: Readonly<{

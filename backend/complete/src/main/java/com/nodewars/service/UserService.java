@@ -1,8 +1,9 @@
 package com.nodewars.service;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,18 +11,37 @@ import com.nodewars.model.User;
 import com.nodewars.repository.UserRepository;
 
 /**
- * Service class for managing users.
+ * Service class for managing user-related operations.
+ * This class provides methods for user creation, retrieval, and updates.
+ * It also includes methods for checking username existence, fetching user statistics, and updating user attributes.
  */
+
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(String email, String cognitoUserId, String username, String password, String stats, String preferredUsername) {
-        User user = new User(email, cognitoUserId, username, password, stats, preferredUsername);
+    public User createUser(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
+        User user = new User(email, cognitoUserId, username, password, stats, elo, preferredUsername, preferredLanguage, friends, profilePicture);
 
         return userRepository.save(user);
+    }
+
+    /**
+     * Gets all usernames from the database.
+     * @return a list of Object arrays containing preferred_username and profile_picture
+     */
+    public List<Object[]> getAllUsernamesAndPfps() {
+        return userRepository.findPreferredUsernamesAndProfilePictures();
+    }
+
+    /**
+     * Gets the top users with their preferred usernames, wins, and ELO.
+     * @return a list of Object arrays containing preferred_username, wins, and ELO
+     */
+    public List<Object[]> getTopUsersWithWinsAndElo() {
+        return userRepository.findTopUsersWithWinsAndElo();
     }
 
     /**
@@ -61,12 +81,30 @@ public class UserService {
     }
 
     /**
+     * Checks if a preferred username exists in the database.
+     * @param preferredUsername the preferred username to check
+     * @return true if the preferred username exists, false otherwise
+     */
+    public boolean preferredUsernameExists(String preferredUsername) {
+        return userRepository.existsByPreferredUsername(preferredUsername);
+    }
+
+    /**
      * Fetches the stats for a given username.
      * @param username the username
      * @return the stats JSON as a string
      */
-    public String getStatsByUsername(String username) {
-        return userRepository.findStatsByUsername(username);
+    public String getStatsByPreferredUsername(String preferredUsername) {
+        return userRepository.findByPreferredUsername(preferredUsername).getStats();
+    }
+
+    /**
+     * Fetches the elo for a given username.
+     * @param username the username
+     * @return the elo as a double
+     */
+    public double getEloByPreferredUsername(String preferredUsername) {
+        return userRepository.findByPreferredUsername(preferredUsername).getElo();
     }
 
     /**
@@ -74,82 +112,185 @@ public class UserService {
      * @param username the username
      * @return the profile picture as a string
      */
-    public String getPfpByUsername(String username) {
-        return userRepository.findPfpByUsername(username);
+    public String getPfpByPreferredUsername(String preferredUsername) {
+        return userRepository.findByPreferredUsername(preferredUsername).getProfilePicture();
     }
 
     /**
      * Fetches the profile picture for a given username.
-     * @param username the username
+     * @param sub the username
      * @return the profile picture as a string
      */
     public String getUsernameByUserSub(String sub) {
-        return userRepository.findUsernameByUsersub(sub);
+        return userRepository.findUserByUsersub(sub).getUsername();
+    }
+
+    /**
+     * Fetches the preferred language for a given preferred username.
+     * @param preferred_username the preferred username
+     * @return the preferred language as a string
+     */
+    public String getPreferredLanguageByPreferredUsername(String preferredUsername) {
+        return userRepository.findByPreferredUsername(preferredUsername).getPreferredLanguage();
+    }
+
+    /**
+     * Fetches the friends for a given preferred username.
+     * @param preferredUsername the preferred username
+     * @return a list of Object arrays containing preferred_username and profile_picture
+     */
+    public List<Object[]> getFriendsByPreferredUsername(String preferredUsername) {
+        return userRepository.findFriendsByPreferredUsername(preferredUsername);
+    }
+
+    /**
+     * Updates a user's preferred language in the database by their preferred username.
+     * @param preferredUsername the user's preferred username
+     * @param newPreferredLanguage the new preferred language
+     * @throws Exception if the user is not found
+     */
+    @Transactional
+    public void updatePreferredLanguage(String preferredUsername, String newPreferredLanguage) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.updatePreferredLanguage(preferredUsername, newPreferredLanguage);
     }
 
     /**
      * Updates a user's username in the database.
-     * @param currentUsername the user's current username
+     * @param preferredUsername the user's preferred username
      * @param newUsername the new username
      * @throws Exception if the username is already taken
      */
     @Transactional
-    public void updatePreferredUsername(String currentPreferredUsername, String newPreferredUsername) throws Exception {
-        User currentUser = userRepository.findByUsername(currentPreferredUsername);
+    public void updatePreferredUsername(String preferredUsername, String newPreferredUsername) throws Exception {
+        User currentUser = userRepository.findByPreferredUsername(preferredUsername);
         if (currentUser == null) {
             throw new Exception("User not found");
         }
 
-        if (userRepository.existsByUsername(newPreferredUsername)) {
+        if (userRepository.existsByPreferredUsername(newPreferredUsername)) {
             throw new Exception("Username already taken");
         }
 
-        userRepository.updatePreferredUsername(currentPreferredUsername, newPreferredUsername);
+        userRepository.updatePreferredUsername(currentUser.getUsername(), newPreferredUsername);
     }
 
     /**
      * Updates a user's email in the database.
-     * @param currentUsername the user's current username
+     * @param preferredUsername the user's preferred username
      * @param newEmail the new email
      * @throws Exception if the user is not found
      */
     @Transactional
-    public void updateEmail(String currentUsername, String newEmail) throws Exception {
-        User currentUser = userRepository.findByUsername(currentUsername);
-        if (currentUser == null) {
+    public void updateEmail(String preferredUsername, String newEmail) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
             throw new Exception("User not found");
         }
 
-        userRepository.updateEmail(currentUser.getUsername(), newEmail);
+        userRepository.updateEmail(preferredUsername, newEmail);
     }
 
     /**
      * Updates a user's password in the database.
-     * @param currentUsername the user's current username
+     * @param preferredUsername the user's preferred username
      * @param newPassword the new password
      * @throws Exception if the user is not found
      */
     @Transactional
-    public void updatePassword(String currentUsername, String newPassword) throws Exception {
-        User currentUser = userRepository.findByUsername(currentUsername);
-        if (currentUser == null) {
+    public void updatePassword(String preferredUsername, String newPassword) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
             throw new Exception("User not found");
         }
 
-        userRepository.updatePassword(currentUser.getUsername(), newPassword);
+        userRepository.updatePassword(preferredUsername, newPassword);
     }
 
     /**
-     * Deletes a user by their username.
-     * @param username the username of the user to delete
-     * @throws Exception if the user does not exist
+     * Updates a user's stats in the database.
+     * @param preferredUsername the user's preferred username
+     * @param newStats the new stats
+     * @throws Exception if the user is not found
      */
     @Transactional
-    public void deleteUser(String username) throws Exception {
-        if (!userRepository.existsByUsername(username)) {
+    public void updateStats(String preferredUsername, String newStats) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
             throw new Exception("User not found");
         }
 
-        userRepository.deleteByUsername(username);
+        userRepository.updateStats(preferredUsername, newStats);
+    }
+
+    /**
+     * Updates a user's profile picture in the database.
+     * @param preferredUsername the user's preferred username
+     * @param newProfilePicture the new profile picture s3 key
+     * @throws Exception if the user is not found
+     */
+    @Transactional
+    public void updateProfilePicture(String preferredUsername, String newProfilePicture) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.updatePfp(preferredUsername, newProfilePicture);
+    }
+
+    /**
+     * Adds a friend to the user's friends array in the database.
+     * @param preferredUsername the user's preferred username
+     * @param newFriend the friend to add
+    * @throws Exception if the user is not found
+    */
+    @Transactional
+    public void addFriend(String preferredUsername, String newFriend) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        String[] currentFriends = userRepository.findByPreferredUsername(preferredUsername).getFriends();
+        if (Arrays.asList(currentFriends).contains(newFriend)) {
+            throw new Exception("Friend already exists");
+        }
+
+        userRepository.addFriend(preferredUsername, newFriend);
+    }
+
+    /**
+     * Removes a friend from the user's friends array in the database.
+     * @param preferredUsername the user's preferred username
+     * @param friendToDelete the friend to remove
+     * @throws Exception if the user is not found or the friend does not exist
+     */
+    @Transactional
+    public void deleteFriend(String preferredUsername, String friendToDelete) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        String[] currentFriends = userRepository.findByPreferredUsername(preferredUsername).getFriends();
+
+        if (currentFriends == null || !Arrays.asList(currentFriends).contains(friendToDelete)) {
+            throw new Exception("Friend not found");
+        }
+
+        userRepository.deleteFriend(preferredUsername, friendToDelete);
+    }
+    
+
+    /**
+     * Deletes a user by their username.
+     * @param preferredUsername the preferred username of the user to delete
+     * @throws Exception if the user does not exist
+     */
+    @Transactional
+    public void deleteUser(String preferredUsername) throws Exception {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            throw new Exception("User not found");
+        }
+
+        userRepository.deleteUser(preferredUsername);
     }
 }

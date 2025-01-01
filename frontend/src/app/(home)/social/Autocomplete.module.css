@@ -1,0 +1,8 @@
+.option {
+    transition: background-color 300ms ease, color 200ms ease;
+}
+
+.option:hover {
+    background-color: #41414785 !important;
+}
+  
