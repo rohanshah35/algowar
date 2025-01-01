@@ -37,8 +37,16 @@ const UserProfile = async ({ params }: { params: { username: string } }) => {
     notFound();
   }
 
-  const statsResponse = await fetch(`http://localhost:8080/user/stats/${username}`);
+  const statsResponse = await fetch(`http://localhost:8080/user/stats/${username}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookies().toString(),
+    },
+    credentials: "include",
+  });
   const statsData = await statsResponse.json();
+  console.log(statsData);
 
 
   let stats = {};

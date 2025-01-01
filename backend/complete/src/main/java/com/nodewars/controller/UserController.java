@@ -142,6 +142,19 @@ public class UserController {
             }
 
             String stats = userService.getStatsByPreferredUsername(username);
+            String pfp = s3Service.getPreSignedUrl(userService.getPfpByPreferredUsername(username));
+            String elo = String.valueOf(userService.getEloByPreferredUsername(username));
+            String friendCount = String.valueOf(userService.getFriendsByPreferredUsername(username).size());
+
+            if (idToken != null && preferredUsername != null) {
+                String currentPreferredUsername = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
+                if (userService.getFriendsByPreferredUsername(currentPreferredUsername).stream()
+                        .noneMatch(friend -> userService.getUserByUsername(String.valueOf(friend[0])).getPreferredUsername().equals(username))) {
+                    response.put("isFriend", "false");
+                } else {
+                    response.put("isFriend", "true");
+                }
+            }
 
             if (stats == null) {
                 response.put("stats", "{}");
@@ -149,6 +162,9 @@ public class UserController {
             }
 
             response.put("stats", stats);
+            response.put("pfp", pfp);
+            response.put("elo", elo);
+            response.put("friendCount", friendCount);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error checking if username exists: {}", e.getMessage());

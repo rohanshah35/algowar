@@ -99,6 +99,15 @@ public class UserService {
     }
 
     /**
+     * Fetches the elo for a given username.
+     * @param username the username
+     * @return the elo as a double
+     */
+    public double getEloByPreferredUsername(String preferredUsername) {
+        return userRepository.findByPreferredUsername(preferredUsername).getElo();
+    }
+
+    /**
      * Fetches the profile picture for a given username.
      * @param username the username
      * @return the profile picture as a string
