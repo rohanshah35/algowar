@@ -66,7 +66,7 @@ import { use, useEffect, useState } from 'react';
         icon: IconUsersGroup, 
         links: [
           { label: 'Friends & Search', link: '/friends' },
-          { label: 'Requests', link: '/requests' },
+          { label: 'Friend Requests', link: '/friend-requests' },
         ],
       },
       { label: 'Settings', icon: IconSettings, link: '/settings' },

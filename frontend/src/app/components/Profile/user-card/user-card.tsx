@@ -117,8 +117,8 @@ export function UserCardImage() {
       <Text ta="center" fz="lg" fw={500} mt="sm" style={{ color: "#f4f4f5" }}>
         {username}
       </Text>
-      <Text ta="center" fz="sm" c="dimmed" lh={1} style={{ color: "#a1a1aa" }}>
-        Created on {creationDate}
+      <Text ta="center" fz="sm" c="dimmed" lh={1} style={{ marginTop: "0.5rem", color: "#a1a1aa" }}>
+        Member since {creationDate}
       </Text>
       <Group mt="md" justify="center" gap={30}>
         {items}
