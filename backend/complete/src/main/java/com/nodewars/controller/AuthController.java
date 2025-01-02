@@ -78,12 +78,26 @@ public class AuthController {
 
         try {
             String userSub = cognitoService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
-            String stats = "{\"wins\": 0, \"losses\": 0}";
+            String stats = "{\n" +
+                "  \"wins\": 0,\n" +
+                "  \"losses\": 0,\n" +
+                "  \"skills\": [],\n" +
+                "  \"winRate\": 0,\n" +
+                "  \"languages\": [],\n" +
+                "  \"eloHistory\": [],\n" +
+                "  \"recentGames\": [],\n" +
+                "  \"difficultyDistribution\": {\n" +
+                "    \"easy\": 0,\n" +
+                "    \"medium\": 0,\n" +
+                "    \"hard\": 0\n" +
+                "  }\n" +
+                "}";
             double elo = 0.0;
             String preferred_language = "python3";
             String[] friends = new String[0];
+            String[] friendRequests = new String[0];
             String profilePicture = "profile-pictures/default.jpg";
-            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats, elo, request.getUsername(), preferred_language, friends, profilePicture);
+            userService.createUser(request.getEmail(), userSub, request.getUsername(), request.getPassword(), stats, elo, request.getUsername(), preferred_language, friends, profilePicture, friendRequests);
 
             response.put("sub", userSub);
 

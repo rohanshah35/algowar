@@ -54,15 +54,21 @@ import { use, useEffect, useState } from 'react';
         ],
       },
       {
-        label: 'Puzzles',
+        label: 'Practice',
         icon: IconPuzzle,
         links: [
           { label: 'Daily Puzzle', link: '/daily' },
-          { label: 'By Topic', link: '/bytopic' },
+          { label: 'Problems', link: '/problems' },
         ],
       },
       { label: 'Leaderboard', icon: IconChartBar, link: '/leaderboard' },
-      { label: 'Social', icon: IconUsersGroup, link: '/social' },
+      { label: 'Social', 
+        icon: IconUsersGroup, 
+        links: [
+          { label: 'Friends & Search', link: '/friends' },
+          { label: 'Requests', link: '/requests' },
+        ],
+      },
       { label: 'Settings', icon: IconSettings, link: '/settings' },
       {
         label: 'Account',
@@ -101,7 +107,7 @@ import { use, useEffect, useState } from 'react';
       <nav className={classes.navbar}>
         <div className={classes.header}>
           <Group justify="space-between">
-            <div style={{ color: '#d4d4d8', fontSize: '22px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
+            <div style={{ color: '#f4f4f5', fontSize: '22px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
               algowar.xyz
             </div>
           </Group>

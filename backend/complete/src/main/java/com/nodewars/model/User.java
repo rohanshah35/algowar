@@ -1,5 +1,6 @@
 package com.nodewars.model;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -46,10 +47,13 @@ public class User {
     @Column(name = "friends")
     private String[] friends;
 
+    @Column(name = "friend_requests")
+    private String[] friendRequests;
+
     @Transient
     private boolean isVerified; 
 
-    public User(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
+    public User(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture, String[] friendRequests) {
         this.email = email;
         this.cognitoUserId = cognitoUserId;
         this.username = username;
@@ -60,6 +64,7 @@ public class User {
         this.preferredLanguage = preferredLanguage;
         this.friends = friends;
         this.profilePicture = profilePicture;
+        this.friendRequests = friendRequests;
     }
 
     public User(String email, String cognitoUserId, String username, String preferredUsername, Boolean isVerified) {
@@ -161,18 +166,11 @@ public class User {
         this.isVerified = isVerified;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", cognitoUserId='" + cognitoUserId + '\'' +
-                ", profilePicture='" + profilePicture + '\'' +
-                ", stats='" + stats + '\'' +
-                ", preferredUsername='" + preferredUsername + '\'' +
-                ", preferredLanguage='" + preferredLanguage + '\'' +
-                ", isVerified=" + isVerified +
-                '}';
+    public String[] getFriendRequests() {
+        return friendRequests;
+    }
+
+    public void setFriendRequests(String[] friendRequests) {
+        this.friendRequests = friendRequests;
     }
 }

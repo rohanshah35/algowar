@@ -1,10 +1,13 @@
 'use client';
 
-import { Table, TableData } from '@mantine/core';
+import { Table, Card } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 export function LeaderboardTable() {
-  const [tableData, setTableData] = useState<TableData>({
+  const [tableData, setTableData] = useState<any>({
     head: ['RANK', 'USERNAME', 'WINS', 'ELO'],
     body: [],
   });
@@ -32,7 +35,7 @@ export function LeaderboardTable() {
             player.elo,
           ]);
 
-        setTableData((prev) => ({ ...prev, body }));
+        setTableData((prev: any) => ({ ...prev, body }));
       } catch (error) {
         console.error('Error fetching leaderboard data:', error);
       }
@@ -41,28 +44,136 @@ export function LeaderboardTable() {
     fetchLeaderboardData();
   }, []);
 
+  if (!tableData) {
+    return <div></div>
+  }
+
   return (
-    <Table
-      data={tableData}
-      styles={{
-        table: {
-          color: '#d4d4d8',
-        },
-        thead: {
-          backgroundColor: '#3f3f46',
-        },
-        th: {
-          color: '#d4d4d8 !important',
-          fontSize: '0.9rem',
-          fontWeight: 600,
-          padding: '1rem',
-        },
-        td: {
-          color: '#d4d4d8',
-          padding: '0.75rem 1rem',
-          fontSize: '0.95rem',
-        },
+    <Card
+      withBorder
+      radius="md"
+      style={{
+        backgroundColor: '#18181b',
+        borderColor: 'transparent',
+        color: '#f4f4f5',
+        padding: '2rem',
+        height: '100%',
+        minHeight: '450px',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: inter.style.fontFamily,
       }}
-    />
+    >
+      <div style={{ flex: 1, overflow: 'auto' }}>
+        <Table
+          striped
+          highlightOnHover
+          verticalSpacing="lg"
+          horizontalSpacing="lg"
+          style={{
+            borderCollapse: 'collapse',
+            width: '100%',
+          }}
+        >
+          <thead>
+            <tr>
+              <th
+                style={{
+                  textAlign: 'center',
+                  color: '#f4f4f5',
+                  paddingBottom: '1rem',
+                  borderBottom: '1px solid #27272a',
+                  fontSize: '1rem',
+                }}
+              >
+                Rank
+              </th>
+              <th
+                style={{
+                  textAlign: 'center',
+                  color: '#f4f4f5',
+                  paddingBottom: '1rem',
+                  borderBottom: '1px solid #27272a',
+                  fontSize: '1rem',
+                }}
+              >
+                Username
+              </th>
+              <th
+                style={{
+                  textAlign: 'center',
+                  color: '#f4f4f5',
+                  paddingBottom: '1rem',
+                  borderBottom: '1px solid #27272a',
+                  fontSize: '1rem',
+                }}
+              >
+                Wins
+              </th>
+              <th
+                style={{
+                  textAlign: 'center',
+                  color: '#f4f4f5',
+                  paddingBottom: '1rem',
+                  borderBottom: '1px solid #27272a',
+                  fontSize: '1rem',
+                }}
+              >
+                ELO
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.body.length === 0 ? (
+              <tr>
+                <td colSpan={4} style={{ textAlign: 'center', padding: '1.5rem', color: '#a0a0a0', fontSize: '1.5rem' }}>
+                </td>
+              </tr>
+            ) : (
+              tableData.body.map((row: any, index: number) => (
+                <tr key={index} style={{ borderBottom: '1px solid #27272a' }}>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '1rem',
+                      fontSize: '1rem',
+                    }}
+                  >
+                    {row[0]}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '1rem',
+                      fontSize: '1rem',
+                    }}
+                  >
+                    {row[1]}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '1rem',
+                      fontSize: '1rem',
+                    }}
+                  >
+                    {row[2]}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '1rem',
+                      fontSize: '1rem',
+                    }}
+                  >
+                    {row[3]}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </Table>
+      </div>
+    </Card>
   );
 }

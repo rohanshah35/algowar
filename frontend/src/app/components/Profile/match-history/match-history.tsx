@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 export function MatchHistory(): React.ReactElement {
   const { stats } = useProfile();
-  const { recentGames } = stats; // Get eloHistory from the profile context
+  const { recentGames } = stats;
 
   return (
     <Card
@@ -93,56 +93,63 @@ export function MatchHistory(): React.ReactElement {
             </tr>
           </thead>
           <tbody>
-            {/* Map through the eloHistory and display it */}
-            {recentGames.map((match, index) => (
-              <tr key={index} style={{ borderBottom: '1px solid #27272a' }}>
-                <td
-                  style={{
-                    textAlign: 'center',
-                    padding: '0.4rem',
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  {match.problem}
-                </td>
-                <td
-                  style={{
-                    textAlign: 'center',
-                    padding: '0.4rem',
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  {match.date}
-                </td>
-                <td
-                  style={{
-                    textAlign: 'center',
-                    padding: '0.4rem',
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  {match.opponent}
-                </td>
-                <td
-                  style={{
-                    textAlign: 'center',
-                    padding: '0.4rem',
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  {match.result}
-                </td>
-                <td
-                  style={{
-                    textAlign: 'center',
-                    padding: '0.4rem',
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  {match.eloChange}
+            {recentGames.length === 0 ? (
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '1rem', color: '#a0a0a0', fontSize: '1.2rem' }}>
+                  No matches available
                 </td>
               </tr>
-            ))}
+            ) : (
+              recentGames.map((match, index) => (
+                <tr key={index} style={{ borderBottom: '1px solid #27272a' }}>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '0.4rem',
+                      fontSize: '0.85rem',
+                    }}
+                  >
+                    {match.problem}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '0.4rem',
+                      fontSize: '0.85rem',
+                    }}
+                  >
+                    {match.date}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '0.4rem',
+                      fontSize: '0.85rem',
+                    }}
+                  >
+                    {match.opponent}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '0.4rem',
+                      fontSize: '0.85rem',
+                    }}
+                  >
+                    {match.result}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'center',
+                      padding: '0.4rem',
+                      fontSize: '0.85rem',
+                    }}
+                  >
+                    {match.eloChange}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </Table>
       </div>

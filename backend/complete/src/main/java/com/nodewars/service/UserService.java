@@ -3,6 +3,8 @@ package com.nodewars.service;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +24,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture) {
-        User user = new User(email, cognitoUserId, username, password, stats, elo, preferredUsername, preferredLanguage, friends, profilePicture);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    public User createUser(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture, String[] friendRequests) {
+        User user = new User(email, cognitoUserId, username, password, stats, elo, preferredUsername, preferredLanguage, friends, profilePicture, friendRequests);
 
         return userRepository.save(user);
     }
@@ -50,6 +54,7 @@ public class UserService {
      * @return the user
      */
     public User getUserByUsername(String username) {
+        logger.info("Fetching user by username: " + username);
         return userRepository.findByUsername(username);
     }
 
@@ -262,6 +267,10 @@ public class UserService {
             throw new Exception("User not found");
         }
 
+        if (!userRepository.existsByUsername(newFriend)) {
+            throw new Exception("Friend not found");
+        }
+
         String[] currentFriends = userRepository.findByPreferredUsername(preferredUsername).getFriends();
         if (Arrays.asList(currentFriends).contains(newFriend)) {
             throw new Exception("Friend already exists");
@@ -289,6 +298,13 @@ public class UserService {
         }
 
         userRepository.deleteFriend(preferredUsername, friendToDelete);
+        friendToDelete = userRepository.findByUsername(friendToDelete).getPreferredUsername();
+        preferredUsername = userRepository.findByPreferredUsername(preferredUsername).getUsername();
+        userRepository.deleteFriend(friendToDelete, preferredUsername);
+    }
+
+    public String getCreationDateByPreferredUsername(String preferredUsername) {
+        return userRepository.findCreationDateByPreferredUsername(preferredUsername);
     }
     
 
@@ -304,5 +320,81 @@ public class UserService {
         }
 
         userRepository.deleteUser(preferredUsername);
+    }
+
+    /**
+     * Sends a friend request from preferredUsername to friendUsername.
+     * @param preferredUsername
+     * @param friendUsername
+    * @throws Exception 
+    */
+    public void sendFriendRequest(String senderUsername, String friendPreferredUsername) throws Exception {
+        User user = userRepository.findByUsername(senderUsername);
+        User friend = userRepository.findByPreferredUsername(friendPreferredUsername);
+
+        if (user == null) {
+            throw new Exception("User not found");
+        } else if (friend == null) {
+            throw new Exception("Friend not found");
+        }
+
+        String[] currentFriends = friend.getFriends();
+        if (Arrays.asList(currentFriends).contains(senderUsername)) {
+            throw new Exception("Friend already exists");
+        }
+        logger.info("Sending friend request from " + senderUsername + " to " + friendPreferredUsername);
+        userRepository.addFriendRequest(friendPreferredUsername, senderUsername);
+    }
+
+    /**
+     * Accepts a friend request from friendUsername to preferredUsername.
+     * @param preferredUsername
+     * @param friendUsername
+     */
+    public void acceptFriendRequest(String senderUsername, String friendUsername) throws Exception {
+        User user = userRepository.findByUsername(senderUsername);
+        User friend = userRepository.findByUsername(friendUsername);
+
+        if (user == null) {
+            throw new Exception("User not found");
+        } else if (friend == null) {
+            throw new Exception("Friend not found");
+        }
+
+        String[] currentFriends = user.getFriendRequests();
+        if (!Arrays.asList(currentFriends).contains(friendUsername)) {
+            throw new Exception("Friend request not found");
+        }
+
+        userRepository.addFriend(user.getPreferredUsername(), friendUsername);
+        userRepository.addFriend(friend.getPreferredUsername(), senderUsername);
+        userRepository.deleteFriendRequest(senderUsername, friend.getUsername());
+    }
+
+    /**
+     * Declines a friend request from friendUsername to preferredUsername.
+     * @param preferredUsername
+     * @param friendUsername
+     */
+    public void declineFriendRequest(String senderUsername, String friendUsername) throws Exception {
+        User user = userRepository.findByUsername(senderUsername);
+        User friend = userRepository.findByUsername(friendUsername);
+
+        if (user == null) {
+            throw new Exception("User not found");
+        } else if (friend == null) {
+            throw new Exception("Friend not found");
+        }
+
+        String[] currentFriends = user.getFriendRequests();
+        if (!Arrays.asList(currentFriends).contains(friendUsername)) {
+            throw new Exception("Friend request not found");
+        }
+
+        userRepository.deleteFriendRequest(user.getPreferredUsername(), friendUsername);
+    }
+
+    public List<Object[]> getFriendRequestsByPreferredUsername(String preferredUsername) {
+        return userRepository.findFriendRequestsByPreferredUsername(preferredUsername);
     }
 }

@@ -42,7 +42,9 @@ interface Stats {
 interface ProfileContextType {
   username: string;
   isFriend: string;
+  isFriendRequestSent: string;
   isCurrentUser: string;
+  creationDate: string;
   stats: Stats;
   pfp: string;
   elo: number;
@@ -58,7 +60,9 @@ interface ProfileProviderProps {
     username: string;
     stats: string;
     isCurrentUser: string;
+    creationDate: string;
     isFriend: string;
+    isFriendRequestSent: string;
     pfp: string;
     elo: number;
     friendCount: number;
