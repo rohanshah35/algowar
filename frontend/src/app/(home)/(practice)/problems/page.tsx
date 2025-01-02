@@ -1,4 +1,4 @@
-import { ProblemTable } from "@/components/Problems/problem-table/problem-table";
+import { ProblemTable } from "@/components/Practice/problem-table/problem-table";
 
 export default async function Problems() {
   return (

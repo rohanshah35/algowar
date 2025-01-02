@@ -34,13 +34,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Queries using 'username'
 
-    @Query("SELECT u FROM User u WHERE u.username = :username")
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) = LOWER(:username)")
     User findByUsername(String username);
     boolean existsByUsername(String username);
 
     @Modifying(clearAutomatically = true)
     @Transactional
-    @Query("UPDATE User u SET u.preferredUsername = :newPreferredUsername WHERE u.username = :username")
+    @Query("UPDATE User u SET u.preferredUsername = :newPreferredUsername WHERE LOWER(u.username) = LOWER(:username)")
     void updatePreferredUsername(@Param("username") String username, @Param("newPreferredUsername") String newPreferredUsername);
 
     // Queries using 'preferred username'
@@ -86,6 +86,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE users SET friend_requests = array_append(friend_requests, :newFriend) WHERE preferred_username = :preferredUsername AND NOT (:newFriend = ANY(friend_requests))", nativeQuery = true)
+    void addFriendRequest(@Param("preferredUsername") String preferredUsername, @Param("newFriend") String newFriend);
+    
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE users SET friend_requests = array_remove(friend_requests, :friendToRemove) WHERE preferred_username = :preferredUsername", nativeQuery = true)
+    void deleteFriendRequest(@Param("preferredUsername") String preferredUsername, @Param("friendToRemove") String friendToRemove);
+     
+
+    @Modifying
+    @Transactional
     @Query("DELETE FROM User u WHERE u.preferredUsername = :preferredUsername")
     void deleteUser(@Param("preferredUsername") String preferredUsername);
 
@@ -113,8 +124,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
        nativeQuery = true)
     List<Object[]> findFriendsByPreferredUsername(@Param("preferredUsername") String preferredUsername);
 
+    @Query(value = "SELECT f.preferred_username, f.profile_picture " +
+               "FROM users u " +
+               "JOIN users f ON f.username = ANY(u.friend_requests) " +
+               "WHERE u.preferred_username = :preferredUsername", 
+       nativeQuery = true)
+    List<Object[]> findFriendRequestsByPreferredUsername(@Param("preferredUsername") String preferredUsername);
+
     @Query(value = "SELECT COUNT(*) + 1 FROM users WHERE elo > (SELECT elo FROM users WHERE preferred_username = :preferredUsername)", nativeQuery = true)
     int findRankByPreferredUsername(@Param("preferredUsername") String preferredUsername);
+
+    @Query(value = "SELECT created_at FROM users WHERE preferred_username = :preferredUsername", nativeQuery = true)
+    String findCreationDateByPreferredUsername(@Param("preferredUsername") String preferredUsername);
 
 
 }

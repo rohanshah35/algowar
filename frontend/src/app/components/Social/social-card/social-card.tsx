@@ -24,8 +24,8 @@ export function SocialCard({
         radius="md"
         withBorder
         p="md"
-        bg="#27272a"
-        style={{ border: "1px solid #3f3f46", position: "relative", boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.5)" }}
+        bg="#18181b"
+        style={{ border: "transparent", position: "relative", boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.5)" }}
       >
         <ActionIcon
           variant="transparent"
@@ -69,7 +69,7 @@ export function SocialCard({
           styles={{
             root: {
               backgroundColor: "#27272a",
-              borderColor: "#3f3f46",
+              borderColor: "transparent",
               color: "#d4d4d8",
               fontFamily: inter.style.fontFamily,
               fontSize: "0.75rem",

@@ -141,7 +141,7 @@ public class UserController {
                 throw new IllegalArgumentException("Username not provided in PathVariable or JWT.");
             }
 
-            String stats = userService.getStatsByPreferredUsername(username);
+            String stats = userService.getStatsByPreferredUsername(username).toString();
 
             if (stats == null) {
                 return ResponseEntity.notFound().build();
@@ -179,23 +179,36 @@ public class UserController {
                 throw new IllegalArgumentException("Username not provided in PathVariable or JWT.");
             }
 
-            String stats = userService.getStatsByPreferredUsername(username);
+            String stats = userService.getStatsByPreferredUsername(username).toString();
             String pfp = s3Service.getPreSignedUrl(userService.getPfpByPreferredUsername(username));
             String elo = String.valueOf(userService.getEloByPreferredUsername(username));
             String friendCount = String.valueOf(userService.getFriendsByPreferredUsername(username).size());
             String rank = String.valueOf(userService.getRankByPreferredUsername(username));
-            
+            String creationDate = userService.getCreationDateByPreferredUsername(username).split(" ")[0];
+
             if (idToken != null && preferredUsername != null) {
                 String currentPreferredUsername = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
-                if (userService.getFriendsByPreferredUsername(currentPreferredUsername).stream()
-                        .noneMatch(friend -> userService.getUserByUsername(String.valueOf(friend[0])).getPreferredUsername().equals(username))) {
-                    response.put("isFriend", "false");
-                } else {
-                    response.put("isFriend", "true");
-                }
-
                 boolean isCurrentUser = currentPreferredUsername.equals(preferredUsername);
-                response.put("isCurrentUser", String.valueOf(isCurrentUser));
+                logger.info("isCurrentUser: {}", isCurrentUser);
+                if (isCurrentUser) {
+                    response.put("isCurrentUser", String.valueOf(isCurrentUser));
+                    response.put("isFriend", "false");
+                    response.put("isFriendRequestSent", "false");
+                } else {
+                    if (userService.getFriendsByPreferredUsername(currentPreferredUsername).stream()
+                    .noneMatch(friend -> String.valueOf(friend[0]).equals(username))) {
+                        response.put("isFriend", "false");
+                    } else {
+                        response.put("isFriend", "true");
+                    }
+                    String senderUsername = userService.getUserByPreferredUsername(currentPreferredUsername).getUsername();
+                    if (userService.getFriendRequestsByPreferredUsername(preferredUsername).stream()
+                            .noneMatch(friend -> String.valueOf(friend[0]).equals(senderUsername))) {
+                        response.put("isFriendRequestSent", "false");
+                    } else {
+                        response.put("isFriendRequestSent", "true");
+                    }
+                }
             }
 
             if (stats == null) {
@@ -209,6 +222,7 @@ public class UserController {
             response.put("elo", elo);
             response.put("friendCount", friendCount);
             response.put("rank", rank);
+            response.put("creationDate", creationDate);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error checking if username exists: {}", e.getMessage());
@@ -311,7 +325,6 @@ public class UserController {
             }
 
             List<Object[]> friendsData = userService.getFriendsByPreferredUsername(username);
-
             List<Map<String, String>> friends = friendsData.stream()
                 .map(entry -> {
                     String friendPreferredUsername = (String) entry[0];
@@ -333,25 +346,115 @@ public class UserController {
         }
     }
 
+    /**
+     * Endpoint to fetch the friend requests for a given username.
+     * @param idToken
+     * @param newFriend
+     * @return
+     */
+    @GetMapping("/friend-requests")
+    public ResponseEntity<Map<String, Object>> getFriendRequests(
+        @CookieValue(name = "idToken", required = false) String idToken
+    ) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String username = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
+
+            List<Object[]> friendRequestsData = userService.getFriendRequestsByPreferredUsername(username);
+            List<Map<String, String>> friendRequests = friendRequestsData.stream()
+                .map(entry -> {
+                    String friendPreferredUsername = (String) entry[0];
+                    String profilePicturePath = (String) entry[1];
+                    String profilePictureUrl = s3Service.getPreSignedUrl(profilePicturePath);
+                    return Map.of(
+                        "username", friendPreferredUsername,
+                        "profilePicture", profilePictureUrl
+                    );
+                })
+                .toList();
+
+            response.put("friendRequests", friendRequests);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error fetching friend requests: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
 
     /**
-     * Endpoint to add a friend to the user's friends array.
+     * Endpoint to send a friend request to another user.
      * @param newFriend the friend to add (preferred username)
      * @return success/error message
      */
-    @PostMapping("/friends/add/{newFriend}")
-    public ResponseEntity<Map<String, String>> addFriend(
-        @CookieValue(name = "idToken", required = false) String idToken,
+    @PostMapping("/friends/send-friend-request/{newFriend}")
+    public ResponseEntity<Map<String, String>> sendFriendRequest(
+        @CookieValue(name = "idToken", required = true) String idToken,
         @PathVariable String newFriend) {
         Map<String, String> response = new HashMap<>();
 
         try {
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
-            String preferredUsername = currentUser.getPreferredUsername();
+            String username = userService.getUserByPreferredUsername(currentUser.getPreferredUsername()).getUsername();
 
-            newFriend = userService.getUserByPreferredUsername(newFriend).getPreferredUsername();
+            // newfriend row is where the friend request is sent to
+            userService.sendFriendRequest(username, newFriend);
+            response.put("message", "Friend request sent successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error adding friend: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 
-            userService.addFriend(preferredUsername, newFriend);
+    /**
+     * Endpoint to accept a friend request from another user.
+     * @param newFriend the friend to add (preferred username)
+     * @return success/error message
+     */
+    @PostMapping("/friends/accept-friend-request/{newFriend}")
+    public ResponseEntity<Map<String, String>> acceptFriendRequest(
+        @CookieValue(name = "idToken", required = true) String idToken,
+        @PathVariable String newFriend) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String username = userService.getUserByPreferredUsername(currentUser.getPreferredUsername()).getUsername();
+
+            newFriend = userService.getUserByPreferredUsername(newFriend).getUsername();
+            // newfriend row is where the friend request will be removed, but the friend will be added (on both rows)
+            userService.acceptFriendRequest(username, newFriend);
+            response.put("message", "Friend added successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error adding friend: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    /**
+     * Endpoint to accept a friend request from another user.
+     * @param newFriend the friend to add (preferred username)
+     * @return success/error message
+     */
+    @DeleteMapping("/friends/decline-friend-request/{newFriend}")
+    public ResponseEntity<Map<String, String>> declineFriendRequest(
+        @CookieValue(name = "idToken", required = true) String idToken,
+        @PathVariable String newFriend) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            String username = userService.getUserByPreferredUsername(currentUser.getPreferredUsername()).getUsername();
+
+            newFriend = userService.getUserByPreferredUsername(newFriend).getUsername();
+            // newfriend row is where the friend request will be removed
+            userService.declineFriendRequest(username, newFriend);
             response.put("message", "Friend added successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -377,7 +480,7 @@ public class UserController {
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
             String preferredUsername = currentUser.getPreferredUsername();
 
-            String friendPreferredUsername = userService.getUserByPreferredUsername(friendToDelete).getPreferredUsername();
+            String friendPreferredUsername = userService.getUserByPreferredUsername(friendToDelete).getUsername();
 
             userService.deleteFriend(preferredUsername, friendPreferredUsername);
             response.put("message", "Friend deleted successfully");
@@ -435,6 +538,7 @@ public class UserController {
             String newPreferredUsername = request.get("newUsername");
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            currentUser = userService.getUserByUsername(currentUser.getUsername());
 
             if (userService.usernameExists(newPreferredUsername)) {
                 response.put("error", "Username already exists");
@@ -484,10 +588,12 @@ public class UserController {
             String newEmail = request.get("newEmail");
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            currentUser = userService.getUserByPreferredUsername(currentUser.getPreferredUsername());
             String currentPreferredUsername = currentUser.getPreferredUsername();
+            String currentUsername = currentUser.getUsername();
 
 
-            cognitoService.updateEmail(currentPreferredUsername, newEmail);
+            cognitoService.updateEmail(currentUsername, newEmail);
             userService.updateEmail(currentPreferredUsername, newEmail);
 
             currentUser = userService.getUserByUsername(currentUser.getUsername());
@@ -530,6 +636,7 @@ public class UserController {
             String newPassword = passwordRequest.get("newPassword");
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            currentUser = userService.getUserByPreferredUsername(currentUser.getPreferredUsername());
             String currentPreferredUsername = currentUser.getPreferredUsername();
 
             cognitoService.changePassword(currentUser.getUsername(), oldPassword, newPassword);
@@ -590,6 +697,7 @@ public class UserController {
         try {
 
             User currentUser = cognitoUtils.verifyAndGetUser(idToken);
+            currentUser = userService.getUserByPreferredUsername(currentUser.getPreferredUsername());
             String currentUsername = currentUser.getUsername();
             String currentPreferredUsername = currentUser.getPreferredUsername();
 

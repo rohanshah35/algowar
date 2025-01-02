@@ -62,7 +62,13 @@ import { use, useEffect, useState } from 'react';
         ],
       },
       { label: 'Leaderboard', icon: IconChartBar, link: '/leaderboard' },
-      { label: 'Social', icon: IconUsersGroup, link: '/social' },
+      { label: 'Social', 
+        icon: IconUsersGroup, 
+        links: [
+          { label: 'Friends & Search', link: '/friends' },
+          { label: 'Requests', link: '/requests' },
+        ],
+      },
       { label: 'Settings', icon: IconSettings, link: '/settings' },
       {
         label: 'Account',
