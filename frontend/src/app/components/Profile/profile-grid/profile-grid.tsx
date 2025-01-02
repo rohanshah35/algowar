@@ -5,12 +5,17 @@ import { ProfileBox } from '../profile-box/profile-box';
 import { SparklineGraph } from '../profile-graphs/sparkline';
 import { DonutGraph } from '../profile-graphs/donut';
 import { MatchHistory } from '../match-history/match-history';
+import { useProfile } from '@/context/profile-context';
 
 const PRIMARY_COL_HEIGHT = '850px';
 
 export function ProfileGrid(): React.ReactNode {
   const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - var(--mantine-spacing-md) / 2)`;
   const isMobile = useMediaQuery('(max-width: 1200px)');
+
+  const profileInfo = useProfile();
+
+  console.log('profileInfo:', profileInfo);
 
   return (
     <div

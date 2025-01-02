@@ -1,12 +1,15 @@
 import React from 'react';
 import { ResponsivePie } from '@nivo/pie';
 import { Card } from '@mantine/core';
+import { useProfile } from '@/context/profile-context';
 
 export function DonutGraph(): React.ReactNode {
+  const { stats } = useProfile();
+  const { difficultyDistribution } = stats;
   const data = [
-    { id: 'Easy', label: 'Easy', value: 50 },
-    { id: 'Medium', label: 'Medium', value: 30 },
-    { id: 'Hard', label: 'Hard', value: 20 },
+    { id: 'Easy', label: 'Easy', value: stats.difficultyDistribution.easy },
+    { id: 'Medium', label: 'Medium', value: stats.difficultyDistribution.medium },
+    { id: 'Hard', label: 'Hard', value: stats.difficultyDistribution.hard },
   ];
 
   return (

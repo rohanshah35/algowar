@@ -1,18 +1,19 @@
 import React from 'react';
 import { ResponsiveLine } from '@nivo/line';
 import { Card } from '@mantine/core';
+import { useProfile } from '@/context/profile-context';
 
 export function SparklineGraph(): React.ReactElement {
+  const { stats } = useProfile();
+  const { eloHistory } = stats;
+  
   const data = [
     {
       id: 'sparkline',
-      data: [
-        { x: 'Jan', y: 1500 },
-        { x: 'Feb', y: 3200 },
-        { x: 'Mar', y: 4500 },
-        { x: 'Apr', y: 6700 },
-        { x: 'May', y: 8200 },
-      ],
+      data: eloHistory.map(game => ({
+        x: game.month,
+        y: game.elo,
+      })),
     },
   ];
 

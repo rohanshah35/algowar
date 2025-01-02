@@ -113,4 +113,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
        nativeQuery = true)
     List<Object[]> findFriendsByPreferredUsername(@Param("preferredUsername") String preferredUsername);
 
+    @Query(value = "SELECT COUNT(*) + 1 FROM users WHERE elo > (SELECT elo FROM users WHERE preferred_username = :preferredUsername)", nativeQuery = true)
+    int findRankByPreferredUsername(@Param("preferredUsername") String preferredUsername);
+
+
 }

@@ -1,23 +1,13 @@
 import React from 'react';
 import { Table, Card } from '@mantine/core';
 import { Inter } from 'next/font/google';
+import { useProfile } from '@/context/profile-context';
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 export function MatchHistory(): React.ReactElement {
-  const matchHistory = [
-    { problem: 'Two Sum', date: '2023-01-15', opponent: 'Player123', result: 'Win', eloChange: '+30' },
-    { problem: 'Reverse Linked List', date: '2023-01-18', opponent: 'Player456', result: 'Loss', eloChange: '-20' },
-    { problem: 'Binary Search', date: '2023-01-20', opponent: 'Player789', result: 'Win', eloChange: '+25' },
-    { problem: 'Climbing Stairs', date: '2023-01-22', opponent: 'Player101', result: 'Loss', eloChange: '-15' },
-    { problem: 'Longest Substring', date: '2023-01-25', opponent: 'Player202', result: 'Win', eloChange: '+40' },
-    { problem: 'Merge Intervals', date: '2023-01-27', opponent: 'Player303', result: 'Win', eloChange: '+30' },
-    { problem: 'Minimum Path Sum', date: '2023-01-29', opponent: 'Player404', result: 'Loss', eloChange: '-25' },
-    { problem: 'Word Search', date: '2023-02-01', opponent: 'Player505', result: 'Win', eloChange: '+50' },
-    { problem: 'Word Search', date: '2023-02-01', opponent: 'Player505', result: 'Win', eloChange: '+50' },
-    { problem: 'Longest Substring', date: '2023-01-25', opponent: 'Player202', result: 'Win', eloChange: '+40' },
-    
-  ];
+  const { stats } = useProfile();
+  const { recentGames } = stats; // Get eloHistory from the profile context
 
   return (
     <Card
@@ -103,47 +93,48 @@ export function MatchHistory(): React.ReactElement {
             </tr>
           </thead>
           <tbody>
-            {matchHistory.map((match, index) => (
+            {/* Map through the eloHistory and display it */}
+            {recentGames.map((match, index) => (
               <tr key={index} style={{ borderBottom: '1px solid #27272a' }}>
-                <td 
-                  style={{ 
-                    textAlign: 'center', 
+                <td
+                  style={{
+                    textAlign: 'center',
                     padding: '0.4rem',
                     fontSize: '0.85rem',
                   }}
                 >
                   {match.problem}
                 </td>
-                <td 
-                  style={{ 
-                    textAlign: 'center', 
+                <td
+                  style={{
+                    textAlign: 'center',
                     padding: '0.4rem',
                     fontSize: '0.85rem',
                   }}
                 >
                   {match.date}
                 </td>
-                <td 
-                  style={{ 
-                    textAlign: 'center', 
+                <td
+                  style={{
+                    textAlign: 'center',
                     padding: '0.4rem',
                     fontSize: '0.85rem',
                   }}
                 >
                   {match.opponent}
                 </td>
-                <td 
-                  style={{ 
-                    textAlign: 'center', 
+                <td
+                  style={{
+                    textAlign: 'center',
                     padding: '0.4rem',
                     fontSize: '0.85rem',
                   }}
                 >
                   {match.result}
                 </td>
-                <td 
-                  style={{ 
-                    textAlign: 'center', 
+                <td
+                  style={{
+                    textAlign: 'center',
                     padding: '0.4rem',
                     fontSize: '0.85rem',
                   }}
