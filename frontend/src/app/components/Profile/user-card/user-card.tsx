@@ -1,16 +1,18 @@
 import { Avatar, Button, Card, Group, Text } from "@mantine/core";
 import { Inter } from 'next/font/google';
 import classes from "./UserCardImage.module.css";
-import { IconUserPlus } from "@tabler/icons-react";
+import { IconUserMinus, IconUserPlus } from "@tabler/icons-react";
+import { useProfile } from "@/context/profile-context";
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
-const stats = [
-  { value: "2", label: "Friends" },
-];
 
 export function UserCardImage() {
-  const items = stats.map((stat) => (
+  const { username, isCurrentUser, isFriend, pfp, rank, friendCount } = useProfile();
+  const items = [
+    { value: friendCount, label: "Friends" },
+    { value: rank, label: "Rank" },
+  ].map((stat) => (
     <div key={stat.label}>
       <Text ta="center" fz="lg" fw={500} style={{ color: "#f4f4f5" }}>
         {stat.value}
@@ -36,7 +38,7 @@ export function UserCardImage() {
       }}
     >
       <Avatar
-        src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+        src={pfp}
         size={80}
         radius={80}
         mx="auto"
@@ -50,33 +52,32 @@ export function UserCardImage() {
         mt="sm"
         style={{ color: "#f4f4f5" }}
       >
-        LeBron James
-      </Text>
-      <Text
-        ta="center"
-        fz="sm"
-        c="dimmed"
-        style={{ color: "#a1a1aa"}}
-      >
-        Fullstack engineer
+        {username}
       </Text>
       <Group mt="md" justify="center" gap={30}>
         {items}
       </Group>
-      <Button
-        fullWidth
-        radius="md"
-        mt="xl"
-        size="sm"
-        variant="default"
-        style={{
-          backgroundColor: "#27272a",
-          color: "#f4f4f5",
-          borderColor: "#3f3f46",
-        }}
-      >
-        <IconUserPlus size={25} />
-      </Button>
+      {!(isCurrentUser === "true") && (
+        <Button
+          fullWidth
+          radius="md"
+          mt="xl"
+          size="sm"
+          variant="default"
+          style={{
+            backgroundColor: "#27272a",
+            color: "#f4f4f5",
+            borderColor: "#3f3f46",
+          }}
+          title={(isFriend === "true") ? "Remove Friend" : "Add Friend"}
+        >
+          {(isFriend === "true") ? (
+            <IconUserMinus size={25} />
+          ) : (
+            <IconUserPlus size={25} />
+          )}
+        </Button>
+      )}  
     </Card>
   );
 }

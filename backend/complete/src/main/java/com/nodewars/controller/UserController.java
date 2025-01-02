@@ -142,10 +142,49 @@ public class UserController {
             }
 
             String stats = userService.getStatsByPreferredUsername(username);
+
+            if (stats == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            response.put("stats", stats);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error checking if username exists: {}", e.getMessage());
+            response.put("error", "An error has occurred, please try again.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(response);
+        }
+    }
+
+    /**
+     * Endpoint to fetch stats for a given username.
+     * @param username the username
+     * @return the stats JSON
+     */
+    @GetMapping({"/profile-info", "/profile-info/{preferredUsername}"})
+    public ResponseEntity<Map<String, String>>  getProfileInfo(
+        @PathVariable(required = false) String preferredUsername,
+        @CookieValue(name = "idToken", required = false) String idToken) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String username;
+
+            if (preferredUsername != null) {
+                username = preferredUsername;
+            } else if (idToken != null) {
+                username = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
+            } else {
+                throw new IllegalArgumentException("Username not provided in PathVariable or JWT.");
+            }
+
+            String stats = userService.getStatsByPreferredUsername(username);
             String pfp = s3Service.getPreSignedUrl(userService.getPfpByPreferredUsername(username));
             String elo = String.valueOf(userService.getEloByPreferredUsername(username));
             String friendCount = String.valueOf(userService.getFriendsByPreferredUsername(username).size());
-
+            String rank = String.valueOf(userService.getRankByPreferredUsername(username));
+            
             if (idToken != null && preferredUsername != null) {
                 String currentPreferredUsername = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
                 if (userService.getFriendsByPreferredUsername(currentPreferredUsername).stream()
@@ -154,6 +193,9 @@ public class UserController {
                 } else {
                     response.put("isFriend", "true");
                 }
+
+                boolean isCurrentUser = currentPreferredUsername.equals(preferredUsername);
+                response.put("isCurrentUser", String.valueOf(isCurrentUser));
             }
 
             if (stats == null) {
@@ -161,10 +203,12 @@ public class UserController {
                 return ResponseEntity.notFound().build();
             }
 
+            response.put("username", preferredUsername);
             response.put("stats", stats);
             response.put("pfp", pfp);
             response.put("elo", elo);
             response.put("friendCount", friendCount);
+            response.put("rank", rank);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error checking if username exists: {}", e.getMessage());

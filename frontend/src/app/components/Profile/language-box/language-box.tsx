@@ -1,19 +1,14 @@
 import React, { useState } from "react";
 import { Badge, Text, UnstyledButton } from "@mantine/core";
 import { Inter } from 'next/font/google';
+import { useProfile } from "@/context/profile-context";
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 
 export function Languages() {
-  const languages = [
-    { name: "JavaScript", count: 40 },
-    { name: "React", count: 18 },
-    { name: "Node.js", count: 12 },
-    { name: "Python", count: 25 },
-    { name: "Java", count: 22 },
-    { name: "C++", count: 15 },
-  ];
+  const { stats } = useProfile();
+  const { languages } = stats;
 
   const [showAll, setShowAll] = useState(false);
   const visibleLanguages = showAll ? languages : languages.slice(0, 4);
@@ -38,7 +33,7 @@ export function Languages() {
       >
         {visibleLanguages.map((language) => (
           <Badge
-          key={language.name}
+          key={language.language}
           size="md"
           radius="md"
           style={{
@@ -53,7 +48,7 @@ export function Languages() {
             textTransform: "none",
           }}
         >
-          <span style={{ textTransform: "uppercase" }}>{language.name}</span>
+          <span style={{ textTransform: "uppercase" }}>{language.language}</span>
           <span style={{ fontWeight: "normal" }}> x{language.count}</span>
         </Badge>
         ))}

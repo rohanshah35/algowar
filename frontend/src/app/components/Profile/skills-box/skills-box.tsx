@@ -2,19 +2,14 @@ import React, { useState } from "react";
 import { Badge, Text, UnstyledButton } from "@mantine/core";
 
 import { Inter } from 'next/font/google';
+import { useProfile } from "@/context/profile-context";
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 export function Skills() {
-  const skills = [
-    { name: "Divide and Conquer", count: 40 },
-    { name: "Hash Table", count: 18 },
-    { name: "Math", count: 12 },
-    { name: "Array", count: 25 },
-    { name: "Two Pointers", count: 22 },
-    { name: "String", count: 15 },
-  ];
-
+  const { stats } = useProfile();
+  const { skills } = stats;
+  
   const [showAll, setShowAll] = useState(false);
   const visibleSkills = showAll ? skills : skills.slice(0, 3);
 
@@ -38,7 +33,7 @@ export function Skills() {
       >
         {visibleSkills.map((skill) => (
           <Badge
-            key={skill.name}
+            key={skill.skill}
             size="md"
             radius="md"
             style={{
@@ -53,7 +48,7 @@ export function Skills() {
               textTransform: "none",
             }}
           >
-            <span style={{ textTransform: "uppercase" }}>{skill.name}</span>
+            <span style={{ textTransform: "uppercase" }}>{skill.skill}</span>
             <span style={{ fontWeight: "normal" }}> x{skill.count}</span>
           </Badge>
         ))}

@@ -126,6 +126,18 @@ public class UserService {
     }
 
     /**
+     * Fetches the rank for a given username.
+     * @param preferredUsername the username
+     * @return the rank as an integer
+     */
+    public int getRankByPreferredUsername(String preferredUsername) {
+        if (!userRepository.existsByPreferredUsername(preferredUsername)) {
+            return -1;
+        }
+        return userRepository.findRankByPreferredUsername(preferredUsername);
+    }
+
+    /**
      * Fetches the preferred language for a given preferred username.
      * @param preferred_username the preferred username
      * @return the preferred language as a string

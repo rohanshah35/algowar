@@ -48,7 +48,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link }: 
         e.preventDefault();
         if (link.isLogout) {
           handleLogout();
-          router.push('/');
+          setTimeout(() => router.push('/'), 200);
         } else {
           router.push(link.link);
         }

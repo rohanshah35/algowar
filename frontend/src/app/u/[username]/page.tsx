@@ -3,6 +3,7 @@ import { NavbarNested } from '@/components/Navbars/vertical-navbar/vertical-navb
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { ProfileGrid } from '@/components/Profile/profile-grid/profile-grid';
+import { ProfileProvider } from '@/context/profile-context';
 
 async function checkAuth() {
   try {
@@ -27,62 +28,55 @@ async function checkAuth() {
   }
 }
 
-const UserProfile = async ({ params }: { params: { username: string } }) => {
-  const { username } = await params;
-
-  const response = await fetch(`http://localhost:8080/user/exists/${username}`);
-  const data = await response.json();
-
-  if (data.exists !== 'true') {
-    notFound();
-  }
-
-  const statsResponse = await fetch(`http://localhost:8080/user/stats/${username}`, {
-    method: "GET",
+async function fetchProfileInfo(username: string) {
+  const cookieStore = cookies().toString();
+  const response = await fetch(`http://localhost:8080/user/profile-info/${username}`, {
     headers: {
       "Content-Type": "application/json",
-      Cookie: cookies().toString(),
+      Cookie: cookieStore,
     },
     credentials: "include",
   });
-  const statsData = await statsResponse.json();
-  console.log(statsData);
 
+  if (!response.ok) throw new Error("Failed to fetch profile info");
+  return response.json();
+}
 
-  let stats = {};
-  if (statsData.stats) {
-    try {
-      stats = JSON.parse(statsData.stats);
-    } catch (error) {
-      console.error("Failed to parse stats JSON:", error);
-    }
-  }
-
+const UserProfile = async ({ params }: { params: { username: string } }) => {
+  const { username } = await params;
   const auth = await checkAuth();
 
-  return (
-    <div style={{ 
-      display: 'flex', 
-      minHeight: '100vh', 
-      flexDirection: 'column', 
-    }}>
-      {auth ? <NavbarNested /> : <AppNavbar />}
+  const userExistsResponse = await fetch(`http://localhost:8080/user/exists/${username}`);
+  const userExists = await userExistsResponse.json();
+  if (!userExists.exists) notFound();
 
-      <main
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '20px',
-          flex: 1,
-          marginLeft: auth ? '250px' : '0',
-          marginTop: auth ? '10px' : '60px',
-          width: auth ? 'calc(100vw - 250px)' : '100vw',
-          maxWidth: '100%',
-        }}
-      >
-        <ProfileGrid />
-      </main>
-    </div>
+  const profileInfo = await fetchProfileInfo(username);
+
+  return (
+    <ProfileProvider profileInfo={profileInfo}>
+      <div style={{ 
+        display: 'flex', 
+        minHeight: '100vh', 
+        flexDirection: 'column', 
+      }}>
+        {auth ? <NavbarNested /> : <AppNavbar />}
+
+        <main
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '20px',
+            flex: 1,
+            marginLeft: auth ? '250px' : '0',
+            marginTop: auth ? '10px' : '60px',
+            width: auth ? 'calc(100vw - 250px)' : '100vw',
+            maxWidth: '100%',
+          }}
+        >
+          <ProfileGrid />
+        </main>
+      </div>
+    </ProfileProvider>
   );
 };
 
