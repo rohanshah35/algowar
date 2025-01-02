@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
     "@mantine/charts": "^7.15.2",
     "@mantine/core": "^7.15.1",
     "@mantine/dropzone": "^7.15.2",
@@ -20,9 +21,12 @@
     "@nivo/line": "^0.88.0",
     "@nivo/pie": "^0.88.0",
     "@tabler/icons-react": "^3.26.0",
+    "@uiw/codemirror-theme-vscode": "^4.23.7",
+    "@uiw/react-codemirror": "^4.23.7",
     "next": "15.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-split": "^2.0.14",
     "recharts": "^2.15.0",
     "sass": "^1.83.0"
   },
