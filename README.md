@@ -13,6 +13,7 @@ We are creating a full-stack web application designed to gamify Leetcode-style c
 - **Authentication**: AWS Cognito
 - **File Storage**: AWS S3
 - **Containerization**: Docker
+- **Hosting**: AWS EC2
 
 ---
 
