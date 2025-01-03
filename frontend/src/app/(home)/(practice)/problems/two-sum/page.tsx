@@ -1,10 +1,13 @@
-// import React from "react";
-// import Workspace from "@/components/Puzzle/workspace";
-// import { mockProblem } from "@/components/Puzzle/mockdata";
+"use client";
 
-// const ProblemPage = () => {
-//   // Mock problem; replace with dynamic data
-//   return <Workspace problem={mockProblem} />;
-// };
+import React from "react";
+import Workspace from "@/components/Practice/workspace";
+import { mockProblem } from "@/components/Practice/mockdata";
 
-// export default ProblemPage;
+const ProblemPage = () => {
+    return (
+        <Workspace problem={mockProblem} />
+    );
+};
+
+export default ProblemPage;

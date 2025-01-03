@@ -28,7 +28,8 @@
     "react-dom": "^18.3.1",
     "react-split": "^2.0.14",
     "recharts": "^2.15.0",
-    "sass": "^1.83.0"
+    "sass": "^1.83.0",
+    "split.js": "^1.6.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
