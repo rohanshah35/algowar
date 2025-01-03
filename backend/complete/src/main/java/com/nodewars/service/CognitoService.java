@@ -300,7 +300,7 @@ public class CognitoService {
                     .userPoolId(userPoolId)
                     .build();
 
-            AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
+            cognitoClient.adminGetUser(getUserRequest);
 
             String accessToken = getAccessToken(username, oldPassword);
 
@@ -332,7 +332,7 @@ public class CognitoService {
                     .username(username)
                     .build();
 
-            AdminDeleteUserResponse deleteUserResponse = cognitoClient.adminDeleteUser(deleteUserRequest);
+            cognitoClient.adminDeleteUser(deleteUserRequest);
 
         } catch (CognitoIdentityProviderException e) {
             throw new Exception("Failed to delete user from Cognito: " + e.awsErrorDetails().errorMessage(), e);

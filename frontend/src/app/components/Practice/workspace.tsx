@@ -13,6 +13,11 @@ const Workspace = ({ problem }: { problem: any }) => {
       snapOffset: 30,
       dragInterval: 1,
       gutterAlign: "center",
+      gutter: (index, direction) => {
+        const gutter = document.createElement("div");
+        gutter.className = `${styles.gutter}`;
+        return gutter;
+      },
     });
 
     return () => splitInstance.destroy();
@@ -20,12 +25,10 @@ const Workspace = ({ problem }: { problem: any }) => {
 
   return (
     <div style={{ display: "flex", height: "100vh", width: "100%" }}>
-      {/* Problem Description */}
       <div id="description" style={{ height: "100%", overflow: "auto" }}>
         <ProblemDescription problem={problem} />
       </div>
 
-      {/* Playground */}
       <div id="playground" style={{ height: "100%", overflow: "auto" }}>
         <Playground problem={problem} />
       </div>
