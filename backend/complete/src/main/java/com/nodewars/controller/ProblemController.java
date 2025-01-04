@@ -1,5 +1,7 @@
 package com.nodewars.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,22 @@ public class ProblemController {
 
     @Autowired
     private ProblemService problemService;
+
+    /**
+     * Endpoint to get all problems.
+     * 
+     * @return a list of all problems
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<Problem>> getAllProblems() {
+        try {
+            List<Problem> problems = problemService.getAllProblems();
+            return ResponseEntity.ok(problems);
+        } catch (Exception e) {
+            logger.error("Error fetching all problems: {}", e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     /**
      * Endpoint to fetch a problem by its slug.

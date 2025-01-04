@@ -1,5 +1,7 @@
 package com.nodewars.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,15 @@ public class ProblemService {
     private ProblemRepository problemRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
+
+    /**
+     * Fetch all problems.
+     * 
+     * @return a list of all problems
+     */
+    public List<Problem> getAllProblems() {
+        return problemRepository.findAllProblems();
+    }
 
     /**
      * Checks if a problem exists by its slug.

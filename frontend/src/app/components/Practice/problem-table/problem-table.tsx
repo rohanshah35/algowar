@@ -1,30 +1,20 @@
 'use client';
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Table, Card } from '@mantine/core';
 import { useRouter } from 'next/navigation';
+import ProblemData from '@/components/Practice/ProblemData';
 
 export function ProblemTable(): React.ReactElement {
   const router = useRouter();
+  const { problems, loading, error } = useContext(ProblemData);
 
-  // Example filler data for the problem table
-  const problems = [
-    { id: 1, title: 'Two Sum', difficulty: 'Easy', category: 'Array' },
-    { id: 2, title: 'Reverse Linked List', difficulty: 'Hard', category: 'Linked List' },
-    { id: 3, title: 'Jump Game', difficulty: 'Medium', category: 'Dynamic Programming' },
-    { id: 4, title: 'Valid Parentheses', difficulty: 'Easy', category: 'Stack' },
-    { id: 5, title: 'Search a 2D Matrix', difficulty: 'Medium', category: 'Binary Search' },
-    { id: 6, title: 'Container With Most Water', difficulty: 'Medium', category: 'Two Pointers' },
-    { id: 7, title: 'Merge Intervals', difficulty: 'Medium', category: 'Intervals' },
-    { id: 8, title: 'Maximum Depth of Binary Tree', difficulty: 'Easy', category: 'Binary Tree' },
-    { id: 9, title: 'Best Time to Buy and Sell Stock', difficulty: 'Easy', category: 'Sliding Window' },
-    { id: 10, title: 'Subsets', difficulty: 'Medium', category: 'Backtracking' },
-  ];
-
-  const handleTitleClick = (problemTitle: string) => {
-    const formattedTitle = problemTitle.replace(/ /g, '-').toLowerCase(); // Convert title to slug
-    router.push(`/problems/${formattedTitle}`);
+  const handleTitleClick = (slug: string) => {
+    router.push(`/problems/${slug}`);
   };
+
+  if (loading) return <p style={{ color: '#f4f4f5', textAlign: 'center' }}>Loading...</p>;
+  if (error) return <p style={{ color: '#F87171', textAlign: 'center' }}>Error: {error}</p>;
 
   return (
     <Card
@@ -77,12 +67,12 @@ export function ProblemTable(): React.ReactElement {
                 fontSize: '0.9rem',
               }}
             >
-              Category
+              Categories
             </th>
           </tr>
         </thead>
         <tbody>
-          {problems.map((problem) => (
+          {problems?.map((problem) => (
             <tr key={problem.id} style={{ borderBottom: '1px solid #27272a' }}>
               <td
                 style={{
@@ -95,7 +85,7 @@ export function ProblemTable(): React.ReactElement {
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    handleTitleClick(problem.title);
+                    handleTitleClick(problem.slug);
                   }}
                   style={{
                     textDecoration: 'none',
@@ -116,7 +106,7 @@ export function ProblemTable(): React.ReactElement {
                       ? '#4ADE80'
                       : problem.difficulty === 'Medium'
                       ? '#FBBF24'
-                      : '#F87171', // Color based on difficulty
+                      : '#F87171',
                 }}
               >
                 {problem.difficulty}
@@ -128,7 +118,7 @@ export function ProblemTable(): React.ReactElement {
                   fontSize: '0.9rem',
                 }}
               >
-                {problem.category}
+                {problem.categories.join(', ')}
               </td>
             </tr>
           ))}
