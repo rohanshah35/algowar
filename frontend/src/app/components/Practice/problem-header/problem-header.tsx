@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import { Button } from '@mantine/core';
+import { IconPlayerPlay, IconCloudCheck } from '@tabler/icons-react'; // Import icons
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
@@ -11,12 +12,12 @@ type ProblemHeaderProps = {
 const ProblemHeader: React.FC<ProblemHeaderProps> = ({ handleRun, handleSubmit }) => (
   <div
     style={{
-      backgroundColor: '#1e1e1e',
-      padding: '10px',
+      backgroundColor: '#18181b',
+      padding: '14px',
       display: 'flex',
       justifyContent: 'center',
       width: '100%',
-      borderBottom: '1px solid #3c3c3c',
+      borderBottom: '1px solid #27272a',
     }}
   >
     <div style={{ display: 'flex', gap: '4px' }}>
@@ -29,23 +30,26 @@ const ProblemHeader: React.FC<ProblemHeaderProps> = ({ handleRun, handleSubmit }
           backgroundColor: '#2d2d2d',
           color: '#d4d4d4',
         }}
-        radius="sm"
+        radius="xs"
         onClick={handleRun}
+        leftSection={<IconPlayerPlay size={16} />}
         variant="filled"
       >
         Run
       </Button>
+
       <Button
         className={inter.className}
         style={{
           fontSize: '12px',
-          width: '80px',
+          width: '100px',
           height: '30px',
           backgroundColor: '#059669',
           color: 'white',
         }}
-        radius="sm"
+        radius="xs"
         onClick={handleSubmit}
+        leftSection={<IconCloudCheck size={16} />}
         variant="filled"
       >
         Submit
