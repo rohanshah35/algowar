@@ -15,12 +15,15 @@ const Playground = ({ problem }: { problem: any }) => {
     alert("Code submitted:\n" + userCode);
   };
 
+  const handleTabChange = (value: string) => {
+    console.log('Selected Tab:', value);
+  };
+
   useEffect(() => {
     const splitInstance = Split(["#editor", "#footer"], {
       direction: "vertical",
-      sizes: [85, 15],
+      sizes: [60, 40],
       minSize: [100, 50],
-      gutterSize: 10,
       snapOffset: 20, 
       gutter: (index, direction) => {
         console.log(index, direction);
@@ -46,7 +49,7 @@ const Playground = ({ problem }: { problem: any }) => {
         />
       </div>
       <div id="footer" className="bg-dark-layer-2">
-        <EditorFooter handleSubmit={handleSubmit} />
+        <EditorFooter onChange={handleTabChange} />
       </div>
     </div>
   );

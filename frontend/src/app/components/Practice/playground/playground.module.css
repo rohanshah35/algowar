@@ -1,9 +1,10 @@
 .gutter {
-    background-color: #4b4b4b;
+    background-color: #2e2e2e;
     background-repeat: no-repeat;
     background-position: 50%;
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
     cursor: row-resize;
+    flex-basis: 5px;
 }
   
   .gutter:hover {

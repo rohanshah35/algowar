@@ -1,4 +1,3 @@
-import React from "react";
 
 const ProblemDescription = ({ problem }: { problem: any }) => (
   <div className="bg-dark-layer-1 p-4 h-full overflow-y-auto">
