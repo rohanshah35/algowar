@@ -3,14 +3,25 @@ import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
+interface TestCase {
+  input: string;
+  output: string;
+}
+
 type EditorFooterProps = {
   onChange: (value: string) => void;
+  problem: {
+    testCases: TestCase[];
+  };
+  testResults?: {
+    passed: boolean;
+    output: string;
+    expectedOutput: string;
+  }[];
 };
 
-const EditorFooter: React.FC<EditorFooterProps> = ({ onChange }) => (
-  <div
-    className={`bg-dark-layer-1 p-3 ${inter.className}`}
-  >
+const EditorFooter: React.FC<EditorFooterProps> = ({ onChange, problem, testResults }) => (
+  <div className={`bg-dark-layer-1 p-3 ${inter.className}`}>
     <Tabs
       defaultValue="testcases"
       onChange={(value) => onChange(value || 'testcases')}
@@ -37,14 +48,24 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ onChange }) => (
 
       <Tabs.Panel value="testcases" pt="xs">
         <div className="p-4">
-          <p>nums = [2, 7, 11, 15]</p>
-          <p>target = 9</p>
+          {problem.testCases.map((testCase, index) => (
+            <div key={index}>
+              <p>Input: {testCase.input}</p>
+              <p>Expected Output: {testCase.output}</p>
+            </div>
+          ))}
         </div>
       </Tabs.Panel>
 
       <Tabs.Panel value="results" pt="xs">
         <div className="p-4">
-          <p>Output: [0, 1]</p>
+          {testResults ? (
+            testResults.map((result, index) => (
+              <p key={index}>Output: {result.output}</p>
+            ))
+          ) : (
+            <p>Output: Run your code to see results</p>
+          )}
         </div>
       </Tabs.Panel>
     </Tabs>

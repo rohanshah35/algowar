@@ -2,6 +2,34 @@
 
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 
+interface TestCase {
+  input: string;
+  output: string;
+}
+
+interface Example {
+  input: string;
+  output: string;
+}
+
+// Interface for the raw problem data from the API
+interface RawProblem {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  difficulty: string;
+  categories: string[];
+  examples: string; // String representation of JSON
+  constraints: string[];
+  starterCode: string;
+  testCases: string; // String representation of JSON
+  acceptanceRate: number;
+  totalSubmissions: number;
+  acceptedSubmissions: number;
+}
+
+// Interface for the parsed problem data
 interface Problem {
   id: number;
   title: string;
@@ -9,10 +37,10 @@ interface Problem {
   description: string;
   difficulty: string;
   categories: string[];
-  examples: string;
+  examples: Example[];
   constraints: string[];
   starterCode: string;
-  testCases: string;
+  testCases: TestCase[];
   acceptanceRate: number;
   totalSubmissions: number;
   acceptedSubmissions: number;
@@ -42,8 +70,15 @@ export const ProblemProvider = ({ children }: { children: ReactNode }) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const data: Problem[] = await response.json();
-        setProblems(data);
+        const rawData: RawProblem[] = await response.json();
+        
+        const parsedData: Problem[] = rawData.map((problem) => ({
+          ...problem,
+          examples: JSON.parse(problem.examples) as Example[],
+          testCases: JSON.parse(problem.testCases) as TestCase[]
+        }));
+
+        setProblems(parsedData);
       } catch (err: any) {
         setError(err.message || "Failed to fetch problems");
       } finally {

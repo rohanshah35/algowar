@@ -40,7 +40,7 @@ public class Problem {
     private String examples;
 
     @Column(name = "constraints")
-    private String constraints;
+    private List<String> constraints;
 
     @Column(name = "starter_code")
     private String starterCode;
@@ -60,7 +60,7 @@ public class Problem {
     public Problem() {}
 
     public Problem(int id, String title, String slug, String description, String difficulty, List<String> categories,
-                   String examples, String constraints, String starterCode, String testCases,
+                   String examples, List<String> constraints, String starterCode, String testCases,
                    double acceptanceRate, int totalSubmissions, int acceptedSubmissions) {
         this.id = id;
         this.title = title;
@@ -133,11 +133,11 @@ public class Problem {
         this.examples = examples;
     }
 
-    public String getConstraints() {
+    public List<String> getConstraints() {
         return constraints;
     }
 
-    public void setConstraints(String constraints) {
+    public void setConstraints(List<String> constraints) {
         this.constraints = constraints;
     }
 

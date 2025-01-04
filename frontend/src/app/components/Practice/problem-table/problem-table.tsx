@@ -8,12 +8,12 @@ import ProblemData from '@/components/Practice/ProblemData';
 export function ProblemTable(): React.ReactElement {
   const router = useRouter();
   const { problems, loading, error } = useContext(ProblemData);
-
+  console.log(problems);
   const handleTitleClick = (slug: string) => {
     router.push(`/problems/${slug}`);
   };
 
-  if (loading) return <p style={{ color: '#f4f4f5', textAlign: 'center' }}>Loading...</p>;
+  if (loading) return <div></div>;
   if (error) return <p style={{ color: '#F87171', textAlign: 'center' }}>Error: {error}</p>;
 
   return (

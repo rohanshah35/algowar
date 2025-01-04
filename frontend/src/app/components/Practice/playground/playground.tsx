@@ -49,7 +49,7 @@ const Playground = ({ problem }: { problem: any }) => {
         />
       </div>
       <div id="footer" className="bg-dark-layer-2">
-        <EditorFooter onChange={handleTabChange} />
+        <EditorFooter onChange={handleTabChange} problem={problem} />
       </div>
     </div>
   );
