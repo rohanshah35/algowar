@@ -137,5 +137,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT created_at FROM users WHERE preferred_username = :preferredUsername", nativeQuery = true)
     String findCreationDateByPreferredUsername(@Param("preferredUsername") String preferredUsername);
 
-
 }
