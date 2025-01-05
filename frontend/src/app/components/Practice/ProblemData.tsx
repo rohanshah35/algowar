@@ -2,35 +2,17 @@
 
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 
-interface TestCase {
+export interface TestCase {
   input: string;
   output: string;
 }
 
-interface Example {
+export interface Example {
   input: string;
   output: string;
 }
 
-// Interface for the raw problem data from the API
-interface RawProblem {
-  id: number;
-  title: string;
-  slug: string;
-  description: string;
-  difficulty: string;
-  categories: string[];
-  examples: string; // String representation of JSON
-  constraints: string[];
-  starterCode: string;
-  testCases: string; // String representation of JSON
-  acceptanceRate: number;
-  totalSubmissions: number;
-  acceptedSubmissions: number;
-}
-
-// Interface for the parsed problem data
-interface Problem {
+export interface Problem {
   id: number;
   title: string;
   slug: string;
@@ -70,12 +52,11 @@ export const ProblemProvider = ({ children }: { children: ReactNode }) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const rawData: RawProblem[] = await response.json();
-        
-        const parsedData: Problem[] = rawData.map((problem) => ({
+        const rawData = await response.json();
+        const parsedData: Problem[] = rawData.map((problem: any) => ({
           ...problem,
-          examples: JSON.parse(problem.examples) as Example[],
-          testCases: JSON.parse(problem.testCases) as TestCase[]
+          examples: JSON.parse(problem.examples),
+          testCases: JSON.parse(problem.testCases),
         }));
 
         setProblems(parsedData);
