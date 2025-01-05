@@ -1,5 +1,6 @@
 import { Tabs, Textarea, Text } from "@mantine/core";
 import { Inter } from "next/font/google";
+import styles from "./EditorFooter.module.css";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300"] });
 
@@ -21,23 +22,18 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange }) => (
       defaultValue="testcases"
       onChange={(value) => onChange(value || "testcases")}
       className="w-full"
+      classNames={{
+        tab: styles.tab,
+        list: styles.list,
+      }}
       styles={{
-        tab: {
-          fontSize: "14px",
-          color: "#d4d4d4",
-          "&[data-active]": {
-            color: "#60A5FA",
-          },
-        },
         panel: {
           paddingTop: "2px",
-          paddingLeft: "16px"
+          paddingLeft: "16px",
         },
-        
       }}
     >
-
-      <Tabs.List >
+      <Tabs.List>
         <Tabs.Tab value="testcases">Test Cases</Tabs.Tab>
         <Tabs.Tab value="results">Test Results</Tabs.Tab>
       </Tabs.List>
@@ -46,17 +42,14 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange }) => (
         <div style={{ marginTop: "12px" }}>
           <Tabs
             defaultValue="case-1"
+            classNames={{
+              tab: styles.tab,
+              list: styles.list,
+            }}
             styles={{
               tab: {
                 fontSize: "14px",
                 padding: "4px 10px",
-                color: "#d4d4d4",
-                backgroundColor: "transparent",
-                border: "none",
-                "&[data-active]": {
-                  color: "#60A5FA",
-                  borderBottom: "2px solid #60A5FA",
-                },
               },
             }}
           >

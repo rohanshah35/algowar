@@ -8,7 +8,7 @@ import ProblemData from '@/components/Practice/ProblemData';
 export function ProblemTable(): React.ReactElement {
   const router = useRouter();
   const { problems, loading, error } = useContext(ProblemData);
-  console.log(problems);
+  
   const handleTitleClick = (slug: string) => {
     router.push(`/problems/${slug}`);
   };

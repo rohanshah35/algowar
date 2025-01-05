@@ -3,7 +3,7 @@
 import DailyPage from "@/components/Practice/daily-page/daily-page";
 import { ProblemProvider } from "@/components/Practice/ProblemData";
 
-export default async function Daily() {
+export default function Daily() {
   return (
     <ProblemProvider>
           <DailyPage />

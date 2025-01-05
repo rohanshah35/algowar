@@ -12,10 +12,8 @@ const ProblemPage = () => {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
-    console.log(pid);
-    console.log(problems);
+
     const selectedProblem = problems?.find((problem) => problem.slug === pid);
-    console.log(selectedProblem);
 
     if (!selectedProblem) {
         return <div>Problem not found</div>;

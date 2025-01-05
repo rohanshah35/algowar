@@ -26,7 +26,6 @@ const Playground = ({ problem }: { problem: any }) => {
       minSize: [100, 50],
       snapOffset: 20, 
       gutter: (index, direction) => {
-        console.log(index, direction);
         const gutter = document.createElement("div");
         gutter.className = `${styles.gutter}`;
         return gutter;

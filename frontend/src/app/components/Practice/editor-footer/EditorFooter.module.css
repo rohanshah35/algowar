@@ -1,0 +1,25 @@
+.tab {
+    font-size: 14px;
+    color: #d4d4d4b6;
+}
+
+.tab[data-active="true"] {
+    font-weight: bold;
+    color: #d4d4d4f5;
+    background-color: #41414785;
+    border-color: transparent;
+    border-radius: 15px;
+}
+
+.list::before {
+    content: none;  
+}
+
+
+.tab:hover {
+    background-color: #53535a85;
+    border-color: transparent;
+    border-radius: 15px;
+}
+
+

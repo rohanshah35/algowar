@@ -64,7 +64,7 @@ export function VerificationForm({ sub }: { sub: string }) {
       setSuccess("Verification successful! Redirecting...");
       setTimeout(() => {
         router.push("/");
-      }, 2000);
+      }, 500);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
