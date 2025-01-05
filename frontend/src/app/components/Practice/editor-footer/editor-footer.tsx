@@ -1,6 +1,7 @@
 import { Tabs, Textarea, Text } from "@mantine/core";
 import { Inter } from "next/font/google";
 import styles from "./EditorFooter.module.css";
+import { IconTestPipe, IconFlask2Filled } from "@tabler/icons-react";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300"] });
 
@@ -34,8 +35,18 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange }) => (
       }}
     >
       <Tabs.List>
-        <Tabs.Tab value="testcases">Test Cases</Tabs.Tab>
-        <Tabs.Tab value="results">Test Results</Tabs.Tab>
+          <Tabs.Tab 
+            value="testcases" 
+            leftSection={<IconTestPipe size={16} style={{ marginRight: "6px" }} />}
+          >
+            Test Cases
+          </Tabs.Tab>
+          <Tabs.Tab 
+          value="results" 
+          leftSection={<IconFlask2Filled size={16} style={{ marginRight: '6px' }} />}
+        >
+          Test Results
+        </Tabs.Tab>
       </Tabs.List>
 
       <Tabs.Panel value="testcases">
@@ -48,8 +59,9 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange }) => (
             }}
             styles={{
               tab: {
-                fontSize: "14px",
+                fontSize: "12px",
                 padding: "4px 10px",
+                width: "90px"
               },
             }}
           >
@@ -103,7 +115,7 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange }) => (
         </div>
       </Tabs.Panel>
 
-      <Tabs.Panel value="results">
+      <Tabs.Panel value="results" >
         <Text color="gray.5">Test Results will be displayed here after running your code.</Text>
       </Tabs.Panel>
     </Tabs>

@@ -1,14 +1,17 @@
 .tab {
-    font-size: 14px;
+    font-size: 13px;
     color: #d4d4d4b6;
+    width: 130px;
+    height: 30px;
+    margin-right: 8px;
 }
 
 .tab[data-active="true"] {
-    font-weight: bold;
     color: #d4d4d4f5;
     background-color: #41414785;
     border-color: transparent;
     border-radius: 15px;
+    
 }
 
 .list::before {

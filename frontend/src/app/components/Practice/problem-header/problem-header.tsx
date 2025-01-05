@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google';
 import { Button } from '@mantine/core';
-import { IconPlayerPlay, IconCloudCheck } from '@tabler/icons-react'; // Import icons
+import { IconPlayerPlay, IconCloudCheck } from '@tabler/icons-react';
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
