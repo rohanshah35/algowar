@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@codemirror/lang-cpp": "^6.0.2",
+    "@codemirror/lang-java": "^6.0.1",
     "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/lang-python": "^6.1.6",
     "@mantine/charts": "^7.15.2",
     "@mantine/core": "^7.15.1",
     "@mantine/dropzone": "^7.15.2",
