@@ -1,0 +1,18 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python2 \
+    python3 \
+    openjdk-11-jdk-headless \
+    g++ \
+    gcc \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+WORKDIR /workspace
+
+COPY entrypoint.sh /workspace/entrypoint.sh
+RUN chmod +x /workspace/entrypoint.sh
+
+ENTRYPOINT ["/workspace/entrypoint.sh"]
