@@ -1,6 +1,6 @@
 FROM alpine:3.21
 
-RUN apk add --no-cache openjdk11 bash 
+RUN apk add --no-cache openjdk21 bash 
 
 WORKDIR /workspace
 
