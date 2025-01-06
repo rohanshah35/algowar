@@ -12,7 +12,7 @@ We are creating a full-stack web application designed to gamify Leetcode-style c
 - **Database**: PostgreSQL hosted on AWS RDS
 - **Authentication**: AWS Cognito
 - **File Storage**: AWS S3
-- **Containerization**: Docker, AWS ECR, AWS ECS, AWS ELB
+- **Containerization**: Docker, AWS ECR, AWS ECS/Fargate, AWS ELB
 - **Hosting**: AWS EC2
 
 ---
