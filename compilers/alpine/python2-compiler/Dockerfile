@@ -1,6 +1,6 @@
 FROM alpine:3.13
 
-RUN apk add --no-cache python2
+RUN apk add --no-cache python2 bash
 
 WORKDIR /workspace
 
