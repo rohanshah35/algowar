@@ -25,7 +25,6 @@ export function Settings() {
     'Java',
     'C',
     'C++',
-    'C#',
   ]);
 
   useEffect(() => {
