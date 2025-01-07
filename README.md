@@ -1,7 +1,7 @@
 # algowar
 
 ## Overview
-We are creating a full-stack web application designed to gamify Leetcode-style coding preparation through competitive head-to-head matches. This project combines robust backend development with Spring Boot and PostgreSQL, a modern front-end built with Next.js, and AWS services for seamless hosting and scalability.
+We are creating a full-stack web application designed to gamify Leetcode-style coding preparation through competitive head-to-head matches. This project combines robust backend development with Spring Boot and PostgreSQL, a modern front-end built with Next.js, and AWS services for seamless hosting, functionality, and scalability.
 
 ---
 
@@ -12,7 +12,7 @@ We are creating a full-stack web application designed to gamify Leetcode-style c
 - **Database**: PostgreSQL hosted on AWS RDS
 - **Authentication**: AWS Cognito
 - **File Storage**: AWS S3
-- **Containerization**: Docker, AWS ECR, AWS ECS (w/ Fargate)
+- **User-Submitted Code Execution**: AWS Lambda
 - **Hosting**: AWS EC2
 
 ---
