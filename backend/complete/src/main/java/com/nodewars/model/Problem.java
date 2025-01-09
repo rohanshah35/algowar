@@ -57,11 +57,14 @@ public class Problem {
     @Column(name = "accepted_submissions")
     private int acceptedSubmissions;
 
+    @Column(name = "harness_code")
+    private String harnessCode;
+
     public Problem() {}
 
     public Problem(int id, String title, String slug, String description, String difficulty, List<String> categories,
                    String examples, List<String> constraints, String starterCode, String testCases,
-                   double acceptanceRate, int totalSubmissions, int acceptedSubmissions) {
+                   double acceptanceRate, int totalSubmissions, int acceptedSubmissions, String harnessCode) {
         this.id = id;
         this.title = title;
         this.slug = slug;
@@ -75,6 +78,7 @@ public class Problem {
         this.acceptanceRate = acceptanceRate;
         this.totalSubmissions = totalSubmissions;
         this.acceptedSubmissions = acceptedSubmissions;
+        this.harnessCode = harnessCode;
     }
 
     public int getId() {
@@ -179,5 +183,13 @@ public class Problem {
 
     public void setAcceptedSubmissions(int acceptedSubmissions) {
         this.acceptedSubmissions = acceptedSubmissions;
+    }
+
+    public String getHarnessCodes() {
+        return harnessCode;
+    }
+
+    public void setHarnessCodes(String harnessCode) {
+        this.harnessCode = harnessCode;
     }
 }

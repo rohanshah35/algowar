@@ -31,6 +31,11 @@ public interface ProblemRepository extends JpaRepository<Problem, Integer> {
     Problem findBySlug(@Param("slug") String slug);
     boolean existsBySlug(String slug);
 
+    // Query to pull harness code for problem
+
+    @Query("SELECT p.harnessCode FROM Problem p WHERE p.slug = :slug")
+    String getHarnessCode(@Param("slug") String slug);
+
     // Update queries
 
     @Modifying(clearAutomatically = true)

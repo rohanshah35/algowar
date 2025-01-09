@@ -1,12 +1,14 @@
 package com.nodewars.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.nodewars.model.Problem;
 import com.nodewars.repository.ProblemRepository;
@@ -21,6 +23,9 @@ public class ProblemService {
 
     @Autowired
     private ProblemRepository problemRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
 
@@ -53,21 +58,18 @@ public class ProblemService {
         return problemRepository.findBySlug(slug);
     }
 
-    /**
-     * Updates the test cases for a given problem.
-     * 
-     * @param slug the slug of the problem
-     * @param newTestCases the new test cases as a string
-     * @throws Exception if the problem is not found
-     */
-    @Transactional
-    public void updateTestCases(String slug, String newTestCases) throws Exception {
-        Problem problem = problemRepository.findBySlug(slug);
-        if (problem == null) {
-            throw new Exception("Problem not found with slug: " + slug);
+    public Map<String, String> getHarnessCodes(String slug) {
+        String harnessCodesJSON = problemRepository.getHarnessCode(slug);
+        try {
+            return objectMapper.readValue(harnessCodesJSON, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse main functions JSON", e);
         }
+    }
 
-        problemRepository.updateTestCases(slug, newTestCases);
+    public String getHarnessCode(String slug, String language) {
+        Map<String, String> harnessCodes = getHarnessCodes(slug);
+        return harnessCodes.get(language);
     }
 
     /**

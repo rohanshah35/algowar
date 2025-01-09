@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nodewars.service.CompilerService;
+import com.nodewars.service.ProblemService;
 
 import java.util.List;
 import java.util.Map;
@@ -36,45 +37,81 @@ public class CompilerController {
     @Autowired
     private CompilerService compilerService;
 
+    @Autowired
+    private ProblemService problemService;
 
-    /**
-     * Endpoint to compile and run code with specified test cases.
-     * @param request Request body containing "language", "code", and "testCases".
-     * @return ResponseEntity containing the result or error message.
-     */
-    @PostMapping("/code")
-    public ResponseEntity<Map<String, Object>> compileCode(@RequestBody Map<String, Object> request) {
+
+
+    // /**
+    //  * Endpoint to compile and run code with specified test cases.
+    //  * @param request Request body containing "language", "code", and "testCases".
+    //  * @return ResponseEntity containing the result or error message.
+    //  */
+    // @PostMapping("/code")
+    // public ResponseEntity<Map<String, Object>> compileCode(@RequestBody Map<String, Object> request) {
+    //     String language = (String) request.get("language");
+    //     String code = (String) request.get("code");
+    //     String functionName = (String) request.get("functionName");
+    //     Object testCases = request.get("testCases");
+    
+    //     try {
+    //         String result = compilerService.compileAndRun(language, code, functionName, testCases);
+    
+    //         ObjectMapper objectMapper = new ObjectMapper();
+    //         @SuppressWarnings("unchecked")
+    //         Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
+    
+    //         String body = (String) resultMap.get("body");
+    
+    //         @SuppressWarnings("unchecked")
+    //         Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
+
+    //         @SuppressWarnings("unchecked")
+    //         List<Map<String, Object>> failedTests = (List<Map<String, Object>>) bodyMap.get("failed");
+    //         boolean success = failedTests.isEmpty();  // Set success to true if no failed tests
+
+    
+    //         Map<String, Object> response = Map.of(
+    //             "success", success,
+    //             "result", bodyMap
+    //         );
+    
+    //         return ResponseEntity.ok(response);
+    
+    //     } catch (Exception e) {
+    //         // Return a 500 error response with the error message
+    //         return ResponseEntity.status(500).body(Map.of(
+    //             "success", false,
+    //             "error", e.getMessage()
+    //         ));
+    //     }
+    // }
+
+    @PostMapping("/run")
+    public ResponseEntity<Map<String, Object>> runCode(@RequestBody Map<String, Object> request) {
         String language = (String) request.get("language");
         String code = (String) request.get("code");
-        String functionName = (String) request.get("functionName");
+        String slug = (String) request.get("slug");
         Object testCases = request.get("testCases");
-    
+
         try {
-            String result = compilerService.compileAndRun(language, code, functionName, testCases);
-    
+            String harnessCode = problemService.getHarnessCode(slug, language);
+            String result = compilerService.compileAndRun(language, code, harnessCode, testCases);
+
             ObjectMapper objectMapper = new ObjectMapper();
             @SuppressWarnings("unchecked")
             Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
     
             String body = (String) resultMap.get("body");
-    
-            @SuppressWarnings("unchecked")
-            Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
-
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> failedTests = (List<Map<String, Object>>) bodyMap.get("failed");
-            boolean success = failedTests.isEmpty();  // Set success to true if no failed tests
 
     
             Map<String, Object> response = Map.of(
-                "success", success,
-                "result", bodyMap
+                "result", resultMap
             );
     
             return ResponseEntity.ok(response);
-    
+
         } catch (Exception e) {
-            // Return a 500 error response with the error message
             return ResponseEntity.status(500).body(Map.of(
                 "success", false,
                 "error", e.getMessage()

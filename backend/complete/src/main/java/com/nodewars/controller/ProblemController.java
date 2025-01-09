@@ -87,29 +87,6 @@ public class ProblemController {
     }
 
     /**
-     * Endpoint to update test cases for a problem.
-     * 
-     * @param slug the slug of the problem
-     * @param request containing the new test cases
-     * @return success or error message
-     */
-    @PutMapping("/update/test-cases/{slug}")
-    public ResponseEntity<Map<String, String>> updateTestCases(
-            @PathVariable String slug, @RequestBody Map<String, String> request) {
-        Map<String, String> response = new HashMap<>();
-        try {
-            String newTestCases = request.get("testCases");
-            problemService.updateTestCases(slug, newTestCases);
-            response.put("message", "Test cases updated successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Error updating test cases: {}", e.getMessage());
-            response.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
-
-    /**
      * Endpoint to update acceptance rate for a problem.
      * 
      * @param slug the slug of the problem

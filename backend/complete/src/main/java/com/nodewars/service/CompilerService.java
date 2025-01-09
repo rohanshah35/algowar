@@ -7,6 +7,7 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResponse;
+import software.amazon.awssdk.regions.Region;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
@@ -25,14 +26,15 @@ import java.util.Map;
      private final LambdaClient lambdaClient;
  
      public CompilerService() {
-         this.lambdaClient = LambdaClient.create();
+        this.lambdaClient = LambdaClient.builder()
+            .region(Region.US_WEST_1)
+            .build();
      }
  
-     public String compileAndRun(String language, String code, String functionName, Object testCases) throws Exception {
+     public String compileAndRun(String language, String code, String harnessCode, Object testCases) throws Exception {
          Map<String, Object> payload = Map.of(
-             "language", language,
-             "code", code,
-             "functionName", functionName,
+             "user_code", code,
+             "harness_code", harnessCode,
              "testCases", testCases
          );
  
