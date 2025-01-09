@@ -44,53 +44,12 @@ public class CompilerController {
 
     private static final Logger logger = LoggerFactory.getLogger(CompilerController.class);
 
-
-
-    // /**
-    //  * Endpoint to compile and run code with specified test cases.
-    //  * @param request Request body containing "language", "code", and "testCases".
-    //  * @return ResponseEntity containing the result or error message.
-    //  */
-    // @PostMapping("/code")
-    // public ResponseEntity<Map<String, Object>> compileCode(@RequestBody Map<String, Object> request) {
-    //     String language = (String) request.get("language");
-    //     String code = (String) request.get("code");
-    //     String functionName = (String) request.get("functionName");
-    //     Object testCases = request.get("testCases");
-    
-    //     try {
-    //         String result = compilerService.compileAndRun(language, code, functionName, testCases);
-    
-    //         ObjectMapper objectMapper = new ObjectMapper();
-    //         @SuppressWarnings("unchecked")
-    //         Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
-    
-    //         String body = (String) resultMap.get("body");
-    
-    //         @SuppressWarnings("unchecked")
-    //         Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
-
-    //         @SuppressWarnings("unchecked")
-    //         List<Map<String, Object>> failedTests = (List<Map<String, Object>>) bodyMap.get("failed");
-    //         boolean success = failedTests.isEmpty();  // Set success to true if no failed tests
-
-    
-    //         Map<String, Object> response = Map.of(
-    //             "success", success,
-    //             "result", bodyMap
-    //         );
-    
-    //         return ResponseEntity.ok(response);
-    
-    //     } catch (Exception e) {
-    //         // Return a 500 error response with the error message
-    //         return ResponseEntity.status(500).body(Map.of(
-    //             "success", false,
-    //             "error", e.getMessage()
-    //         ));
-    //     }
-    // }
-
+    /**
+     * Endpoint to compile and execute user-submitted code with test cases.
+     * Delegates code execution to AWS Lambda via CompilerService.
+     * @param request Map containing "language", "code", "slug", and "testCases".
+     * @return ResponseEntity with execution results or error details.
+     */
     @PostMapping("/run")
     public ResponseEntity<Map<String, Object>> runCode(@RequestBody Map<String, Object> request) {
         String language = (String) request.get("language");
