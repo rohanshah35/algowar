@@ -58,9 +58,12 @@ public class ProblemService {
         return problemRepository.findBySlug(slug);
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, String> getHarnessCodes(String slug) {
         String harnessCodesJSON = problemRepository.getHarnessCode(slug);
+        logger.info("Harness codes JSON: " + harnessCodesJSON);
         try {
+            logger.info(objectMapper.readValue(harnessCodesJSON, Map.class).toString());
             return objectMapper.readValue(harnessCodesJSON, Map.class);
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse main functions JSON", e);

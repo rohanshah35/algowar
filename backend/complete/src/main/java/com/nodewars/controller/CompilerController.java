@@ -1,6 +1,8 @@
 package com.nodewars.controller;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,8 @@ public class CompilerController {
 
     @Autowired
     private ProblemService problemService;
+
+    private static final Logger logger = LoggerFactory.getLogger(CompilerController.class);
 
 
 
@@ -96,7 +100,9 @@ public class CompilerController {
 
         try {
             String harnessCode = problemService.getHarnessCode(slug, language);
+            logger.info("Harness code_x: " + harnessCode);
             String result = compilerService.compileAndRun(language, code, harnessCode, testCases);
+            logger.info("Result: " + result);
 
             ObjectMapper objectMapper = new ObjectMapper();
             @SuppressWarnings("unchecked")

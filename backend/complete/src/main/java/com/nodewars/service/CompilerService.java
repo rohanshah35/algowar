@@ -35,7 +35,7 @@ import java.util.Map;
          Map<String, Object> payload = Map.of(
              "user_code", code,
              "harness_code", harnessCode,
-             "testCases", testCases
+             "test_cases", testCases
          );
  
          String jsonPayload = new ObjectMapper().writeValueAsString(payload);
