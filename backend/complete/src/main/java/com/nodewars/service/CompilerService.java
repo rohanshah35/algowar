@@ -7,7 +7,6 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResponse;
-import software.amazon.awssdk.regions.Region;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
@@ -26,9 +25,7 @@ import java.util.Map;
      private final LambdaClient lambdaClient;
  
      public CompilerService() {
-        this.lambdaClient = LambdaClient.builder()
-            .region(Region.US_WEST_1)
-            .build();
+        this.lambdaClient = LambdaClient.create();
      }
  
      public String compileAndRun(String language, String code, String harnessCode, Object testCases) throws Exception {

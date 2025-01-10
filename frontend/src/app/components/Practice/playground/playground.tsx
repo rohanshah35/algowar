@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Split from "split.js";
 import CodeMirror from "@uiw/react-codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -11,14 +9,21 @@ import { Select } from "@mantine/core";
 import EditorFooter from "@/components/Practice/editor-footer/editor-footer";
 import styles from "./playground.module.css";
 
-const Playground = ({ problem }: { problem: any }) => {
-  const [userCode, setUserCode] = useState(problem.starterCode);
-  const [language, setLanguage] = useState("python"); // Default to Python
+const Playground = ({
+  problem,
+  code,
+  setCode,
+  language,
+  setLanguage,
+}: {
+  problem: any;
+  code: string;
+  setCode: (code: string) => void;
+  language: string;
+  setLanguage: (language: string) => void;
+}) => {
 
-  const handleSubmit = () => {
-    alert("Code submitted:\n" + userCode);
-  };
-
+  // Function to handle code execution (Not implemented in Playground)
   const handleTabChange = (value: string) => {
     console.log("Selected Tab:", value);
   };
@@ -53,20 +58,26 @@ const Playground = ({ problem }: { problem: any }) => {
   }, []);
 
   return (
-    <div className="h-full w-full flex flex-col" >
+    <div className="h-full w-full flex flex-col">
       <div
         className="bg-dark-layer-1 p-1 flex justify-start items-center"
         style={{
           backgroundColor: "#1e1e1e",
           height: "40px",
-          borderBottom: "1px solid #27272a"
+          borderBottom: "1px solid #27272a",
         }}
       >
         <Select
           value={language}
-          onChange={(value) => {
-            setLanguage(value!);
-            setUserCode(problem.starterCode);
+          onChange={(value: string | null) => {
+            if (value) {
+              setLanguage(value);
+              // Update the starter code based on the selected language
+              setCode(problem.starterCode[value]);
+            }
+          }}
+          classNames={{
+            option: styles.option,
           }}
           data={[
             { value: "java", label: "Java" },
@@ -77,7 +88,7 @@ const Playground = ({ problem }: { problem: any }) => {
             dropdown: {
               backgroundColor: "#1e1e1e",
               border: "none",
-              height: "1  0px"
+              height: "100px",
             },
             input: {
               backgroundColor: "#1e1e1e",
@@ -85,7 +96,7 @@ const Playground = ({ problem }: { problem: any }) => {
               fontSize: "12px",
               padding: "3px 6px",
               border: "none",
-              marginLeft: "5px"
+              marginLeft: "5px",
             },
           }}
         />
@@ -93,9 +104,9 @@ const Playground = ({ problem }: { problem: any }) => {
 
       <div id="editor" className="bg-dark-layer-1 overflow-auto" style={{ backgroundColor: "#1e1e1e" }}>
         <CodeMirror
-          value={userCode}
+          value={code} // Set the code value
           theme={vscodeDark}
-          onChange={(value) => setUserCode(value)}
+          onChange={(value) => setCode(value)} // Update the code on every change
           extensions={getCodeMirrorExtensions()}
           style={{ height: "100%", fontSize: "14px" }}
         />

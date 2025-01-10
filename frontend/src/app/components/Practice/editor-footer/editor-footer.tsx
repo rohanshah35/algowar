@@ -12,7 +12,7 @@ interface TestCase {
 
 type EditorFooterProps = {
   problem: {
-    testCases: TestCase[];
+    shownTestCases: TestCase[];
   };
   onChange: (value: string) => void;
 };
@@ -66,14 +66,14 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange }) => (
             }}
           >
             <Tabs.List>
-              {problem.testCases.map((_, index) => (
+              {problem.shownTestCases.map((_, index) => (
                 <Tabs.Tab key={index} value={`case-${index + 1}`}>
                   Case {index + 1}
                 </Tabs.Tab>
               ))}
             </Tabs.List>
 
-            {problem.testCases.map((testCase, index) => (
+            {problem.shownTestCases.map((testCase, index) => (
               <Tabs.Panel key={index} value={`case-${index + 1}`} mt="md">
                 <div style={{ marginBottom: "16px" }}>
                   <Text fw={500} color="gray.5" style={{ fontSize: "12px", marginBottom: "6px" }}>

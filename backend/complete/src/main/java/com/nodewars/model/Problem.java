@@ -4,8 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Lob;
 import java.util.List;
 
 /**
@@ -45,6 +43,9 @@ public class Problem {
     @Column(name = "starter_code")
     private String starterCode;
 
+    @Column(name = "shown_test_cases")
+    private String shownTestCases;
+
     @Column(name = "test_cases")
     private String testCases;
 
@@ -63,7 +64,7 @@ public class Problem {
     public Problem() {}
 
     public Problem(int id, String title, String slug, String description, String difficulty, List<String> categories,
-                   String examples, List<String> constraints, String starterCode, String testCases,
+                   String examples, List<String> constraints, String starterCode, String shownTestCases, String testCases,
                    double acceptanceRate, int totalSubmissions, int acceptedSubmissions, String harnessCode) {
         this.id = id;
         this.title = title;
@@ -74,6 +75,7 @@ public class Problem {
         this.examples = examples;
         this.constraints = constraints;
         this.starterCode = starterCode;
+        this.shownTestCases = shownTestCases;
         this.testCases = testCases;
         this.acceptanceRate = acceptanceRate;
         this.totalSubmissions = totalSubmissions;
@@ -151,6 +153,14 @@ public class Problem {
 
     public void setStarterCode(String starterCode) {
         this.starterCode = starterCode;
+    }
+
+    public String getShownTestCases() {
+        return shownTestCases;
+    }
+
+    public void setShownTestCases(String shownTestCases) {
+        this.shownTestCases = shownTestCases;
     }
 
     public String getTestCases() {

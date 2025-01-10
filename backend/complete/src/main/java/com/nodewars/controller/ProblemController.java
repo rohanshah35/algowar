@@ -39,12 +39,21 @@ public class ProblemController {
     public ResponseEntity<List<Problem>> getAllProblems() {
         try {
             List<Problem> problems = problemService.getAllProblems();
-            return ResponseEntity.ok(problems);
+
+            List<Problem> sanitizedProblems = problems.stream()
+                .map(problem -> {
+                    problem.setTestCases(null);
+                    return problem;
+                })
+                .toList();
+
+            return ResponseEntity.ok(sanitizedProblems);
         } catch (Exception e) {
             logger.error("Error fetching all problems: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
+
 
     /**
      * Endpoint to fetch a problem by its slug.
@@ -59,6 +68,7 @@ public class ProblemController {
             if (problem == null) {
                 return ResponseEntity.notFound().build();
             }
+            problem.setTestCases(null);
             return ResponseEntity.ok(problem);
         } catch (Exception e) {
             logger.error("Error fetching problem by slug: {}", e.getMessage());

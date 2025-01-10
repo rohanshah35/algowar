@@ -12,6 +12,13 @@ export interface Example {
   output: string;
 }
 
+interface StarterCode {
+  python: string;
+  java: string;
+  c: string
+  cpp: string;
+}
+
 export interface Problem {
   id: number;
   title: string;
@@ -21,8 +28,8 @@ export interface Problem {
   categories: string[];
   examples: Example[];
   constraints: string[];
-  starterCode: string;
-  testCases: TestCase[];
+  starterCode: StarterCode;
+  shownTestCases: TestCase[];
   acceptanceRate: number;
   totalSubmissions: number;
   acceptedSubmissions: number;
@@ -53,11 +60,14 @@ export const ProblemProvider = ({ children }: { children: ReactNode }) => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const rawData = await response.json();
+        
         const parsedData: Problem[] = rawData.map((problem: any) => ({
           ...problem,
           examples: JSON.parse(problem.examples),
-          testCases: JSON.parse(problem.testCases),
+          shownTestCases: JSON.parse(problem.shownTestCases),
+          starterCode: JSON.parse(problem.starterCode)
         }));
+
 
         setProblems(parsedData);
       } catch (err: any) {

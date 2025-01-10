@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Split from "split.js";
 import ProblemDescription from "./problem-description/problem-description";
 import Playground from "./playground/playground";
@@ -6,6 +6,10 @@ import styles from "./workspace.module.css";
 import ProblemHeader from "./problem-header/problem-header";
 
 const Workspace = ({ problem }: { problem: any }) => {
+  const [code, setCode] = useState<string>(problem.starterCode.python);
+  const [language, setLanguage] = useState<string>("python");
+
+
   useEffect(() => {
     const splitInstance = Split(["#description", "#playground"], {
       sizes: [50, 50],
@@ -24,11 +28,11 @@ const Workspace = ({ problem }: { problem: any }) => {
   }, []);
 
   const handleSubmit = () => {
-    alert("Code submitted:\n");
+    alert("Code submitted:\n" + code + "\nLanguage: " + language);
   };
 
   const handleRun = () => {
-    alert("Code ran:\n");
+    alert("Code ran:\n" + code + "\nLanguage: " + language);
   };
 
   return (
@@ -40,7 +44,13 @@ const Workspace = ({ problem }: { problem: any }) => {
           <ProblemDescription problem={problem} />
         </div>
         <div id="playground" style={{ height: "100%", overflow: "auto" }}>
-          <Playground problem={problem} />
+        <Playground 
+            problem={problem} 
+            code={code} 
+            setCode={setCode} 
+            language={language} 
+            setLanguage={setLanguage} 
+          />
         </div>
       </div>
     </div>
