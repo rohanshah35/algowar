@@ -19,7 +19,7 @@ const ProblemDescription = ({ problem }: { problem: any }) => (
     <h2 className="text-white text-lg font-semibold mb-2">Examples:</h2>
     {problem.examples.map((example: any, index: number) => (
       <div key={index} className="mb-4">
-        <p className="text-white font-medium">Example {index + 1}:</p>
+        <p className="text-white font-medium p-2">{index + 1}:</p>
         <div className="bg-gray-800 p-3 rounded">
           <pre className="text-white text-sm">
             <strong>Input:</strong> {example.inputText}
@@ -29,13 +29,21 @@ const ProblemDescription = ({ problem }: { problem: any }) => (
         </div>
       </div>
     ))}
-    <h2 className="text-white text-lg font-semibold mt-6">Constraints:</h2>
-    <ul className="text-white ml-5 list-disc">
+    <h2 className="text-white text-lg font-semibold mt-6 p-1">Constraints:</h2>
+    <ul className="ml-5 list-disc ">
       {problem.constraints.map((constraint: string, index: number) => (
-        <li key={index}>{constraint}</li>
+        <li
+          key={index}
+          className="text-sm text-gray-300 bg-gray-900 rounded p-2 mb-2 font-mono"
+          dangerouslySetInnerHTML={{
+            __html: `<span class="mr-2 text-orange-400">⚡</span>` + 
+                    constraint.replace(/(\d+)\^(\d+)/g, '$1<sup>$2</sup>'),
+          }}
+        ></li>
       ))}
     </ul>
   </div>
 );
 
 export default ProblemDescription;
+

@@ -23,14 +23,13 @@ const Playground = ({
   setLanguage: (language: string) => void;
 }) => {
 
-  // Function to handle code execution (Not implemented in Playground)
   const handleTabChange = (value: string) => {
     console.log("Selected Tab:", value);
   };
 
   const getCodeMirrorExtensions = () => {
     switch (language) {
-      case "python":
+      case "python3":
         return [python()];
       case "cpp":
         return [cpp()];
@@ -72,7 +71,6 @@ const Playground = ({
           onChange={(value: string | null) => {
             if (value) {
               setLanguage(value);
-              // Update the starter code based on the selected language
               setCode(problem.starterCode[value]);
             }
           }}
@@ -81,7 +79,7 @@ const Playground = ({
           }}
           data={[
             { value: "java", label: "Java" },
-            { value: "python", label: "Python" },
+            { value: "python3", label: "python3" },
             { value: "cpp", label: "C++" },
           ]}
           styles={{
@@ -104,9 +102,9 @@ const Playground = ({
 
       <div id="editor" className="bg-dark-layer-1 overflow-auto" style={{ backgroundColor: "#1e1e1e" }}>
         <CodeMirror
-          value={code} // Set the code value
+          value={code}
           theme={vscodeDark}
-          onChange={(value) => setCode(value)} // Update the code on every change
+          onChange={(value) => setCode(value)}
           extensions={getCodeMirrorExtensions()}
           style={{ height: "100%", fontSize: "14px" }}
         />
