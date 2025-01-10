@@ -36,6 +36,16 @@ public interface ProblemRepository extends JpaRepository<Problem, Integer> {
     @Query("SELECT p.harnessCode FROM Problem p WHERE p.slug = :slug")
     String getHarnessCode(@Param("slug") String slug);
 
+    // Query to pull test cases for problem
+
+    @Query(value = "SELECT test_cases FROM problems WHERE slug = :slug", nativeQuery = true)    
+    String getTestCases(@Param("slug") String slug);
+
+    // Query to pull first three test cases for problem
+
+    @Query(value = "SELECT jsonb_agg(elem) FROM (SELECT jsonb_array_elements(test_cases) AS elem FROM problems WHERE slug = :slug LIMIT 3) AS limited_test_cases", nativeQuery = true)
+    String getFirstThreeTestCases(@Param("slug") String slug);
+    
     // Update queries
 
     @Modifying(clearAutomatically = true)

@@ -54,32 +54,31 @@ public class CompilerController {
         String language = (String) request.get("language");
         String code = (String) request.get("code");
         String slug = (String) request.get("slug");
-        Object testCases = request.get("testCases");
-
+    
         try {
             String harnessCode = problemService.getHarnessCode(slug, language);
-            logger.info("Harness code_x: " + harnessCode);
+            logger.info("Harness code: " + harnessCode);
+
+            String shownTestCasesJson = problemService.getFirstThreeTestCases(slug);
+            logger.info("Fetched first three test cases: " + shownTestCasesJson);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object testCases = objectMapper.readValue(shownTestCasesJson, Object.class);
+
             String result = compilerService.compileAndRun(language, code, harnessCode, testCases);
             logger.info("Result: " + result);
 
-            ObjectMapper objectMapper = new ObjectMapper();
             @SuppressWarnings("unchecked")
             Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
+            return ResponseEntity.ok(Map.of("result", resultMap));
     
-            String body = (String) resultMap.get("body");
-
-    
-            Map<String, Object> response = Map.of(
-                "result", resultMap
-            );
-    
-            return ResponseEntity.ok(response);
-
         } catch (Exception e) {
+            logger.error("Error during code execution", e);
             return ResponseEntity.status(500).body(Map.of(
                 "success", false,
                 "error", e.getMessage()
             ));
         }
     }
+    
 }

@@ -58,6 +58,26 @@ public class ProblemService {
         return problemRepository.findBySlug(slug);
     }
 
+    /**
+     * Retrieves problem test cases by its slug.
+     * 
+     * @param slug the slug of the problem
+     * @return the test cases
+     */
+    public String getTestCases(String slug) {
+        return problemRepository.getTestCases(slug);
+    }
+    
+     /**
+     * Retrieves first three problem test cases by its slug.
+     * 
+     * @param slug the slug of the problem
+     * @return first three test cases
+     */
+    public String getFirstThreeTestCases(String slug) {
+        return problemRepository.getFirstThreeTestCases(slug);
+    }
+
     @SuppressWarnings("unchecked")
     public Map<String, String> getHarnessCodes(String slug) {
         String harnessCodesJSON = problemRepository.getHarnessCode(slug);
