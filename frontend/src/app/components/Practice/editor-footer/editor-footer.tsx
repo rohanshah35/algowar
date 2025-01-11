@@ -189,7 +189,7 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange, results 
                   <div>
                     <Text fw={500} color="gray.5" size="xs" className="mb-1">Input:</Text>
                     <Text size="sm" color="gray.4">
-                      nums = [{result.nums?.join(", ")}], target = {result.target}
+                      {problem.shownTestCases[result.case - 1]?.input}
                     </Text>
                   </div>
                   
