@@ -125,7 +125,7 @@ const Playground: React.FC<PlaygroundProps> = ({
             tabSize: 4,
             lineNumbers: true,
           }}
-          style={{ height: "100%", fontSize: "14px" }}
+          style={{ height: "100%", fontSize: "12px" }}
         />
       </div>
 

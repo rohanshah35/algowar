@@ -45,7 +45,7 @@ const Workspace = ({ problem }: { problem: any }) => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       alert("Code submitted:\n" + code + "\nLanguage: " + language);
     } finally {
       setIsSubmitting(false);

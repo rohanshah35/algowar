@@ -19,13 +19,18 @@ interface StarterCode {
   cpp: string;
 }
 
+interface CategoriesObject {
+  datatypes: string[];
+  strategies: string[];
+}
+
 export interface Problem {
   id: number;
   title: string;
   slug: string;
   description: string;
   difficulty: string;
-  categories: string[];
+  categories: CategoriesObject;
   examples: Example[];
   constraints: string[];
   starterCode: StarterCode;
@@ -65,7 +70,8 @@ export const ProblemProvider = ({ children }: { children: ReactNode }) => {
           ...problem,
           examples: JSON.parse(problem.examples),
           shownTestCases: JSON.parse(problem.shownTestCases),
-          starterCode: JSON.parse(problem.starterCode)
+          starterCode: JSON.parse(problem.starterCode),
+          categories: JSON.parse(problem.categories)  
         }));
 
 

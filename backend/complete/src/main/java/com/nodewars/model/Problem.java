@@ -32,7 +32,7 @@ public class Problem {
     private String difficulty;
 
     @Column(name = "categories")
-    private List<String> categories;
+    private String categories;    
 
     @Column(name = "examples")
     private String examples;
@@ -63,7 +63,7 @@ public class Problem {
 
     public Problem() {}
 
-    public Problem(int id, String title, String slug, String description, String difficulty, List<String> categories,
+    public Problem(int id, String title, String slug, String description, String difficulty, String categories,
                    String examples, List<String> constraints, String starterCode, String shownTestCases, String testCases,
                    double acceptanceRate, int totalSubmissions, int acceptedSubmissions, String harnessCode) {
         this.id = id;
@@ -123,11 +123,11 @@ public class Problem {
         this.difficulty = difficulty;
     }
 
-    public List<String> getCategories() {
+    public String getCategories() {
         return categories;
     }
 
-    public void setCategories(List<String> categories) {
+    public void setCategories(String categories) {
         this.categories = categories;
     }
 

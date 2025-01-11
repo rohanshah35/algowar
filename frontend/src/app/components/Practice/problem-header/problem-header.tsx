@@ -1,7 +1,7 @@
 // ProblemHeader.tsx
 import { Inter } from 'next/font/google';
 import { Button } from '@mantine/core';
-import { IconPlayerPlay, IconCloudCheck } from '@tabler/icons-react';
+import { IconPlayerPlay, IconCloudCheck, IconArrowLeft } from '@tabler/icons-react';
 import styles from './problem-header.module.css';
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
@@ -20,6 +20,18 @@ const ProblemHeader: React.FC<ProblemHeaderProps> = ({
   isSubmitting 
 }) => (
   <div className={styles.header}>
+    <div className={styles.backButtonContainer}>
+      <Button
+        className={`${inter.className} ${styles.backButton}`}
+        radius="xs"
+        variant="subtle"
+        component="a"
+        href="http://localhost:3000/problems"
+      >
+        <IconArrowLeft size={16} />
+      </Button>
+    </div>
+
     <div className={styles.buttonContainer}>
       <Button
         className={`${inter.className} ${styles.runButton}`}

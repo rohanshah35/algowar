@@ -67,7 +67,7 @@ export function ProblemTable(): React.ReactElement {
                 fontSize: '0.9rem',
               }}
             >
-              Categories
+              Acceptance Rate
             </th>
           </tr>
         </thead>
@@ -89,7 +89,7 @@ export function ProblemTable(): React.ReactElement {
                   }}
                   style={{
                     textDecoration: 'none',
-                    color: '#60A5FA', // Clickable link color
+                    color: '#60A5FA',
                     cursor: 'pointer',
                   }}
                 >
@@ -118,7 +118,7 @@ export function ProblemTable(): React.ReactElement {
                   fontSize: '0.9rem',
                 }}
               >
-                {problem.categories.join(', ')}
+                {problem.acceptanceRate}%
               </td>
             </tr>
           ))}
