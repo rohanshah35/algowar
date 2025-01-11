@@ -70,7 +70,7 @@ public class CompilerController {
 
             @SuppressWarnings("unchecked")
             Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
-            return ResponseEntity.ok(Map.of("result", resultMap));
+            return ResponseEntity.ok(resultMap);
     
         } catch (Exception e) {
             logger.error("Error during code execution", e);

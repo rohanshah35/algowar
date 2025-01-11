@@ -1,0 +1,40 @@
+/* problem-header.module.css */
+.header {
+    background-color: #18181b;
+    padding: 14px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    border-bottom: 1px solid #27272a;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    gap: 4px;
+  }
+  
+  .runButton {
+    font-size: 12px !important;
+    width: 80px !important;
+    height: 30px !important;
+    background-color: #2d2d2d !important;
+    color: #d4d4d4 !important;
+    transition: background-color 0.2s ease-in-out !important;
+  }
+  
+  .runButton:hover {
+    background-color: #404040 !important;
+  }
+  
+  .submitButton {
+    font-size: 12px !important;
+    width: 100px !important;
+    height: 30px !important;
+    background-color: #059669 !important;
+    color: white !important;
+    transition: background-color 0.2s ease-in-out !important;
+  }
+  
+  .submitButton:hover {
+    background-color: #047857 !important;
+  }

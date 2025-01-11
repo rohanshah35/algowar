@@ -1,56 +1,44 @@
+// ProblemHeader.tsx
 import { Inter } from 'next/font/google';
 import { Button } from '@mantine/core';
 import { IconPlayerPlay, IconCloudCheck } from '@tabler/icons-react';
+import styles from './problem-header.module.css';
 
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 type ProblemHeaderProps = {
   handleRun: () => void;
   handleSubmit: () => void;
+  isRunning: boolean;
+  isSubmitting: boolean;
 };
 
-const ProblemHeader: React.FC<ProblemHeaderProps> = ({ handleRun, handleSubmit }) => (
-  <div
-    style={{
-      backgroundColor: '#18181b',
-      padding: '14px',
-      display: 'flex',
-      justifyContent: 'center',
-      width: '100%',
-      borderBottom: '1px solid #27272a',
-    }}
-  >
-    <div style={{ display: 'flex', gap: '4px' }}>
+const ProblemHeader: React.FC<ProblemHeaderProps> = ({ 
+  handleRun, 
+  handleSubmit, 
+  isRunning, 
+  isSubmitting 
+}) => (
+  <div className={styles.header}>
+    <div className={styles.buttonContainer}>
       <Button
-        className={inter.className}
-        style={{
-          fontSize: '12px',
-          width: '80px',
-          height: '30px',
-          backgroundColor: '#2d2d2d',
-          color: '#d4d4d4',
-        }}
+        className={`${inter.className} ${styles.runButton}`}
         radius="xs"
         onClick={handleRun}
         leftSection={<IconPlayerPlay size={16} />}
         variant="filled"
+        loading={isRunning}
       >
         Run
       </Button>
 
       <Button
-        className={inter.className}
-        style={{
-          fontSize: '12px',
-          width: '100px',
-          height: '30px',
-          backgroundColor: '#059669',
-          color: 'white',
-        }}
+        className={`${inter.className} ${styles.submitButton}`}
         radius="xs"
         onClick={handleSubmit}
         leftSection={<IconCloudCheck size={16} />}
         variant="filled"
+        loading={isSubmitting}
       >
         Submit
       </Button>

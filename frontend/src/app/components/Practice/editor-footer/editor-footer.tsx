@@ -1,7 +1,8 @@
 import { Tabs, Textarea, Text } from "@mantine/core";
 import { Inter } from "next/font/google";
 import styles from "./EditorFooter.module.css";
-import { IconTestPipe, IconFlask2Filled } from "@tabler/icons-react";
+import { IconTestPipe, IconFlask2Filled, IconCheck, IconX } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300"] });
 
@@ -10,31 +11,54 @@ interface TestCase {
   output: string;
 }
 
+interface TestResult {
+  case: number;
+  error: string | null;
+  expected: any;
+  nums: number[];
+  output: any;
+  passed: boolean;
+  target: number;
+}
+
 type EditorFooterProps = {
   problem: {
     shownTestCases: TestCase[];
   };
   onChange: (value: string) => void;
+  results: { results: TestResult[]; error?: string; } | null;
 };
 
-const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange }) => (
-  <div className={`bg-dark-layer-1 p-3 ${inter.className}`}>
-    <Tabs
-      defaultValue="testcases"
-      onChange={(value) => onChange(value || "testcases")}
-      className="w-full"
-      classNames={{
-        tab: styles.tab,
-        list: styles.list,
-      }}
-      styles={{
-        panel: {
-          paddingTop: "2px",
-          paddingLeft: "16px",
-        },
-      }}
-    >
-      <Tabs.List>
+const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange, results }) => {
+  const [activeTab, setActiveTab] = useState("testcases");
+
+  useEffect(() => {
+    if (results) {
+      setActiveTab("results");
+    }
+  }, [results]);
+
+  return (
+    <div className={`bg-dark-layer-1 p-3 ${inter.className}`}>
+      <Tabs
+        value={activeTab}
+        onChange={(value) => {
+          setActiveTab(value || "testcases");
+          onChange(value || "testcases");
+        }}
+        className="w-full"
+        classNames={{
+          tab: styles.tab,
+          list: styles.list,
+        }}
+        styles={{
+          panel: {
+            paddingTop: "2px",
+            paddingLeft: "16px",
+          },
+        }}
+      >
+        <Tabs.List>
           <Tabs.Tab 
             value="testcases" 
             leftSection={<IconTestPipe size={16} style={{ marginRight: "6px" }} />}
@@ -42,84 +66,168 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange }) => (
             Test Cases
           </Tabs.Tab>
           <Tabs.Tab 
-          value="results" 
-          leftSection={<IconFlask2Filled size={16} style={{ marginRight: '6px' }} />}
-        >
-          Test Results
-        </Tabs.Tab>
-      </Tabs.List>
+            value="results" 
+            leftSection={<IconFlask2Filled size={16} style={{ marginRight: '6px' }} />}
+          >
+            Test Results
+          </Tabs.Tab>
+        </Tabs.List>
 
-      <Tabs.Panel value="testcases">
-        <div style={{ marginTop: "12px" }}>
-          <Tabs
-            defaultValue="case-1"
-            classNames={{
-              tab: styles.tab,
-              list: styles.list,
-            }}
-            styles={{
-              tab: {
-                fontSize: "12px",
-                padding: "4px 10px",
-                width: "90px"
-              },
+        <Tabs.Panel value="testcases">
+          <div style={{ marginTop: "12px" }}>
+            <Tabs
+              defaultValue="case-1"
+              classNames={{
+                tab: styles.tab,
+                list: styles.list,
+              }}
+              styles={{
+                tab: {
+                  fontSize: "12px",
+                  padding: "4px 10px",
+                  width: "90px"
+                },
+              }}
+            >
+              <Tabs.List>
+                {problem.shownTestCases.map((_, index) => (
+                  <Tabs.Tab key={index} value={`case-${index + 1}`}>
+                    Case {index + 1}
+                  </Tabs.Tab>
+                ))}
+              </Tabs.List>
+
+              {problem.shownTestCases.map((testCase, index) => (
+                <Tabs.Panel key={index} value={`case-${index + 1}`} mt="md">
+                  <div style={{ marginBottom: "16px" }}>
+                    <Text fw={500} color="gray.5" style={{ fontSize: "12px", marginBottom: "6px" }}>
+                      Input:
+                    </Text>
+                    <Textarea
+                      value={testCase.input}
+                      readOnly
+                      autosize
+                      styles={{
+                        input: {
+                          backgroundColor: "#18181b",
+                          color: "#f4f4f5",
+                          border: "1px solid #27272a",
+                        },
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Text fw={500} color="gray.5" style={{ fontSize: "12px", marginBottom: "6px" }}>
+                      Expected Output:
+                    </Text>
+                    <Textarea
+                      value={testCase.output}
+                      readOnly
+                      autosize
+                      styles={{
+                        input: {
+                          backgroundColor: "#18181b",
+                          color: "#22C55E",
+                          border: "1px solid #27272a",
+                        },
+                      }}
+                    />
+                  </div>
+                </Tabs.Panel>
+              ))}
+            </Tabs>
+          </div>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="results">
+        {!results ? (
+          <Text color="gray.5">Test Results will be displayed here after running your code.</Text>
+        ) : results.error ? (
+          <div 
+            className="p-4 rounded-lg" 
+            style={{
+              backgroundColor: "#18181b",
+              border: "1px solid #27272a",
+              color: "#f87171",
+              marginTop: "16px"
             }}
           >
-            <Tabs.List>
-              {problem.shownTestCases.map((_, index) => (
-                <Tabs.Tab key={index} value={`case-${index + 1}`}>
-                  Case {index + 1}
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-
-            {problem.shownTestCases.map((testCase, index) => (
-              <Tabs.Panel key={index} value={`case-${index + 1}`} mt="md">
-                <div style={{ marginBottom: "16px" }}>
-                  <Text fw={500} color="gray.5" style={{ fontSize: "12px", marginBottom: "6px" }}>
-                    Input:
+            <Text fw={500} color="red.4" size="sm" style={{ marginBottom: "6px" }}>
+              Error:
+            </Text>
+            <Text size="sm">{results.error}</Text>
+          </div>
+        ) : (
+          <div className="space-y-4 mt-4">
+            {results.results.map((result, index) => (
+              <div 
+                key={index}
+                className="p-4 rounded-lg"
+                style={{ 
+                  backgroundColor: "#18181b",
+                  border: "1px solid #27272a"
+                }}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <Text fw={500} color="gray.5" size="sm">
+                    Test Case {result.case}
                   </Text>
-                  <Textarea
-                    value={testCase.input}
-                    readOnly
-                    autosize
-                    styles={{
-                      input: {
-                        backgroundColor: "#18181b",
-                        color: "#f4f4f5",
-                        border: "1px solid #27272a",
-                      },
-                    }}
-                  />
+                  {result.passed ? (
+                    <div className="flex items-center text-green-500">
+                      <IconCheck size={16} className="mr-1" />
+                      <Text size="sm">Passed</Text>
+                    </div>
+                  ) : (
+                    <div className="flex items-center text-red-500">
+                      <IconX size={16} className="mr-1" />
+                      <Text size="sm">Failed</Text>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <Text fw={500} color="gray.5" style={{ fontSize: "12px", marginBottom: "6px" }}>
-                    Expected Output:
-                  </Text>
-                  <Textarea
-                    value={testCase.output}
-                    readOnly
-                    autosize
-                    styles={{
-                      input: {
-                        backgroundColor: "#18181b",
-                        color: "#22C55E",
-                        border: "1px solid #27272a",
-                      },
-                    }}
-                  />
+                
+                <div className="space-y-2">
+                  <div>
+                    <Text fw={500} color="gray.5" size="xs" className="mb-1">Input:</Text>
+                    <Text size="sm" color="gray.4">
+                      nums = [{result.nums?.join(", ")}], target = {result.target}
+                    </Text>
+                  </div>
+                  
+                  <div>
+                    <Text fw={500} color="gray.5" size="xs" className="mb-1">Expected Output:</Text>
+                    <Text size="sm" color="green.4">
+                      {JSON.stringify(result.expected)}
+                    </Text>
+                  </div>
+                  
+                  <div>
+                    <Text fw={500} color="gray.5" size="xs" className="mb-1">Your Output:</Text>
+                    <Text 
+                      size="sm" 
+                      color={result.passed ? "green.4" : "red.4"}
+                    >
+                      {result.output === null ? "null" : JSON.stringify(result.output)}
+                    </Text>
+                  </div>
+                  
+                  {result.error && (
+                    <div>
+                      <Text fw={500} color="gray.5" size="xs" className="mb-1">Error:</Text>
+                      <Text size="sm" color="red.4">
+                        {result.error}
+                      </Text>
+                    </div>
+                  )}
                 </div>
-              </Tabs.Panel>
+              </div>
             ))}
-          </Tabs>
-        </div>
+          </div>
+        )}
       </Tabs.Panel>
 
-      <Tabs.Panel value="results" >
-        <Text color="gray.5">Test Results will be displayed here after running your code.</Text>
-      </Tabs.Panel>
-    </Tabs>
-  </div>
-);
+      </Tabs>
+    </div>
+  );
+};
 
 export default EditorFooter;

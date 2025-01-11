@@ -9,20 +9,35 @@ import { Select } from "@mantine/core";
 import EditorFooter from "@/components/Practice/editor-footer/editor-footer";
 import styles from "./playground.module.css";
 
-const Playground = ({
-  problem,
-  code,
-  setCode,
-  language,
-  setLanguage,
-}: {
+interface TestResult {
+  results: Array<{
+    case: number;
+    error: string | null;
+    expected: any;
+    nums: number[];
+    output: any;
+    passed: boolean;
+    target: number;
+  }>;
+}
+
+interface PlaygroundProps {
   problem: any;
   code: string;
   setCode: (code: string) => void;
   language: string;
   setLanguage: (language: string) => void;
-}) => {
+  testResults: TestResult | null;
+}
 
+const Playground: React.FC<PlaygroundProps> = ({
+  problem,
+  code,
+  setCode,
+  language,
+  setLanguage,
+  testResults,
+}) => {
   const handleTabChange = (value: string) => {
     console.log("Selected Tab:", value);
   };
@@ -79,7 +94,7 @@ const Playground = ({
           }}
           data={[
             { value: "java", label: "Java" },
-            { value: "python3", label: "python3" },
+            { value: "python3", label: "Python 3" },
             { value: "cpp", label: "C++" },
           ]}
           styles={{
@@ -106,12 +121,20 @@ const Playground = ({
           theme={vscodeDark}
           onChange={(value) => setCode(value)}
           extensions={getCodeMirrorExtensions()}
+          basicSetup={{
+            tabSize: 4,
+            lineNumbers: true,
+          }}
           style={{ height: "100%", fontSize: "14px" }}
         />
       </div>
 
       <div id="footer" className="bg-dark-layer-2">
-        <EditorFooter onChange={handleTabChange} problem={problem} />
+        <EditorFooter 
+          onChange={handleTabChange} 
+          problem={problem} 
+          results={testResults} 
+        />
       </div>
     </div>
   );

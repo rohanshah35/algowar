@@ -5,11 +5,25 @@ import Playground from "./playground/playground";
 import styles from "./workspace.module.css";
 import ProblemHeader from "./problem-header/problem-header";
 
+interface TestResult {
+  results: Array<{
+    case: number;
+    error: string | null;
+    expected: any;
+    nums: number[];
+    output: any;
+    passed: boolean;
+    target: number;
+  }>;
+}
+
 const Workspace = ({ problem }: { problem: any }) => {
   const slug = problem.slug;
-
-  const [code, setCode] = useState<string>(problem.starterCode.python);
+  const [code, setCode] = useState<string>(problem.starterCode.python3);
   const [language, setLanguage] = useState<string>("python3");
+  const [testResults, setTestResults] = useState<TestResult | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const splitInstance = Split(["#description", "#playground"], {
@@ -28,25 +42,22 @@ const Workspace = ({ problem }: { problem: any }) => {
     return () => splitInstance.destroy();
   }, []);
 
-  const handleSubmit = () => {
-    alert("Code submitted:\n" + code + "\nLanguage: " + language);
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      alert("Code submitted:\n" + code + "\nLanguage: " + language);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleRun = async () => {
-    const normalizedCode = code
-      .split("\n")
-      .map((line, index) => {
-        if (index === 0) {
-          return line.trim();
-        }
-        return line.trim() ? "    " + line.trim() : "";
-      })
-      .join("\n");
-  
+    setIsRunning(true);
     const requestBody = {
       language: language,
       slug: slug as string,
-      code: normalizedCode,
+      code: code,
     };
   
     try {
@@ -66,8 +77,7 @@ const Workspace = ({ problem }: { problem: any }) => {
   
       const result = await response.json();
       console.log("Run result:", result);
-  
-      alert(`Run result: ${JSON.stringify(result, null, 2)}`);
+      setTestResults(result);
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error during code execution:", error.message);
@@ -76,24 +86,33 @@ const Workspace = ({ problem }: { problem: any }) => {
         console.error("Unexpected error:", error);
         alert("An unexpected error occurred.");
       }
+      setTestResults(null);
+    } finally {
+      setIsRunning(false);
     }
   };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", width: "100%" }}>
-      <ProblemHeader handleRun={handleRun} handleSubmit={handleSubmit} />
+      <ProblemHeader 
+        handleRun={handleRun} 
+        handleSubmit={handleSubmit}
+        isRunning={isRunning}
+        isSubmitting={isSubmitting}
+      />
 
       <div style={{ display: "flex", height: "100%", width: "100%" }}>
         <div id="description" style={{ height: "100%", overflow: "auto" }}>
           <ProblemDescription problem={problem} />
         </div>
         <div id="playground" style={{ height: "100%", overflow: "auto" }}>
-        <Playground 
+          <Playground 
             problem={problem} 
             code={code} 
             setCode={setCode} 
             language={language} 
-            setLanguage={setLanguage} 
+            setLanguage={setLanguage}
+            testResults={testResults}
           />
         </div>
       </div>
