@@ -69,7 +69,7 @@ import { use, useEffect, useState } from 'react';
           { label: 'Friend Requests', link: '/friend-requests' },
         ],
       },
-      { label: 'Settings', icon: IconSettings, link: '/settings' },
+      // { label: 'Settings', icon: IconSettings, link: '/settings' },
       {
         label: 'Account',
         icon: IconLock,

@@ -21,10 +21,10 @@ export function Settings() {
   const [preferredLanguage, setPreferredLanguage] = useState<string | null>(null);
   const [availableLanguages, setAvailableLanguages] = useState<string[]>([
     'python3',
-    'python',
-    'Java',
-    'C',
-    'C++',
+    // 'python',
+    // 'Java',
+    // 'C',
+    // 'C++',
   ]);
 
   useEffect(() => {

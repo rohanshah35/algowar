@@ -93,20 +93,20 @@ const Playground: React.FC<PlaygroundProps> = ({
             option: styles.option,
           }}
           data={[
-            { value: "java", label: "Java" },
+            // { value: "java", label: "Java" },
             { value: "python3", label: "Python 3" },
-            { value: "cpp", label: "C++" },
+            // { value: "cpp", label: "C++" },
           ]}
           styles={{
             dropdown: {
               backgroundColor: "#1e1e1e",
               border: "none",
-              height: "100px",
+              height: "30px",
             },
             input: {
               backgroundColor: "#1e1e1e",
               color: "#f4f4f5",
-              fontSize: "12px",
+              fontSize: "11px",
               padding: "3px 6px",
               border: "none",
               marginLeft: "5px",
