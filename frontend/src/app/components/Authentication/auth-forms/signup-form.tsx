@@ -49,7 +49,7 @@ export function SignupForm() {
       const responseData = await response.json();
       setTimeout(() => {
         router.push(`/verification/${responseData.sub}`);
-      }, 2000);
+      }, 500);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {

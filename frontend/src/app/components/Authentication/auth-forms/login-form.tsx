@@ -48,7 +48,7 @@ export function LoginForm() {
 
       setTimeout(() => {
         router.push(`/u/${payload.username}`);
-      }, 2000);
+      }, 500);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {

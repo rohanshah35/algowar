@@ -87,7 +87,7 @@ export default function Social() {
   }
 
   return (
-    <div className={`container ${isDropdownOpen ? "blurred" : ""}`}>
+    <div className={`container ${isDropdownOpen ? "blurred" : ""}`} style={{ paddingTop: "20px" }}>
       <div
         style={{
           display: "flex",

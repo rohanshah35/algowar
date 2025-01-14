@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Avatar, Button, Card, Group, Text, Loader } from "@mantine/core";
+import { Avatar, Button, Paper, Text, Loader, Group } from "@mantine/core";
 import { Inter } from "next/font/google";
+
 const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 
 export default function FriendRequests() {
@@ -80,9 +81,27 @@ export default function FriendRequests() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Text ta="center" fz="xl" fw={700} style={{ fontFamily: inter.style.fontFamily, color: "#f4f4f5", fontSize: "2.5rem" }}>
-        Pending Friend Requests
+    <div >
+      <Text
+        ta="center"
+        fz="lg"
+        style={{
+          fontFamily: inter.style.fontFamily,
+          color: "#f4f4f5",
+          marginBottom: "2.5rem",
+          fontWeight: 400,
+        }}
+      >
+        Friend Requests{" "}
+        {pendingRequests.length > 0 && (
+          <span
+            style={{
+              fontWeight: 700,
+            }}
+          >
+            ({pendingRequests.length})
+          </span>
+        )}
       </Text>
 
       {pendingRequests.length === 0 ? (
@@ -90,54 +109,81 @@ export default function FriendRequests() {
           You have no pending friend requests.
         </Text>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "30px"}}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "60px", paddingLeft: "150px", paddingRight: "150px" }}>
           {pendingRequests.map((request, index) => (
-            <Card
+            <Paper
               key={index}
-              withBorder
-              padding="xl"
               radius="md"
+              withBorder
+              p="lg"
+              bg="#18181b"
               style={{
-                backgroundColor: "#18181b",
-                borderColor: "#27272a",
-                color: "#f4f4f5",
-                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.6)",
-                minWidth: "200px",
+                border: "transparent",
+                position: "relative",
+                boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.5)",
               }}
             >
-              <Avatar src={request.profilePicture} size={80} radius={80} mx="auto" mt={-10} />
-              <Text ta="center" fz="lg" fw={500} mt="sm" style={{ color: "#f4f4f5" }}>
+              <Avatar
+                src={request.profilePicture}
+                size={120}
+                radius={100}
+                mx="auto"
+              />
+              <Text
+                ta="center"
+                fz="md"
+                fw={500}
+                mt="sm"
+                c="#d4d4d8"
+                style={{ fontFamily: inter.style.fontFamily }}
+              >
                 {request.username}
               </Text>
-
               <Group mt="md" justify="center">
-                <Button
-                  variant="outline"
-                  color="green"
-                  size="sm"
-                  style={{backGroundColor: "#18181b"}}
-                  onClick={() => handleAcceptRequest(request.username)}
-                  disabled={isLoading}
-                >
-                  {isLoading ? <Loader size="sm" style={{backGroundColor: "#18181b"}} /> : "Accept"}
-                </Button>
-                <Button
-                  variant="outline"
-                  color="red"
-                  size="sm"
-                  onClick={() => handleRejectRequest(request.username)}
-                  disabled={isLoading}
-                >
-                  {isLoading ? <Loader size="sm" color="red" /> : "Reject"}
-                </Button>
-              </Group>
-
+              <Button
+                variant="filled"
+                color="green"
+                size="sm"
+                onClick={() => handleAcceptRequest(request.username)}
+                disabled={isLoading}
+                styles={{
+                  root: {
+                    backgroundColor: "#14532d",
+                    color: "#ffffff",
+                    fontWeight: 300,
+                  },
+                }}
+              >
+                {isLoading ? <Loader size="sm" color="white" /> : "Accept"}
+              </Button>
+              <Button
+                variant="filled"
+                color="red"
+                size="sm"
+                onClick={() => handleRejectRequest(request.username)}
+                disabled={isLoading}
+                styles={{
+                  root: {
+                    backgroundColor: "#7f1d1d",
+                    color: "#ffffff",
+                    fontWeight: 300,
+                  },
+                }}
+              >
+                {isLoading ? <Loader size="sm" color="white" /> : "Reject"}
+              </Button>
+            </Group>
               {statusMessage && (
-                <Text ta="center" fz="sm" c={statusMessage.includes("failed") ? "red" : "green"} mt="sm">
+                <Text
+                  ta="center"
+                  fz="sm"
+                  c={statusMessage.includes("failed") ? "red" : "green"}
+                  mt="sm"
+                >
                   {statusMessage}
                 </Text>
               )}
-            </Card>
+            </Paper>
           ))}
         </div>
       )}

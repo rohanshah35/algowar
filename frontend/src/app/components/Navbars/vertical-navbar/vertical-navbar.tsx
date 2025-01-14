@@ -66,10 +66,10 @@ import { use, useEffect, useState } from 'react';
         icon: IconUsersGroup, 
         links: [
           { label: 'Friends & Search', link: '/friends' },
-          { label: 'Requests', link: '/requests' },
+          { label: 'Friend Requests', link: '/friend-requests' },
         ],
       },
-      { label: 'Settings', icon: IconSettings, link: '/settings' },
+      // { label: 'Settings', icon: IconSettings, link: '/settings' },
       {
         label: 'Account',
         icon: IconLock,
@@ -107,7 +107,7 @@ import { use, useEffect, useState } from 'react';
       <nav className={classes.navbar}>
         <div className={classes.header}>
           <Group justify="space-between">
-            <div style={{ color: '#f4f4f5', fontSize: '22px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
+            <div style={{ color: '#f4f4f5', fontSize: '20px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
               algowar.xyz
             </div>
           </Group>

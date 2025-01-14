@@ -1,11 +1,12 @@
-import { ProblemTable } from "@/components/Practice/problem-table/problem-table";
+"use client";
 
-export default async function Problems() {
+import { ProblemTable } from "@/components/Practice/problem-table/problem-table";
+import { ProblemProvider } from "@/components/Practice/ProblemData";
+
+export default function Problems() {
   return (
-    <div style={{ display: 'flex' }}>
-     <div style={{ flex: 1 }}>
-       <ProblemTable />
-     </div>
-   </div>
-  )
+    <ProblemProvider>
+          <ProblemTable />
+    </ProblemProvider>
+  );
 }

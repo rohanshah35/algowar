@@ -16,6 +16,7 @@ import jakarta.persistence.Transient;
 @Entity
 @Table(name = "users")
 public class User {
+    
     @Id
     @Column(name = "username")
     private String username;

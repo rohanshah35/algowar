@@ -41,7 +41,6 @@ import com.nodewars.utils.CognitoUtils;
  * - 401 Unauthorized for authentication failures
  * - 404 Not Found for missing resources
  */
-
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")

@@ -76,7 +76,7 @@ export function SocialCard({
             },
           }}
         >
-          Invite +
+          Invite to match +
         </Button>
       </Paper>
 

@@ -54,7 +54,6 @@ public class UserService {
      * @return the user
      */
     public User getUserByUsername(String username) {
-        logger.info("Fetching user by username: " + username);
         return userRepository.findByUsername(username);
     }
 
@@ -342,7 +341,6 @@ public class UserService {
         if (Arrays.asList(currentFriends).contains(senderUsername)) {
             throw new Exception("Friend already exists");
         }
-        logger.info("Sending friend request from " + senderUsername + " to " + friendPreferredUsername);
         userRepository.addFriendRequest(friendPreferredUsername, senderUsername);
     }
 
