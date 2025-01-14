@@ -104,6 +104,7 @@ const Playground: React.FC<PlaygroundProps> = ({
               borderColor: "#27272a",
               border: "1px solid #27272a",
               height: "35px",
+              fontSize: "11px",
             },
             // input: {
             //   backgroundColor: "#1e1e1e",
