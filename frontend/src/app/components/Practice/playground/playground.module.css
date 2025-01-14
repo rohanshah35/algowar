@@ -13,8 +13,30 @@
   }
 
   .option:hover {
-    background-color: #5e5e5e;
+    background-color: #313131;
     cursor: pointer;
   }
+
+  .option {
+    color: #f4f4f5;
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+
+.input{
+    background-color: #1e1e1e;
+    color: #f4f4f5;
+    font-size: 11px;
+    padding: 2px 4px;
+    border: none;
+    margin-left: 3px;
+    width: 100px;
+    height: 5px;
+}
+
+.input:hover {
+    background-color: #313131;
+    cursor: pointer;
+}
 
   

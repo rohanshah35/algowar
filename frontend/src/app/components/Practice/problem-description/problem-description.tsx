@@ -17,11 +17,20 @@ const ProblemDescription = ({ problem }: { problem: any }) => {
   const { datatypes, strategies } = problem.categories || { datatypes: [], strategies: [] };
   const { acceptedSubmissions, totalSubmissions, acceptanceRate } = problem;
 
+  const renderFormattedText = (text: string) => {
+    return text.split('\\n').map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        {index < text.split('\\n').length - 1 && <br />}
+      </React.Fragment>
+    ));
+  };
+
   return (
     <div className="bg-dark-layer-1 p-4 h-full overflow-y-auto">
       <h1 className="text-white text-2xl font-bold mb-4">{problem.title}</h1>
 
-      <div className="mb-8 ">
+      <div className="mb-8">
         <span
           className={`text-sm px-2 py-1 rounded ${
             problem.difficulty === "Easy"
@@ -38,7 +47,7 @@ const ProblemDescription = ({ problem }: { problem: any }) => {
       <div className="mb-6">
         <div className="flex items-center mb-2">
           <h3 className="text-white text-sm font-bold mr-2 font-mono">DATA STRUCTURES:</h3>
-          <Group >
+          <Group>
             {datatypes.map((datatype: string, idx: number) => (
               <Badge
                 key={idx}
@@ -56,7 +65,7 @@ const ProblemDescription = ({ problem }: { problem: any }) => {
 
         <div className="flex items-center">
           <h3 className="text-white text-sm font-bold mr-2 font-mono">STRATEGIES:</h3>
-          <Group >
+          <Group>
             {strategies.map((strategy: string, idx: number) => (
               <Badge
                 key={idx}
@@ -73,17 +82,25 @@ const ProblemDescription = ({ problem }: { problem: any }) => {
         </div>
       </div>
 
-      <p className="text-white text-sm mb-4">{problem.description}</p>
+      <div className="text-white text-sm mb-4 whitespace-pre-line">
+        {renderFormattedText(problem.description)}
+      </div>
 
       <h2 className="text-white text-lg font-semibold mb-2">Examples:</h2>
       {problem.examples?.map((example: any, index: number) => (
         <div key={index} className="mb-4">
           <p className="text-white font-medium p-2">Case {index + 1}</p>
           <div className="bg-gray-800 p-3 rounded">
-            <pre className="text-white text-sm">
-              <strong>Input:</strong> {example.inputText}
+            <pre className="text-white text-sm whitespace-pre-line">
+              <strong>Input:</strong> {renderFormattedText(example.inputText)}
               <br />
-              <strong>Output:</strong> {example.outputText}
+              <strong>Output:</strong> {renderFormattedText(example.outputText)}
+              {example.explanation && (
+                <>
+                  <br />
+                  <strong>Explanation:</strong> {renderFormattedText(example.explanation)}
+                </>
+              )}
             </pre>
           </div>
         </div>
@@ -94,16 +111,20 @@ const ProblemDescription = ({ problem }: { problem: any }) => {
         {problem.constraints?.map((constraint: string, index: number) => (
           <li
             key={index}
-            className="text-sm text-gray-300 bg-gray-900 rounded p-2 mb-2 font-mono"
-            dangerouslySetInnerHTML={{
-              __html:
-                constraint.replace(/(\d+)\^(\d+)/g, "$1<sup>$2</sup>"),
-            }}
-          ></li>
+            className="text-sm text-gray-300 bg-gray-900 rounded p-2 mb-2 font-mono whitespace-pre-line"
+          >
+            <span
+              dangerouslySetInnerHTML={{
+                __html: constraint
+                  .replace(/(\d+)\^(\d+)/g, "$1<sup>$2</sup>")
+                  .replace(/\\n/g, "<br />"),
+              }}
+            />
+          </li>
         ))}
       </ul>
 
-      <div className="justify-between items-center mt-6 border-t border-gray-700 pt-5">
+      <div className="flex items-center space-x-4 mt-6 border-t border-gray-700 pt-5">
         <div className="text-gray-400 text-sm">
           <span className="font-semibold text-white">Accepted:</span>{" "}
           {formatNumber(acceptedSubmissions)}
