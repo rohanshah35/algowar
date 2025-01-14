@@ -1,6 +1,5 @@
 package com.nodewars.controller;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,30 +91,51 @@ public class CompilerController {
         String language = (String) request.get("language");
         String code = (String) request.get("code");
         String slug = (String) request.get("slug");
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> resultMap;
     
         try {
             String harnessCode = problemService.getHarnessCode(slug, language);
             logger.info("Harness code: " + harnessCode);
-
+    
             String shownTestCasesJson = problemService.getTestCases(slug);
             logger.info("Fetched test cases: " + shownTestCasesJson);
-
-            ObjectMapper objectMapper = new ObjectMapper();
+    
             Object testCases = objectMapper.readValue(shownTestCasesJson, Object.class);
-
+    
             String result = compilerService.compileAndRun(language, code, harnessCode, testCases);
             logger.info("Result: " + result);
-
-            @SuppressWarnings("unchecked")
-            Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
+    
+            resultMap = objectMapper.readValue(result, Map.class);
+    
+            logger.info(resultMap.toString());
+    
+            boolean allPassed = (Boolean) resultMap.getOrDefault("all_passed", false);
+    
+            if (allPassed) {
+                int newAcceptedSubmissions = problemService.getAcceptedSubmissions(slug) + 1;
+                problemService.updateAcceptedSubmissions(slug, newAcceptedSubmissions);
+            }
+    
             return ResponseEntity.ok(resultMap);
     
         } catch (Exception e) {
             logger.error("Error during code execution", e);
-            return ResponseEntity.status(500).body(Map.of(
+            resultMap = Map.of(
                 "success", false,
                 "error", e.getMessage()
-            ));
+            );
+            return ResponseEntity.status(500).body(resultMap);
+    
+        } finally {
+            try {
+                int newTotalSubmissions = problemService.getTotalSubmissions(slug) + 1;
+                problemService.updateTotalSubmissions(slug, newTotalSubmissions);
+                double newAcceptanceRate = problemService.getAcceptedSubmissions(slug) / (double) problemService.getTotalSubmissions(slug);
+                problemService.updateAcceptanceRate(slug, newAcceptanceRate * 100);
+            } catch (Exception updateException) {
+                logger.error("Error updating total submissions or acceptance rate", updateException);
+            }
         }
     }
     
