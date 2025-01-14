@@ -104,9 +104,9 @@ public class CompilerController {
             Object testCases = objectMapper.readValue(shownTestCasesJson, Object.class);
     
             String result = compilerService.compileAndRun(language, code, harnessCode, testCases);
-            logger.info("Result: " + result);
     
             resultMap = objectMapper.readValue(result, Map.class);
+            resultMap.remove("results");
     
             logger.info(resultMap.toString());
     

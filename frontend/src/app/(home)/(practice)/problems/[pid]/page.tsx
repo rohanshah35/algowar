@@ -6,7 +6,7 @@ import { ProblemProvider } from "@/components/Practice/ProblemData";
 export default function ProblemPageWrapper() {
   return (
     <ProblemProvider>
-          <ProblemPage />
+      <ProblemPage />
     </ProblemProvider>
   );
 }
