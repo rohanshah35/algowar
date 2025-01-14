@@ -97,7 +97,6 @@ const ProblemDescription = ({ problem }: { problem: any }) => {
             className="text-sm text-gray-300 bg-gray-900 rounded p-2 mb-2 font-mono"
             dangerouslySetInnerHTML={{
               __html:
-                `<span class="mr-2 text-orange-400">⚡</span>` +
                 constraint.replace(/(\d+)\^(\d+)/g, "$1<sup>$2</sup>"),
             }}
           ></li>
