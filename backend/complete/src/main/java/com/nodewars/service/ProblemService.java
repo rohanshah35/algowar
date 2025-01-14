@@ -78,6 +78,26 @@ public class ProblemService {
         return problemRepository.getFirstThreeTestCases(slug);
     }
 
+     /**
+     * Retrieves total submissions
+     * 
+     * @param slug the slug of the problem
+     * @return total submissions count
+     */
+    public int getTotalSubmissions(String slug) {
+        return problemRepository.getTotalSubmissions(slug);
+    }
+
+     /**
+     * Retrieves accepted submissions
+     * 
+     * @param slug the slug of the problem
+     * @return accepted submissions count
+     */
+    public int getAcceptedSubmissions(String slug) {
+        return problemRepository.getAcceptedSubmissions(slug);
+    }
+
     @SuppressWarnings("unchecked")
     public Map<String, String> getHarnessCodes(String slug) {
         String harnessCodesJSON = problemRepository.getHarnessCode(slug);

@@ -45,6 +45,16 @@ public interface ProblemRepository extends JpaRepository<Problem, Integer> {
 
     @Query(value = "SELECT jsonb_agg(elem) FROM (SELECT jsonb_array_elements(test_cases) AS elem FROM problems WHERE slug = :slug LIMIT 3) AS limited_test_cases", nativeQuery = true)
     String getFirstThreeTestCases(@Param("slug") String slug);
+
+    // Query to pull problem accepted submissions
+
+    @Query(value = "SELECT p.acceptedSubmissions FROM Problem p WHERE p.slug = :slug")
+    int getAcceptedSubmissions(@Param("slug") String slug);
+
+    // Query to pull problem total submissions
+
+    @Query(value = "SELECT p.totalSubmissions FROM Problem p WHERE p.slug = :slug")
+    int getTotalSubmissions(@Param("slug") String slug);
     
     // Update queries
 

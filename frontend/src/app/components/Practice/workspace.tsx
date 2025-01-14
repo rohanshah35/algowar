@@ -44,6 +44,20 @@ const Workspace = ({ problem }: { problem: any }) => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    const requestBody = {
+      language: language,
+      slug: slug as string,
+      code: code,
+    };
+
+    const response = await fetch("http://localhost:8080/compile/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       alert("Code submitted:\n" + code + "\nLanguage: " + language);
