@@ -100,7 +100,6 @@ export default function Social() {
             flex: 1,
             maxWidth: "500px",
             position: "relative",
-            zIndex: 10,
           }}
         >
           <Autocomplete

@@ -80,5 +80,43 @@ public class CompilerController {
             ));
         }
     }
+
+    /**
+     * Endpoint to submit user-submitted code with test cases.
+     * Delegates code execution to AWS Lambda via CompilerService.
+     * @param request Map containing "language", "code", "slug".
+     * @return ResponseEntity with execution results or error details.
+     */
+    @PostMapping("/submit")
+    public ResponseEntity<Map<String, Object>> submitCode(@RequestBody Map<String, Object> request) {
+        String language = (String) request.get("language");
+        String code = (String) request.get("code");
+        String slug = (String) request.get("slug");
+    
+        try {
+            String harnessCode = problemService.getHarnessCode(slug, language);
+            logger.info("Harness code: " + harnessCode);
+
+            String shownTestCasesJson = problemService.getTestCases(slug);
+            logger.info("Fetched test cases: " + shownTestCasesJson);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object testCases = objectMapper.readValue(shownTestCasesJson, Object.class);
+
+            String result = compilerService.compileAndRun(language, code, harnessCode, testCases);
+            logger.info("Result: " + result);
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
+            return ResponseEntity.ok(resultMap);
+    
+        } catch (Exception e) {
+            logger.error("Error during code execution", e);
+            return ResponseEntity.status(500).body(Map.of(
+                "success", false,
+                "error", e.getMessage()
+            ));
+        }
+    }
     
 }
