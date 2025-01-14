@@ -107,7 +107,11 @@ const EditorFooter: React.FC<EditorFooterProps> = ({ problem, onChange, results 
 
   const renderTestResults = () => {
     if (!results) {
-      return <Text color="gray.5">Test Results will be displayed here after running your code.</Text>;
+      return (
+        <Text color="gray.5" style={{ paddingTop: "12px" }}>
+          Test Results will be displayed here after running your code.
+        </Text>
+      );
     }
 
     if (results.error) {

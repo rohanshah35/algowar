@@ -101,7 +101,8 @@ const Playground: React.FC<PlaygroundProps> = ({
             dropdown: {
               backgroundColor: "#1e1e1e",
               border: "none",
-              height: "30px",
+              height: "60px",
+              fontSize: "11px",
             },
             input: {
               backgroundColor: "#1e1e1e",
