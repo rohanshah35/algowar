@@ -32,6 +32,7 @@
     "react-split": "^2.0.14",
     "recharts": "^2.15.0",
     "sass": "^1.83.0",
+    "socket.io-client": "^4.8.1",
     "split.js": "^1.6.5"
   },
   "devDependencies": {
