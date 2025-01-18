@@ -167,6 +167,7 @@ export default function Social() {
                 key={index}
                 username={friend.username}
                 profilePicture={friend.profilePicture}
+                // elo={friend.elo}
                 onRemoveFriend={handleRemoveFriend}
               />
             ))}

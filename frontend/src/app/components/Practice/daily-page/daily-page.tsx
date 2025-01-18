@@ -32,10 +32,6 @@ const DailyPage = () => {
 
   const dailyProblem = useCurrentDayProblem(problems || []);
 
-  if (loading) {
-    return <div style={{ color: '#f4f4f5', textAlign: 'center' }}>Loading...</div>;
-  }
-
   if (error) {
     return <div style={{ color: '#f87171', textAlign: 'center' }}>Error: {error}</div>;
   }

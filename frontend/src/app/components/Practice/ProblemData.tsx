@@ -13,7 +13,7 @@ export interface Example {
 }
 
 interface StarterCode {
-  python: string;
+  python3: string;
   java: string;
   c: string
   cpp: string;

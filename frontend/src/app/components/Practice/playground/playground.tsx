@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from "react";
 import Split from "split.js";
 import CodeMirror from "@uiw/react-codemirror";
@@ -23,7 +25,7 @@ interface TestResult {
 
 interface PlaygroundProps {
   problem: any;
-  code: string;
+  code: string | null;
   setCode: (code: string) => void;
   language: string;
   setLanguage: (language: string) => void;

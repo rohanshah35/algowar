@@ -8,12 +8,14 @@ const inter = Inter({ subsets: ['latin'], weight: ['300'] });
 type SocialCardProps = {
   username: string;
   profilePicture: string;
+  // elo: number
   onRemoveFriend: (username: string) => void;
 };
 
 export function SocialCard({
   username,
   profilePicture,
+  // elo,
   onRemoveFriend,
 }: SocialCardProps) {
   const [modalOpened, setModalOpened] = useState(false);
@@ -76,7 +78,7 @@ export function SocialCard({
             },
           }}
         >
-          Invite to match +
+          {/* {elo} */}
         </Button>
       </Paper>
 

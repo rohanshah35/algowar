@@ -10,13 +10,12 @@ const ProblemPage = () => {
     const { pid } = useParams();
     const { problems, loading, error } = useContext(ProblemData);
 
-    if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     const selectedProblem = problems?.find((problem) => problem.slug === pid);
 
     if (!selectedProblem) {
-        return <div>Problem not found</div>;
+        return <div></div>;
     }
 
     return (

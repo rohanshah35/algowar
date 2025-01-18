@@ -1,11 +1,12 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Split from "split.js";
 import ProblemDescription from "./problem-description/problem-description";
 import Playground from "./playground/playground";
 import styles from "./workspace.module.css";
 import ProblemHeader from "./problem-header/problem-header";
-import { useSubmission } from "@/context/submission-context";
 import { useRouter } from "next/navigation";
+import { Problem } from "./ProblemData";
 
 interface TestResult {
   results: Array<{
@@ -19,16 +20,43 @@ interface TestResult {
   }>;
 }
 
-const Workspace = ({ problem }: { problem: any }) => {
-  const slug = problem.slug;
-  const [code, setCode] = useState<string>(problem.starterCode.python3);
+const Workspace = ({ slug }: { slug: any }) => {
+  const [problem, setProblem] = useState<any | null>(null); // Problem state
+  const [code, setCode] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>("python3");
   const [testResults, setTestResults] = useState<TestResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { setSubmission } = useSubmission();
   const Router = useRouter();
+  console.log(slug);
+  useEffect(() => {
+    console.log("test")
+
+    const fetchProblem = async () => {
+      console.log("about to call");
+      try {
+        const response = await fetch(`http://localhost:8080/problem/${slug}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const rawData = await response.json();
+        const parsedData: Problem = {
+          ...rawData,
+          examples: JSON.parse(rawData.examples),
+          shownTestCases: JSON.parse(rawData.shownTestCases),
+          starterCode: JSON.parse(rawData.starterCode),
+          categories: JSON.parse(rawData.categories),
+        };
+        setProblem(parsedData);
+        setCode(parsedData.starterCode.python3); // Set starter code
+      } catch (err: any) {
+        console.error(err.message || "Failed to fetch problem");
+      }
+    };
+
+    fetchProblem();
+  }, []);
 
   useEffect(() => {
     const splitInstance = Split(["#description", "#playground"], {
@@ -55,28 +83,7 @@ const Workspace = ({ problem }: { problem: any }) => {
       code: code,
     };
 
-    try {
-      const response = await fetch("http://localhost:8080/compile/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const result = await response.json();
-      setSubmission(result, code, problem.title, language);
-      Router.push("/problems/submission-result");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error during submission:", error.message);
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    console.log("submitting code")
   };
 
   const handleRun = async () => {
@@ -127,18 +134,25 @@ const Workspace = ({ problem }: { problem: any }) => {
       />
 
       <div style={{ display: "flex", height: "100%", width: "100%" }}>
-        <div id="description" style={{ height: "100%", overflow: "auto" }}>
+      <div id="description" style={{ height: "100%", overflow: "auto" }}>
+        {problem ? (
           <ProblemDescription problem={problem} />
-        </div>
+        ) : (
+          <div>Loading…</div>
+        )}
+      </div>
         <div id="playground" style={{ height: "100%", overflow: "auto" }}>
-          <Playground
+          {problem ? (
+            <Playground
             problem={problem}
             code={code}
             setCode={setCode}
             language={language}
             setLanguage={setLanguage}
             testResults={testResults}
-          />
+          />) : (
+            <div>Loading</div>
+          )}
         </div>
       </div>
     </div>

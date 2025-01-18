@@ -49,8 +49,9 @@ import { use, useEffect, useState } from 'react';
         label: 'Play',
         icon: IconSwords,
         links: [
-          { label: 'Join Queue', link: '/queue' },
-          { label: 'Invite Friend', link: '/invite' },
+          { label: 'Matchmaking', link: '/matchmaking' },
+          { label: 'Join Room', link: '/join' },
+          { label: 'Create Room', link: '/create' },
         ],
       },
       {
