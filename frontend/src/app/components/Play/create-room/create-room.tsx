@@ -78,7 +78,7 @@ export function CreateRoom() {
           if (response === "error") {
             setError("Failed to create room");
           } else if (response === "success") {
-            setModalOpened(true); // Open the modal
+            setModalOpened(true);
           }
         }
       );
@@ -166,7 +166,7 @@ export function CreateRoom() {
                 fontWeight: 300,
               }}
               onClick={() => {
-                setModalOpened(false); // Close the modal
+                setModalOpened(false);
                 router.push(`/game/${roomCodeRef.current}`);
               }}
             >
