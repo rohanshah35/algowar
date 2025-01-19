@@ -49,7 +49,6 @@ public class ProblemController {
 
             return ResponseEntity.ok(sanitizedProblems);
         } catch (Exception e) {
-            logger.error("Error fetching all problems: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -70,7 +69,21 @@ public class ProblemController {
             problem.setTestCases(null);
             return ResponseEntity.ok(problem);
         } catch (Exception e) {
-            logger.error("Error fetching problem by slug: {}", e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * Endpoint to fetch title, difficulty, acceptance rate, and slug of all problems.
+     * @param slug
+     * @return
+     */
+    @GetMapping("/titles")
+    public ResponseEntity<List<Object[]>> getProblemTitles() {
+        try {
+            List<Object[]> problemTitles = problemService.getAllProblemsInfo();
+            return ResponseEntity.ok(problemTitles);
+        } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
     }
@@ -89,7 +102,6 @@ public class ProblemController {
             response.put("exists", String.valueOf(exists));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error checking problem existence: {}", e.getMessage());
             response.put("error", "An error occurred while checking problem existence.");
             return ResponseEntity.status(500).body(response);
         }

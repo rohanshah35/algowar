@@ -21,13 +21,13 @@ import com.nodewars.repository.ProblemRepository;
 @Service
 public class ProblemService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
+
     @Autowired
     private ProblemRepository problemRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
 
     /**
      * Fetch all problems.
@@ -88,6 +88,15 @@ public class ProblemService {
         return problemRepository.getTotalSubmissions(slug);
     }
 
+    /**
+     * Retrieves problem titles (title, difficulty, acceptance rate, slug).
+     * @param slug
+     * @return
+     */
+    public List<Object[]> getAllProblemsInfo() {
+        return problemRepository.getAllProblemsInfo();
+    }
+
      /**
      * Retrieves accepted submissions
      * 
@@ -101,9 +110,7 @@ public class ProblemService {
     @SuppressWarnings("unchecked")
     public Map<String, String> getHarnessCodes(String slug) {
         String harnessCodesJSON = problemRepository.getHarnessCode(slug);
-        logger.info("Harness codes JSON: " + harnessCodesJSON);
         try {
-            logger.info(objectMapper.readValue(harnessCodesJSON, Map.class).toString());
             return objectMapper.readValue(harnessCodesJSON, Map.class);
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse main functions JSON", e);

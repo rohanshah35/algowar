@@ -103,7 +103,6 @@ public class AuthController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
-            logger.error("Error signing up user: " + e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -139,7 +138,6 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            logger.error("Error logging in user: " + e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -173,7 +171,6 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            logger.error("Error verifying email: " + e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -195,7 +192,6 @@ public class AuthController {
             response.put("message", "Successfully resent");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error resending verification code: " + e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -222,7 +218,6 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            logger.error("Error logging out user: " + e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -262,7 +257,6 @@ public class AuthController {
             response.put("profilePicture", s3Service.getPreSignedUrl(s3Key));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error checking authentication: " + e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }

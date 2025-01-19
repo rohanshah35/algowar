@@ -23,8 +23,11 @@ import java.time.Duration;
 
 @Service
 public class S3Service {
+    
     private static final Logger logger = LoggerFactory.getLogger(S3Service.class);
+
     private final S3Client s3Client;
+
     private final S3Presigner presigner;
 
     @Value("${aws.credentials.access-key-id}")
@@ -69,7 +72,6 @@ public class S3Service {
 
             return key;
         } catch (Exception e) {
-            logger.error("Error generating upload URL for user {}: {}", username, e.getMessage());
             throw new RuntimeException("Failed to generate upload URL", e);
         }
     }
@@ -82,7 +84,6 @@ public class S3Service {
                .build();
             s3Client.deleteObject(deleteObjectRequest);
        } catch (Exception e) {
-           logger.error("Error deleting profile picture {}: {}", key, e.getMessage());
            throw new RuntimeException("Failed to delete profile picture", e);
        }
    }
@@ -100,7 +101,6 @@ public class S3Service {
 
             return presigner.presignGetObject(presignRequest).url().toString();
         } catch (Exception e) {
-            logger.error("Error generating presigned URL for profile picture {}: {}", key, e.getMessage());
             throw new RuntimeException("Failed to generate presigned URL", e);
         }
     }

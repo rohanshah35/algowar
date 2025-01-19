@@ -92,7 +92,6 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error fetching all users: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -111,7 +110,6 @@ public class UserController {
             response.put("exists", String.valueOf(exists));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error checking if username exists: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
@@ -149,7 +147,6 @@ public class UserController {
             response.put("stats", stats);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error checking if username exists: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
@@ -188,7 +185,6 @@ public class UserController {
             if (idToken != null && preferredUsername != null) {
                 String currentPreferredUsername = cognitoUtils.verifyAndGetUser(idToken).getPreferredUsername();
                 boolean isCurrentUser = currentPreferredUsername.equals(preferredUsername);
-                logger.info("isCurrentUser: {}", isCurrentUser);
                 if (isCurrentUser) {
                     response.put("isCurrentUser", String.valueOf(isCurrentUser));
                     response.put("isFriend", "false");
@@ -224,7 +220,6 @@ public class UserController {
             response.put("creationDate", creationDate);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error checking if username exists: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
@@ -260,7 +255,6 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error fetching profile picture: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -292,7 +286,6 @@ public class UserController {
             response.put("preferredLanguage", language);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error checking if username exists: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
@@ -339,7 +332,6 @@ public class UserController {
             response.put("friends", friends);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error fetching friends: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
@@ -376,7 +368,6 @@ public class UserController {
             response.put("friendRequests", friendRequests);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error fetching friend requests: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
@@ -403,7 +394,6 @@ public class UserController {
             response.put("message", "Friend request sent successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error adding friend: {}", e.getMessage());
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -430,7 +420,6 @@ public class UserController {
             response.put("message", "Friend added successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error adding friend: {}", e.getMessage());
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -457,7 +446,6 @@ public class UserController {
             response.put("message", "Friend added successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error adding friend: {}", e.getMessage());
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -485,7 +473,6 @@ public class UserController {
             response.put("message", "Friend deleted successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error removing friend: {}", e.getMessage());
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -515,7 +502,6 @@ public class UserController {
             response.put("message", "Preferred language updated successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error updating preferred language: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -563,7 +549,6 @@ public class UserController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            logger.error("Error updating username: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(response);
@@ -611,7 +596,6 @@ public class UserController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (Exception e) {
-            logger.error("Error updating email: {}", e.getMessage());
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -645,7 +629,6 @@ public class UserController {
             response.put("message", "Password updated successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error updating password: {}", e.getMessage());
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -676,7 +659,6 @@ public class UserController {
             response.put("s3Key", preSignedUrl);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error updating profile picture: {}", e.getMessage());
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -706,7 +688,6 @@ public class UserController {
             response.put("message", "User account deleted successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error deleting user: {}", e.getMessage());
             response.put("error", "An error has occurred, please try again.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }

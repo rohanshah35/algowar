@@ -34,13 +34,13 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CompilerController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CompilerController.class);
+
     @Autowired
     private CompilerService compilerService;
 
     @Autowired
     private ProblemService problemService;
-
-    private static final Logger logger = LoggerFactory.getLogger(CompilerController.class);
 
     /**
      * Endpoint to compile and execute user-submitted code with test cases.

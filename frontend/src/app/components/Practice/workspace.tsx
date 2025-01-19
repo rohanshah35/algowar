@@ -6,7 +6,7 @@ import Playground from "./playground/playground";
 import styles from "./workspace.module.css";
 import ProblemHeader from "./problem-header/problem-header";
 import { useRouter } from "next/navigation";
-import { Problem } from "./ProblemData";
+import { useSubmissionStore } from "@/store/submission-store";
 
 interface TestResult {
   results: Array<{
@@ -20,21 +20,57 @@ interface TestResult {
   }>;
 }
 
+interface TestCase {
+  input: string;
+  output: string;
+}
+
+interface Example {
+  input: string;
+  output: string;
+}
+
+interface StarterCode {
+  python3: string;
+  java: string;
+  c: string
+  cpp: string;
+}
+
+interface CategoriesObject {
+  datatypes: string[];
+  strategies: string[];
+}
+
+interface Problem {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  difficulty: string;
+  categories: CategoriesObject;
+  examples: Example[];
+  constraints: string[];
+  starterCode: StarterCode;
+  shownTestCases: TestCase[];
+  acceptanceRate: number;
+  totalSubmissions: number;
+  acceptedSubmissions: number;
+}
+
 const Workspace = ({ slug }: { slug: any }) => {
-  const [problem, setProblem] = useState<any | null>(null); // Problem state
+  const [problem, setProblem] = useState<Problem | null>(null);
   const [code, setCode] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>("python3");
   const [testResults, setTestResults] = useState<TestResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const setSubmission = useSubmissionStore((state) => state.setSubmission);
   const Router = useRouter();
-  console.log(slug);
-  useEffect(() => {
-    console.log("test")
 
+  useEffect(() => {
     const fetchProblem = async () => {
-      console.log("about to call");
       try {
         const response = await fetch(`http://localhost:8080/problem/${slug}`);
         if (!response.ok) {
@@ -49,14 +85,14 @@ const Workspace = ({ slug }: { slug: any }) => {
           categories: JSON.parse(rawData.categories),
         };
         setProblem(parsedData);
-        setCode(parsedData.starterCode.python3); // Set starter code
+        setCode(parsedData.starterCode.python3);
       } catch (err: any) {
         console.error(err.message || "Failed to fetch problem");
       }
     };
 
     fetchProblem();
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
     const splitInstance = Split(["#description", "#playground"], {
@@ -79,24 +115,51 @@ const Workspace = ({ slug }: { slug: any }) => {
     setIsSubmitting(true);
     const requestBody = {
       language: language,
-      slug: slug as string,
+      slug: slug,
       code: code,
     };
 
-    console.log("submitting code")
+    try {
+      const response = await fetch("http://localhost:8080/compile/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Use the Zustand store to set submission data
+      setSubmission(
+        result,
+        code || '',
+        problem?.title || '',
+        language
+      );
+
+      // Optionally navigate to a results page
+      Router.push('/problems/submission-result');
+    } catch (error) {
+      console.error("Error during submission:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleRun = async () => {
     setIsRunning(true);
     const requestBody = {
       language: language,
-      slug: slug as string,
+      slug: slug,
       code: code,
     };
 
     try {
-      console.log("Request Body:", requestBody);
-
       const response = await fetch("http://localhost:8080/compile/run", {
         method: "POST",
         headers: {
@@ -110,14 +173,9 @@ const Workspace = ({ slug }: { slug: any }) => {
       }
 
       const result = await response.json();
-      console.log("Run result:", result);
       setTestResults(result);
     } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error during code execution:", error.message);
-      } else {
-        console.error("Unexpected error:", error);
-      }
+      console.error("Error during code execution:", error);
       setTestResults(null);
     } finally {
       setIsRunning(false);
@@ -134,24 +192,25 @@ const Workspace = ({ slug }: { slug: any }) => {
       />
 
       <div style={{ display: "flex", height: "100%", width: "100%" }}>
-      <div id="description" style={{ height: "100%", overflow: "auto" }}>
-        {problem ? (
-          <ProblemDescription problem={problem} />
-        ) : (
-          <div>Loading…</div>
-        )}
-      </div>
+        <div id="description" style={{ height: "100%", overflow: "auto" }}>
+          {problem ? (
+            <ProblemDescription problem={problem} />
+          ) : (
+            <div></div>
+          )}
+        </div>
         <div id="playground" style={{ height: "100%", overflow: "auto" }}>
           {problem ? (
             <Playground
-            problem={problem}
-            code={code}
-            setCode={setCode}
-            language={language}
-            setLanguage={setLanguage}
-            testResults={testResults}
-          />) : (
-            <div>Loading</div>
+              problem={problem}
+              code={code}
+              setCode={setCode}
+              language={language}
+              setLanguage={setLanguage}
+              testResults={testResults}
+            />
+          ) : (
+            <div></div>
           )}
         </div>
       </div>

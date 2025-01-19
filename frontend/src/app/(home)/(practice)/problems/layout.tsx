@@ -1,6 +1,5 @@
 "use client";
 
-import { SubmissionProvider } from "@/context/submission-context";
 
 export default function ProblemsLayout({
   children,
@@ -8,8 +7,6 @@ export default function ProblemsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SubmissionProvider>
-      <div>{children}</div>
-    </SubmissionProvider>
+    <div>{children}</div>
   );
 }

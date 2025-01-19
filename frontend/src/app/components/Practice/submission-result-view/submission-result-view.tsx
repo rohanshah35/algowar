@@ -3,7 +3,7 @@ import { Card, Text, Container, Grid, Alert, Title } from '@mantine/core';
 import CodeMirror from '@uiw/react-codemirror';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { python } from '@codemirror/lang-python';
-import { useSubmission } from '@/context/submission-context';
+import { useSubmissionStore } from '@/store/submission-store'; // Update this path to match your store location
 
 const formatValue = (value: any): string => {
   if (Array.isArray(value)) {
@@ -16,7 +16,11 @@ const formatValue = (value: any): string => {
 };
 
 const SubmissionResultView: React.FC = () => {
-  const { submissionResult, submittedCode, problemTitle, language } = useSubmission();
+  // Replace context with Zustand store
+  const submissionResult = useSubmissionStore((state) => state.submissionResult);
+  const submittedCode = useSubmissionStore((state) => state.submittedCode);
+  const problemTitle = useSubmissionStore((state) => state.problemTitle);
+  const language = useSubmissionStore((state) => state.language);
   
   if (!submissionResult) return null;
 
