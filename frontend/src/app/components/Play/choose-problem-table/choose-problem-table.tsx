@@ -115,59 +115,69 @@ export function ChooseProblemTable({
           },
         }}
       />
-      <Table
-        striped
-        highlightOnHover
-        verticalSpacing="md"
-        horizontalSpacing="md"
-        style={{ borderCollapse: "collapse", width: "100%", marginTop: "1rem" }}
+      <div
+        style={{
+          maxHeight: "400px",
+          overflowY: "auto",
+          marginTop: "1rem",
+        }}
       >
-        <thead>
-          <tr>
-            <th style={{ textAlign: "center", color: "#f4f4f5" }}>Title</th>
-            <th style={{ textAlign: "center", color: "#f4f4f5" }}>Difficulty</th>
-            <th style={{ textAlign: "center", color: "#f4f4f5" }}>
-              Acceptance Rate
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredProblems.map((problem) => (
-            <tr
-              key={problem.slug}
-              style={{
-                backgroundColor:
-                  selectedSlug === problem.slug
-                    ? "var(--mantine-color-blue-light)"
-                    : "inherit",
-                cursor: "pointer",
-              }}
-              onClick={() => handleRowClick(problem)}
-            >
-              <td style={{ textAlign: "center", padding: "0.5rem" }}>
-                {problem.title}
-              </td>
-              <td
-                style={{
-                  textAlign: "center",
-                  padding: "0.5rem",
-                  color:
-                    problem.difficulty === "Easy"
-                      ? "#4ADE80"
-                      : problem.difficulty === "Medium"
-                      ? "#FBBF24"
-                      : "#F87171",
-                }}
-              >
-                {problem.difficulty}
-              </td>
-              <td style={{ textAlign: "center", padding: "0.5rem" }}>
-                {problem.acceptanceRate}%
-              </td>
+        <Table
+          striped
+          highlightOnHover
+          verticalSpacing="md"
+          horizontalSpacing="md"
+          style={{ borderCollapse: "collapse", width: "100%" }}
+        >
+          <thead>
+            <tr>
+              <th style={{ textAlign: "center", color: "#f4f4f5" }}>Title</th>
+              <th style={{ textAlign: "center", color: "#f4f4f5" }}>
+                Difficulty
+              </th>
+              <th style={{ textAlign: "center", color: "#f4f4f5" }}>
+                Acceptance Rate
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {filteredProblems.map((problem) => (
+              <tr
+                key={problem.slug}
+                style={{
+                  backgroundColor:
+                    selectedSlug === problem.slug
+                      ? "var(--mantine-color-blue-light)"
+                      : "inherit",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleRowClick(problem)}
+              >
+                <td style={{ textAlign: "center", padding: "0.5rem" }}>
+                  {problem.title}
+                </td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "0.5rem",
+                    color:
+                      problem.difficulty === "Easy"
+                        ? "#4ADE80"
+                        : problem.difficulty === "Medium"
+                        ? "#FBBF24"
+                        : "#F87171",
+                  }}
+                >
+                  {problem.difficulty}
+                </td>
+                <td style={{ textAlign: "center", padding: "0.5rem" }}>
+                  {problem.acceptanceRate}%
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
     </Card>
   );
 }

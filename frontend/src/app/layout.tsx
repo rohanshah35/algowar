@@ -1,7 +1,6 @@
 "use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppShell, MantineProvider } from '@mantine/core';
-import { ModalsProvider } from '@mantine/modals';
 import '@mantine/core/styles.css';
 import "./globals.css";
 
@@ -26,14 +25,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <MantineProvider>
-          <ModalsProvider>
-            <AppShell
-              header={{ height: 60 }}
-              padding="md"
-            >
-              {children}
-            </AppShell>
-            </ModalsProvider>
+          <AppShell
+            header={{ height: 60 }}
+            padding="md"
+          >
+            {children}
+          </AppShell>
         </MantineProvider>
       </body>
     </html>
