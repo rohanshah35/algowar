@@ -41,13 +41,14 @@ public class SocketIOConfig {
         });
 
         server.addEventListener("join_room", String.class, (client, roomId, ackRequest) -> {
-            logger.info("Client " + client.getSessionId() + " is joining room " + roomId);
+            logger.info("Client " + client.getSessionId() + " is attempting to join room " + roomId);
             if (!rooms.containsKey(roomId)) {
                 ackRequest.sendAckData("error");
                 return;
             }
 
             int currentOccupancy = rooms.get(roomId).getOccupancy();
+            logger.info("Room " + roomId + " has " + currentOccupancy + " occupants");
             if (currentOccupancy >= 2) {
                 ackRequest.sendAckData("hi");
                 return;
@@ -56,8 +57,9 @@ public class SocketIOConfig {
             client.joinRoom(roomId);
             RoomDetails roomDetails = rooms.get(roomId);
             roomDetails.setOccupancy(currentOccupancy + 1);
+            logger.info("Room " + roomId + " now has " + roomDetails.getOccupancy() + " occupants");
             rooms.put(roomId, roomDetails); 
-            logger.info("Client " + client.getSessionId() + " has joined room " + roomId);
+            logger.info("Client " + client.getSessionId() + " has successfully joined room " + roomId);
             ackRequest.sendAckData(Map.of(
                 "status", "success",
                 "slug", roomDetails.getSlug()
@@ -69,14 +71,15 @@ public class SocketIOConfig {
         server.addEventListener("create_room", RoomRequestDto.class, (client, data, ackRequest) -> {
             String roomId = data.getRoomId();
             String slug = data.getSlug();
-            logger.info("Client " + client.getSessionId() + " is creating room " + roomId + " with slug " + slug);
+            logger.info("Client " + client.getSessionId() + " is attempting to create room " + roomId + " with slug " + slug);
 
             if (rooms.containsKey(roomId)) {
                 ackRequest.sendAckData("error");
                 return;
             }
 
-            rooms.put(roomId, new RoomDetails(1, slug));
+            rooms.put(roomId, new RoomDetails(0, slug));
+            logger.info("Room " + roomId + " has been created with slug " + slug);
 
             ackRequest.sendAckData("success");
         });
