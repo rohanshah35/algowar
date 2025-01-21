@@ -11,13 +11,31 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  overflow-y: auto;
+  overflow-y: hidden;
+}
+
+.messageBubble.currentUser {
+  background-color: #1a1a1a;
+}
+
+.messageUsername {
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.currentUser .messageUsername {
+  color: #4caf50;
+}
+
+.messageContent {
+  color: #fff;
 }
 
 .timeSection {
+  flex: 0 0 auto;
   margin-top: 10px;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px; /* Reduced from 40px */
 }
 
 .time {
@@ -41,23 +59,28 @@
 }
 
 .playersSection {
+  border: 1px solid #27272a;
+  flex: 1;
   width: 100%;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .playerCard {
-  margin-bottom: 10px;
+  padding: 10px;
+  margin-bottom: 5px;
 }
 
 .avatar {
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   background-color: #444;
   border-radius: 50%;
-  margin: 0 auto 10px;
+  margin: 0 auto 5px;
 }
 
 .playerName {
@@ -86,18 +109,19 @@
   font-weight: 200;
   letter-spacing: 2px;
   margin-bottom: 20px;
-  margin-top: 10px;
+  margin: 10px 0;
 }
 
 .statsSection {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 5px; 
 }
 
 .statBox {
   background-color: #1f1f23;
-  padding: 8px;
+  padding: 6px; 
   width: 220px;
   margin-bottom: 8px;
   border-radius: 6px;
@@ -147,18 +171,23 @@
 }
 
 .bottomSection {
-  margin-top: auto;
+  flex: 0 0 auto; 
   width: 100%;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; 
 }
 
 .chatWindow {
-  height: 300px;
+  height: 200px; 
+  min-height: 150px; 
   display: flex;
   flex-direction: column;
   border: 1px solid #333;
   border-radius: 4px;
   background-color: #1f1f23;
-  margin-bottom: 40px;
+  margin-bottom: 20px; 
   overflow: hidden;
 }
 

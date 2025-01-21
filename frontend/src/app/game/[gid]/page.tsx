@@ -6,9 +6,13 @@ import { io, Socket } from "socket.io-client";
 import Workspace from "@/components/Practice/workspace";
 import { VerticalGamebar } from "@/components/Play/vertical-gamebar/vertical-gamebar";
 import classes from "./game.module.css";
-
-// Import the Zustand store
 import { useAuthStore } from "@/store/auth-store";
+
+interface PlayerData {
+  username: string;
+  pfp: string;
+  elo: string;
+}
 
 export default function ProblemPageWrapper() {
   const router = useRouter();
@@ -17,29 +21,25 @@ export default function ProblemPageWrapper() {
   const [error, setError] = useState<string | null>(null);
   const [problemSlug, setProblemSlug] = useState<string | null>(null);
   const [timer, setTimer] = useState<number | null>(null);
+  const [players, setPlayers] = useState<PlayerData[]>([]);
 
-  // Get the username and the checkAuth function from the Zustand store
   const { username, checkAuth } = useAuthStore();
 
-  // On component mount, check auth to populate the username
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
   useEffect(() => {
-    // If no game ID, redirect
     if (!gid) {
       setError("Invalid game ID. Redirecting...");
       setTimeout(() => router.push("/"), 3000);
       return;
     }
 
-    // Wait for username to be retrieved before connecting the socket
     if (!username) return;
 
     const socketConnection = io("http://localhost:9092");
 
-    // Join the room after obtaining username from the store
     socketConnection.emit(
       "join_room",
       { roomId: gid, username },
@@ -54,14 +54,16 @@ export default function ProblemPageWrapper() {
       }
     );
 
-    // Listen for timer updates
+    socketConnection.on("room_update", (playersData: PlayerData[]) => {
+      setPlayers(playersData);
+    });
+
     socketConnection.on("timer_update", (remainingTime: number) => {
       setTimer(remainingTime);
     });
 
-    // Listen for timer end
     socketConnection.on("timer_ended", () => {
-      setTimer(0); // Timer has ended
+      setTimer(0);
     });
 
     setSocket(socketConnection);
@@ -75,14 +77,22 @@ export default function ProblemPageWrapper() {
     return <div>{error}</div>;
   }
 
-  // If the server hasn't responded yet with the slug (and no error), show loading
   if (!problemSlug) {
     return <div>Loading...</div>;
   }
 
+  const sortedPlayers = players.sort((a, b) => 
+    a.username === username ? -1 : b.username === username ? 1 : 0
+  );
+
   return (
     <div className={classes.pageContainer}>
-      <VerticalGamebar timer={timer} />
+      <VerticalGamebar 
+        timer={timer}
+        currentPlayer={sortedPlayers[0]}
+        opponent={sortedPlayers[1]}
+        socket={socket}
+      />
       <main className={classes.mainContent}>
         <Workspace slug={problemSlug} />
       </main>
