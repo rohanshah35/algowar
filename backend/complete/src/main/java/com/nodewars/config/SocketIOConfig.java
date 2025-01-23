@@ -55,6 +55,45 @@ public class SocketIOConfig {
             }
         });
 
+        server.addEventListener("request_draw", String.class, (client, roomId, ackRequest) -> {
+            String requesterUsername = getUsernameForClient(client);
+            RoomDetails room = rooms.get(roomId);
+            
+            if (room != null) {
+                // Broadcast draw request to the other player in the room
+                server.getRoomOperations(roomId).sendEvent("draw_requested", requesterUsername);
+            }
+        });
+
+        server.addEventListener("respond_draw", Map.class, (client, data, ackRequest) -> {
+            String roomId = (String) data.get("roomId");
+            boolean accepted = (Boolean) data.get("accepted");
+            
+            RoomDetails room = rooms.get(roomId);
+            if (room != null) {
+                if (accepted) {
+                    // Draw is confirmed by both players
+                    server.getRoomOperations(roomId).sendEvent("game_draw", "Draw agreed");
+                    // Optionally reset or close the room
+                    // rooms.remove(roomId);
+                } else {
+                    // Draw is rejected
+                    server.getRoomOperations(roomId).sendEvent("draw_rejected", "Draw request declined");
+                }
+            }
+        });
+
+        server.addEventListener("forfeit", String.class, (client, roomId, ackRequest) -> {
+            RoomDetails room = rooms.get(roomId);
+            
+            if (room != null) {
+                // Broadcast forfeit to the room
+                server.getRoomOperations(roomId).sendEvent("game_forfeit", "Opponent has forfeited.");
+                // Optionally reset or close the room
+                // rooms.remove(roomId);
+            }
+        });
+
         server.addEventListener("chat_message", ChatMessageDto.class, (client, data, ackRequest) -> {
             String roomId = getRoomOfClient(client);
 

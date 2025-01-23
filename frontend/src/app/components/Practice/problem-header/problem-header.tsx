@@ -20,7 +20,7 @@ const ProblemHeader: React.FC<ProblemHeaderProps> = ({
   isSubmitting 
 }) => (
   <div className={styles.header}>
-    <div className={styles.backButtonContainer}>
+    {/* <div className={styles.backButtonContainer}>
       <Button
         className={`${inter.className} ${styles.backButton}`}
         radius="xs"
@@ -30,7 +30,7 @@ const ProblemHeader: React.FC<ProblemHeaderProps> = ({
       >
         <IconArrowLeft size={16} />
       </Button>
-    </div>
+    </div> */}
 
     <div className={styles.buttonContainer}>
       <Button

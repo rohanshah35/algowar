@@ -1,6 +1,6 @@
 .header {
   background-color: #18181b;
-  padding: 14px;
+  padding: 11px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,7 +9,7 @@
   border-bottom: 1px solid #27272a;
 }
 
-.backButtonContainer {
+/* .backButtonContainer {
   position: absolute;
   top: 14px; 
   left: 14px; 
@@ -27,7 +27,7 @@
 .backButton:hover {
   background: none !important;
   color: white !important;
-}
+} */
 
 .buttonContainer {
   display: flex;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IconSend } from '@tabler/icons-react';
-import { Progress } from '@mantine/core';
+import { Button, Modal, Progress } from '@mantine/core';
 import classes from './vertical-gamebar.module.css';
 import { Socket } from 'socket.io-client';
 
@@ -20,11 +20,15 @@ interface VerticalGamebarProps {
   currentPlayer?: PlayerData;
   opponent?: PlayerData;
   socket?: Socket | null;
+  gid: string | string[] | undefined;
 }
 
-export function VerticalGamebar({ timer, currentPlayer, opponent, socket }: VerticalGamebarProps) {
+export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }: VerticalGamebarProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [drawModalOpen, setDrawModalOpen] = useState(false);
+  const [forfeitModalOpen, setForfeitModalOpen] = useState(false);
+  const [drawRequestModalOpen, setDrawRequestModalOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -41,7 +45,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket }: Vert
 
   const handleSendMessage = () => {
     if (newMessage.trim().length > 0 && socket && currentPlayer) {
-      socket.emit('message2', {
+      socket.emit('chat_message', {
         username: currentPlayer.username,
         content: newMessage.trim()
       });
@@ -64,7 +68,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket }: Vert
     <nav className={classes.navbar}>
       <div className={classes.timeSection}>
         <div className={classes.time}>{formatTime(timer)}</div>
-        <div className={classes.subheader}>PTX3RY</div>
+        <div className={classes.subheader}>{gid}</div>
       </div>
 
       <div className={classes.playersSection}>
@@ -163,13 +167,191 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket }: Vert
         </div>
 
         <div className={classes.actionButtons}>
-          <button className={`${classes.actionButton} ${classes.drawButton}`}>
+          <button
+            className={`${classes.actionButton} ${classes.drawButton}`}
+            onClick={() => setDrawModalOpen(true)}
+          >
             DRAW
           </button>
-          <button className={`${classes.actionButton} ${classes.forfeitButton}`}>
+          <button
+            className={`${classes.actionButton} ${classes.forfeitButton}`}
+            onClick={() => setForfeitModalOpen(true)}
+            >
             FORFEIT
           </button>
         </div>
+
+      <Modal
+        opened={drawModalOpen}
+        onClose={() => setDrawModalOpen(false)}
+        title="Are you sure you want to request a draw"
+        centered
+        withCloseButton={false}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        styles={{
+          content: {
+              backgroundColor: "#18181b",
+              color: "#f4f4f5",
+              border: "1px solid #27272a",
+              fontFamily: 'Inter, sans-serif',
+          },
+          header: {
+              backgroundColor: "#18181b",
+              color: "#f4f4f5",
+              borderBottom: "none",
+              fontFamily: 'Inter, sans-serif',
+          },
+          body: {
+              fontFamily: 'Inter, sans-serif',
+          }
+      }}
+      >
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "center", 
+          gap: "1rem", 
+          marginTop: "1rem" 
+          }}>
+          <Button
+              variant="outline"
+              style={{ 
+                  borderColor: "#27272a",
+                  color: "#f4f4f5",
+                  backgroundColor: "#27272a",
+                  fontWeight: 300
+              }}
+          >
+              Yes
+          </Button>
+          <Button
+              style={{ 
+                  backgroundColor: "transparent",
+                  fontWeight: 300
+              }}
+              onClick={() => setForfeitModalOpen(false)}
+          >
+              Decline
+          </Button>
+      </div>
+      </Modal>
+
+      <Modal
+        opened={drawRequestModalOpen}
+        onClose={() => setDrawRequestModalOpen(false)}
+        title="Draw Request"
+        centered
+        withCloseButton={false}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        styles={{
+          content: {
+              backgroundColor: "#18181b",
+              color: "#f4f4f5",
+              border: "1px solid #27272a",
+              fontFamily: 'Inter, sans-serif',
+          },
+          header: {
+              backgroundColor: "#18181b",
+              color: "#f4f4f5",
+              borderBottom: "none",
+              fontFamily: 'Inter, sans-serif',
+          },
+          body: {
+              fontFamily: 'Inter, sans-serif',
+          }
+      }}
+      >
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "center", 
+          gap: "1rem", 
+          marginTop: "1rem" 
+          }}>
+          <Button
+              variant="outline"
+              style={{ 
+                  borderColor: "#27272a",
+                  color: "#f4f4f5",
+                  backgroundColor: "#c04f4f",
+                  fontWeight: 300
+              }}
+          >
+              Accept
+          </Button>
+          <Button
+              style={{ 
+                  backgroundColor: "transparent",
+                  fontWeight: 300
+              }}
+              onClick={() => setForfeitModalOpen(false)}
+          >
+              Decline
+          </Button>
+      </div>
+      </Modal>
+
+      <Modal
+        opened={forfeitModalOpen}
+        onClose={() => setForfeitModalOpen(false)}
+        title="Are you sure you want to forfeit the game?"
+        centered
+        withCloseButton={false}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        styles={{
+          content: {
+              backgroundColor: "#18181b",
+              color: "#f4f4f5",
+              border: "1px solid #27272a",
+              fontFamily: 'Inter, sans-serif',
+          },
+          header: {
+              backgroundColor: "#18181b",
+              color: "#f4f4f5",
+              borderBottom: "none",
+              fontFamily: 'Inter, sans-serif',
+          },
+          body: {
+              fontFamily: 'Inter, sans-serif',
+          }
+      }}
+      >
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "center", 
+          gap: "1rem", 
+          marginTop: "1rem" 
+          }}>
+          <Button
+              variant="outline"
+              style={{ 
+                  borderColor: "#27272a",
+                  color: "#f4f4f5",
+                  backgroundColor: "#c04f4f",
+                  fontWeight: 300
+              }}
+          >
+              Forfeit
+          </Button>
+          <Button
+              style={{ 
+                  backgroundColor: "transparent",
+                  fontWeight: 300
+              }}
+              onClick={() => setForfeitModalOpen(false)}
+          >
+              Cancel
+          </Button>
+      </div>
+      </Modal>
+
       </div>
     </nav>
   );

@@ -108,7 +108,7 @@ import { use, useEffect, useState } from 'react';
       <nav className={classes.navbar}>
         <div className={classes.header}>
           <Group justify="space-between">
-            <div style={{ color: '#f4f4f5', fontSize: '20px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
+            <div style={{ color: '#f4f4f5', fontSize: '16px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
               algowar.xyz
             </div>
           </Group>

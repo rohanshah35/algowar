@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 250px; /* Fixed width */
   height: 100vh;
   background-color: #18181b;
   color: #ffffff;
@@ -10,8 +10,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  overflow-y: hidden;
+  padding: 10px; /* Adjusted for better space usage */
+  overflow-y: auto; /* Allow scrolling if content overflows */
 }
 
 .messageBubble.currentUser {
@@ -20,7 +20,7 @@
 
 .messageUsername {
   font-weight: bold;
-  color: #4caf50;
+  color: #ff4d4d;
 }
 
 .currentUser .messageUsername {
@@ -35,13 +35,13 @@
   flex: 0 0 auto;
   margin-top: 10px;
   text-align: center;
-  margin-bottom: 20px; /* Reduced from 40px */
+  margin-bottom: 10px;
 }
 
 .time {
-  font-size: 42px;
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .subheader {
@@ -66,18 +66,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 0;
   overflow-y: auto;
 }
 
 .playerCard {
-  padding: 10px;
   margin-bottom: 5px;
 }
 
 .avatar {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   background-color: #444;
   border-radius: 50%;
   margin: 0 auto 5px;
@@ -85,14 +85,14 @@
 
 .playerName {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 12px;
   margin-bottom: 2px;
 }
 
 .playerRating {
-  font-size: 14px;
+  font-size: 12px;
   opacity: 0.8;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .playerOne {
@@ -105,7 +105,7 @@
 
 .vsLabel {
   font-family: 'IMPACT', sans-serif;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 200;
   letter-spacing: 2px;
   margin-bottom: 20px;
@@ -116,27 +116,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px; 
+  justify-content: center;
+  gap: 10px; /* Add spacing between stats */
+  margin-top: auto; /* Push section down */
+  margin-bottom: auto; /* Center between time and chatbox */
 }
 
 .statBox {
   background-color: #1f1f23;
   padding: 6px; 
-  width: 220px;
-  margin-bottom: 8px;
+  width: 200px; /* Kept slightly smaller than sidebar width */
+  margin-bottom: 4px;
   border-radius: 6px;
   border: 1px solid #333;
+  text-align: center;
 }
 
 .statLabel {
-  font-size: 12px;
+  font-size: 10px;
   opacity: 0.8;
   margin-bottom: 4px;
   text-transform: uppercase;
 }
 
 .statValue {
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 600;
 }
 
@@ -180,8 +184,7 @@
 }
 
 .chatWindow {
-  height: 200px; 
-  min-height: 150px; 
+  height: 120px;
   display: flex;
   flex-direction: column;
   border: 1px solid #333;
@@ -198,27 +201,27 @@
 }
 
 .messageBubble {
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   padding: 4px 8px;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .chatInputContainer {
   display: flex;
   align-items: center;
   border-top: 1px solid #333;
-  padding: 6px;
+  padding: 2px;
 }
 
 .chatInput {
   flex: 1;
-  height: 32px;
+  height: 20px;
   border: none;
   border-radius: 4px;
-  padding: 0 10px;
-  font-size: 11px;
+  padding: 0 15px;
+  font-size: 10px;
   outline: none;
-  margin-right: 8px;
+  margin-right: 3px;
   background-color: #2d2d32;
   color: #fff;
 }
@@ -228,8 +231,8 @@
 }
 
 .sendButton {
-  width: 35px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   border: none;
   border-radius: 4px;
   background-color: #2d2d32;
@@ -257,8 +260,8 @@
   flex: 1;
   border: none;
   border-radius: 4px;
-  padding: 8px 0;
-  font-size: 13px;
+  padding: 5px 0;
+  font-size: 10px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.15s ease;
@@ -279,4 +282,39 @@
 
 .forfeitButton:hover {
   background-color: #bd362d;
+}
+
+.playerCardLayout {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.playerInfo {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.playerStats {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.statProgressContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.statLabel {
+  font-weight: bold;
 }

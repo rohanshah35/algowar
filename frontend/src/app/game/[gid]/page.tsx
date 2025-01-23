@@ -26,6 +26,7 @@ export default function ProblemPageWrapper() {
   const { username, checkAuth } = useAuthStore();
 
   useEffect(() => {
+    // Ensure the user is authenticated
     checkAuth();
   }, [checkAuth]);
 
@@ -68,10 +69,17 @@ export default function ProblemPageWrapper() {
 
     setSocket(socketConnection);
 
+    // Cleanup socket on unmount
     return () => {
       socketConnection.disconnect();
     };
   }, [gid, router, username]);
+
+  useEffect(() => {
+    if (error) {
+      console.error("Error:", error);
+    }
+  }, [error]);
 
   if (error) {
     return <div>{error}</div>;
@@ -81,18 +89,19 @@ export default function ProblemPageWrapper() {
     return <div>Loading...</div>;
   }
 
-  const sortedPlayers = players.sort((a, b) => 
+  const sortedPlayers = players.sort((a, b) =>
     a.username === username ? -1 : b.username === username ? 1 : 0
   );
 
   return (
     <div className={classes.pageContainer}>
-      <VerticalGamebar 
+      <VerticalGamebar
         timer={timer}
         currentPlayer={sortedPlayers[0]}
         opponent={sortedPlayers[1]}
         socket={socket}
-      />
+        gid={gid}
+        />
       <main className={classes.mainContent}>
         <Workspace slug={problemSlug} />
       </main>
