@@ -1,0 +1,58 @@
+.gutter {
+    background-color: #2e2e2e;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    cursor: row-resize;
+    flex-basis: 5px;
+}
+  
+  .gutter:hover {
+    background-color: #5e5e5e;
+    cursor: row-resize;
+  }
+
+  .option:hover {
+    background-color: #313131;
+    cursor: pointer;
+  }
+
+  .option {
+    color: #f4f4f5;
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+
+.input{
+    background-color: #1e1e1e;
+    color: #f4f4f5;
+    font-size: 11px;
+    padding: 2px 4px;
+    border: none;
+    margin-left: 3px;
+    width: 100px;
+    height: 5px;
+}
+
+.input:hover {
+    background-color: #313131;
+    cursor: pointer;
+}
+
+.root {
+  background-color: var(--notification-color, var(--mantine-primary-color-filled));
+
+  &::before {
+    background-color: var(--mantine-color-white);
+  }
+}
+
+.description,
+.title {
+  color: var(--mantine-color-white);
+}
+
+.closeButton {
+  color: var(--mantine-color-white);
+}
+  

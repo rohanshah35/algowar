@@ -11,6 +11,7 @@ import com.nodewars.objects.RoomDetails;
 import com.nodewars.service.S3Service;
 import com.nodewars.service.UserService;
 
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -55,27 +56,43 @@ public class SocketIOConfig {
             }
         });
 
+        // Example usage in an event listener
         server.addEventListener("request_draw", String.class, (client, roomId, ackRequest) -> {
-            String requesterUsername = getUsernameForClient(client);
-            RoomDetails room = rooms.get(roomId);
+            String requesterUsername = getUsernameForClient(roomId, client);
             
-            if (room != null) {
-                // Broadcast draw request to the other player in the room
-                server.getRoomOperations(roomId).sendEvent("draw_requested", requesterUsername);
+            if (requesterUsername != null) {
+                RoomDetails room = rooms.get(roomId);
+                
+                if (room != null) {
+                    // Broadcast draw request to the other player in the room
+                    server.getRoomOperations(roomId).sendEvent("draw_requested", requesterUsername);
+                }
+            } else {
+                // Handle the case where the username was not found (client is not part of the room)
+                ackRequest.sendAckData("error: client not in room");
             }
         });
 
         server.addEventListener("respond_draw", Map.class, (client, data, ackRequest) -> {
             String roomId = (String) data.get("roomId");
             boolean accepted = (Boolean) data.get("accepted");
-            
+
             RoomDetails room = rooms.get(roomId);
             if (room != null) {
                 if (accepted) {
                     // Draw is confirmed by both players
                     server.getRoomOperations(roomId).sendEvent("game_draw", "Draw agreed");
+
+                    // Kick all players from the room
+                    room.getOccupants().keySet().forEach(clientId -> {
+                        SocketIOClient roomClient = server.getClient(UUID.fromString(clientId));
+                        if (roomClient != null) {
+                            roomClient.leaveRoom(roomId);
+                        }
+                    });
+
                     // Optionally reset or close the room
-                    // rooms.remove(roomId);
+                    rooms.remove(roomId);
                 } else {
                     // Draw is rejected
                     server.getRoomOperations(roomId).sendEvent("draw_rejected", "Draw request declined");
@@ -83,16 +100,27 @@ public class SocketIOConfig {
             }
         });
 
+
         server.addEventListener("forfeit", String.class, (client, roomId, ackRequest) -> {
             RoomDetails room = rooms.get(roomId);
             
             if (room != null) {
                 // Broadcast forfeit to the room
                 server.getRoomOperations(roomId).sendEvent("game_forfeit", "Opponent has forfeited.");
+                
+                // Kick all players from the room
+                room.getOccupants().keySet().forEach(clientId -> {
+                    SocketIOClient roomClient = server.getClient(UUID.fromString(clientId));
+                    if (roomClient != null) {
+                        roomClient.leaveRoom(roomId); // Optionally use `kick()` if available
+                    }
+                });
+
                 // Optionally reset or close the room
-                // rooms.remove(roomId);
+                rooms.remove(roomId); // Close the room after the forfeit
             }
         });
+
 
         server.addEventListener("chat_message", ChatMessageDto.class, (client, data, ackRequest) -> {
             String roomId = getRoomOfClient(client);
@@ -107,51 +135,60 @@ public class SocketIOConfig {
         server.addEventListener("join_room", RoomJoinDto.class, (client, data, ackRequest) -> {
             String roomId = data.getRoomId();
             String username = data.getUsername();
-        
-            logger.info("Client " + client.getSessionId() + " is attempting to join room " + roomId);
-        
+
+            logger.info("Client " + client.getSessionId() + " is attempting to join room " + roomId + " with username " + username);
+
             if (!rooms.containsKey(roomId)) {
                 ackRequest.sendAckData("error");
                 return;
             }
-        
+
             RoomDetails roomDetails = rooms.get(roomId);
-            int currentOccupancy = roomDetails.getOccupancy();
-            if (currentOccupancy >= 2) {
-                ackRequest.sendAckData("hi");
-                return;
+
+            if (roomDetails.getOccupants().containsValue(username)) {
+                boolean updated = roomDetails.updateOccupant(client.getSessionId().toString(), username);
+                if (!updated) {
+                    ackRequest.sendAckData("error: room full");
+                    return;
+                }
+            } else {
+                int currentOccupancy = roomDetails.getOccupancy();
+                if (currentOccupancy >= 2) {
+                    ackRequest.sendAckData("error: room full");
+                    return;
+                }
+                roomDetails.addOccupant(client.getSessionId().toString(), username);
             }
-        
+
             client.joinRoom(roomId);
-            roomDetails.setOccupancy(currentOccupancy + 1);
-            roomDetails.addOccupant(username);
-        
+
             String pfp = s3Service.getPreSignedUrl(userService.getPfpByPreferredUsername(username));
             String elo = String.valueOf(userService.getEloByPreferredUsername(username));
-        
-            List<Map<String, String>> occupantsData = roomDetails.getOccupants().stream()
-                .map(occupant -> {
-                    String occupantPfp = s3Service.getPreSignedUrl(userService.getPfpByPreferredUsername(occupant));
-                    String occupantElo = String.valueOf(userService.getEloByPreferredUsername(occupant));
+
+            List<Map<String, String>> occupantsData = roomDetails.getOccupants().entrySet().stream()
+                .map(entry -> {
+                    String occupantPfp = s3Service.getPreSignedUrl(userService.getPfpByPreferredUsername(entry.getValue()));
+                    String occupantElo = String.valueOf(userService.getEloByPreferredUsername(entry.getValue()));
                     return Map.of(
-                        "username", occupant,
+                        "username", entry.getValue(),
                         "pfp", occupantPfp,
                         "elo", occupantElo
                     );
                 })
                 .collect(Collectors.toList());
-        
+
             server.getRoomOperations(roomId).sendEvent("room_update", occupantsData);
-        
+
             if (roomDetails.getOccupancy() == 2) {
                 startRoomTimer(roomId);
             }
-        
+
             ackRequest.sendAckData(Map.of(
                 "status", "success",
                 "slug", roomDetails.getSlug()
             ));
         });
+
         
 
 
@@ -184,6 +221,25 @@ public class SocketIOConfig {
         System.out.println("SocketIO server started on port 9092");
 
         return server;
+    }
+
+        // Method to get the username for a given client based on roomId
+    private String getUsernameForClient(String roomId, SocketIOClient client) {
+        // Fetch the room details from the rooms map
+        RoomDetails room = rooms.get(roomId);
+        
+        if (room != null) {
+            // Iterate through the room's occupants to find the username for the given client sessionId
+            for (Map.Entry<String, String> entry : room.getOccupants().entrySet()) {
+                if (entry.getKey().equals(client.getSessionId())) {
+                    // Return the username associated with the client's sessionId
+                    return entry.getValue();
+                }
+            }
+        }
+        
+        // If the client is not found in the room's occupants, return null or handle the error accordingly
+        return null;
     }
 
     private String getRoomOfClient(SocketIOClient client) {

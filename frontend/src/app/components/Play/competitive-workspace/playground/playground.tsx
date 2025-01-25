@@ -3,13 +3,16 @@
 import React, { useEffect } from "react";
 import Split from "split.js";
 import CodeMirror from "@uiw/react-codemirror";
+import { EditorView } from "@codemirror/view";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { python } from "@codemirror/lang-python";
 import { cpp } from "@codemirror/lang-cpp";
 import { java } from "@codemirror/lang-java";
 import { Select } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import EditorFooter from "@/components/Practice/editor-footer/editor-footer";
 import styles from "./playground.module.css";
+import classes from "./playground.module.css"
 
 interface TestResult {
   results: Array<{
@@ -57,6 +60,39 @@ const Playground: React.FC<PlaygroundProps> = ({
     }
   };
 
+  const disableCopyPaste = EditorView.domEventHandlers({
+    copy: (event) => {
+      event.preventDefault();
+      notifications.show({
+        title: "ACTION NOT ALLOWED",
+        message: "Copying is disabled in competitive matches.",
+        color: "red",
+        position: "bottom-right",
+        classNames: classes,
+      });
+    },
+    cut: (event) => {
+      event.preventDefault();
+      notifications.show({
+        title: "ACTION NOT ALLOWED",
+        message: "Cutting is disabled in competitive matches.",
+        color: "red",
+        position: "bottom-right",
+        classNames: classes,
+      });
+    },
+    paste: (event) => {
+      event.preventDefault();
+      notifications.show({
+        title: "ACTION NOT ALLOWED",
+        message: "Pasting is disabled in competitive matches.",
+        color: "red",
+        position: "bottom-right",
+        classNames: classes,
+      });
+    },
+  });
+
   useEffect(() => {
     const splitInstance = Split(["#editor", "#footer"], {
       direction: "vertical",
@@ -96,9 +132,7 @@ const Playground: React.FC<PlaygroundProps> = ({
             input: styles.input,
           }}
           data={[
-            // { value: "java", label: "Java" },
             { value: "python3", label: "Python 3" },
-            // { value: "cpp", label: "C++" },
           ]}
           styles={{
             dropdown: {
@@ -108,14 +142,6 @@ const Playground: React.FC<PlaygroundProps> = ({
               height: "35px",
               fontSize: "11px",
             },
-            // input: {
-            //   backgroundColor: "#1e1e1e",
-            //   color: "#f4f4f5",
-            //   fontSize: "11px",
-            //   padding: "3px 6px",
-            //   border: "none",
-            //   marginLeft: "5px",
-            // },
           }}
         />
       </div>
@@ -125,12 +151,12 @@ const Playground: React.FC<PlaygroundProps> = ({
           value={code ?? ""}
           theme={vscodeDark}
           onChange={(value) => setCode(value)}
-          extensions={getCodeMirrorExtensions()}
           basicSetup={{
             tabSize: 4,
             lineNumbers: true,
           }}
           style={{ height: "100%", fontSize: "14px" }}
+          extensions={[...getCodeMirrorExtensions(), disableCopyPaste]}
         />
       </div>
 

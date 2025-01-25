@@ -64,6 +64,18 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
     return `${minutes}:${secs < 10 ? `0${secs}` : secs}`;
   };
 
+  const handleForfeit = (gid: string | string[] | undefined): any => {
+    socket?.emit('forfeit', gid, (response: any) => {
+      // Optional: Handle server acknowledgment
+      console.log('Forfeit response:', response);
+      
+      // Potential additional UI actions like:
+      // - Show forfeit confirmation
+      // - Redirect to game end screen
+      // - Update game state
+    });
+  }
+
   return (
     <nav className={classes.navbar}>
       <div className={classes.timeSection}>
@@ -223,6 +235,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
                   backgroundColor: "#27272a",
                   fontWeight: 300
               }}
+              onClick={handleForfeit(gid)}
           >
               Yes
           </Button>

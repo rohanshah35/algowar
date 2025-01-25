@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
-import Workspace from "@/components/Practice/workspace";
+import CompetitiveWorkspace from "@/components/Play/competitive-workspace/competitive-workspace";
 import { VerticalGamebar } from "@/components/Play/vertical-gamebar/vertical-gamebar";
+import { Modal, Button } from "@mantine/core";
 import classes from "./game.module.css";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -22,6 +23,8 @@ export default function ProblemPageWrapper() {
   const [problemSlug, setProblemSlug] = useState<string | null>(null);
   const [timer, setTimer] = useState<number | null>(null);
   const [players, setPlayers] = useState<PlayerData[]>([]);
+  const [strikes, setStrikes] = useState<number>(3); // Track strikes
+  const [modalOpened, setModalOpened] = useState<boolean>(false); // Control modal visibility
 
   const { username, checkAuth } = useAuthStore();
 
@@ -67,6 +70,14 @@ export default function ProblemPageWrapper() {
       setTimer(0);
     });
 
+    socketConnection.on("draw_requested", (requesterUsername: string) => {
+      console.log(`Draw has been requested by ${requesterUsername}`);
+    });
+
+    socketConnection.on("game_forfeit", () => {
+      console.log("Game has been forfeited");
+    });
+
     setSocket(socketConnection);
 
     // Cleanup socket on unmount
@@ -75,11 +86,46 @@ export default function ProblemPageWrapper() {
     };
   }, [gid, router, username]);
 
+  // Track tab visibility and strikes
   useEffect(() => {
-    if (error) {
-      console.error("Error:", error);
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab is hidden, decrement strikes and show modal
+        setStrikes((prevStrikes) => {
+          const newStrikes = prevStrikes - 1;
+
+          if (newStrikes <= 0) {
+            // Emit auto-forfeit event if strikes reach 0
+            // socket?.emit("auto_forfeit", { roomId: gid, username });
+            console.log("Auto-forfeit triggered");
+          } else {
+            // Show modal if strikes are greater than 0
+            setModalOpened(true);
+          }
+
+          return newStrikes;
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [socket, gid, username]);
+
+  // Handle modal close edge case
+  const handleModalClose = () => {
+    if (strikes <= 0) {
+      // Emit auto-forfeit immediately if strikes are 0 or below
+      // socket?.emit("auto_forfeit", { roomId: gid, username });
+      console.log("Auto-forfeit triggered on modal close");
+    } else {
+      // Close the modal if strikes are still available
+      setModalOpened(false);
     }
-  }, [error]);
+  };
 
   if (error) {
     return <div>{error}</div>;
@@ -101,10 +147,33 @@ export default function ProblemPageWrapper() {
         opponent={sortedPlayers[1]}
         socket={socket}
         gid={gid}
-        />
+      />
       <main className={classes.mainContent}>
-        <Workspace slug={problemSlug} />
+        <CompetitiveWorkspace slug={problemSlug} />
       </main>
+
+      {/* Modal for tab leave warning */}
+      <Modal
+        opened={modalOpened}
+        onClose={handleModalClose} // Handle edge case on modal close
+        title="Tab Leave Detected"
+        centered
+      >
+        {strikes > 0 ? (
+          <>
+            <p>You are not allowed to leave the tab in competitive mode!</p>
+            <p>
+              You have <b>{strikes}</b> more {strikes === 1 ? "strike" : "strikes"} before an auto-forfeit is enacted.
+            </p>
+            <Button onClick={handleModalClose}>OK</Button>
+          </>
+        ) : (
+          <>
+            <p>You have no strikes remaining!</p>
+            <p>An auto-forfeit has been triggered.</p>
+          </>
+        )}
+      </Modal>
     </div>
   );
 }
