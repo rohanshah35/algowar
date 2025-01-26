@@ -65,6 +65,8 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
   };
 
   const handleForfeit = (gid: string | string[] | undefined): any => {
+
+
     socket?.emit('forfeit', gid, (response: any) => {
       // Optional: Handle server acknowledgment
       console.log('Forfeit response:', response);
@@ -235,7 +237,6 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
                   backgroundColor: "#27272a",
                   fontWeight: 300
               }}
-              onClick={handleForfeit(gid)}
           >
               Yes
           </Button>
@@ -350,6 +351,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
                   backgroundColor: "#c04f4f",
                   fontWeight: 300
               }}
+              onClick={() => handleForfeit(gid)}
           >
               Forfeit
           </Button>

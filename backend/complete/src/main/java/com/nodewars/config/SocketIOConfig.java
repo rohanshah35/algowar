@@ -58,6 +58,7 @@ public class SocketIOConfig {
 
         // Example usage in an event listener
         server.addEventListener("request_draw", String.class, (client, roomId, ackRequest) -> {
+            logger.info("Draw requested in room: " + roomId);
             String requesterUsername = getUsernameForClient(roomId, client);
             
             if (requesterUsername != null) {
@@ -74,6 +75,7 @@ public class SocketIOConfig {
         });
 
         server.addEventListener("respond_draw", Map.class, (client, data, ackRequest) -> {
+            logger.info("Draw response received in room: " + data.get("roomId"));
             String roomId = (String) data.get("roomId");
             boolean accepted = (Boolean) data.get("accepted");
 
@@ -102,6 +104,7 @@ public class SocketIOConfig {
 
 
         server.addEventListener("forfeit", String.class, (client, roomId, ackRequest) -> {
+            logger.info("Forfeit requested in room: " + roomId);
             RoomDetails room = rooms.get(roomId);
             
             if (room != null) {
@@ -137,8 +140,9 @@ public class SocketIOConfig {
             String username = data.getUsername();
 
             logger.info("Client " + client.getSessionId() + " is attempting to join room " + roomId + " with username " + username);
-
+            logger.info(rooms.toString());
             if (!rooms.containsKey(roomId)) {
+                logger.info("Room " + roomId + " does not exist");
                 ackRequest.sendAckData("error");
                 return;
             }
@@ -148,12 +152,14 @@ public class SocketIOConfig {
             if (roomDetails.getOccupants().containsValue(username)) {
                 boolean updated = roomDetails.updateOccupant(client.getSessionId().toString(), username);
                 if (!updated) {
+                    logger.info("Username " + username + " is already in room " + roomId);
                     ackRequest.sendAckData("error: room full");
                     return;
                 }
             } else {
                 int currentOccupancy = roomDetails.getOccupancy();
                 if (currentOccupancy >= 2) {
+                    logger.info("Room " + roomId + " is full");
                     ackRequest.sendAckData("error: room full");
                     return;
                 }
@@ -182,6 +188,8 @@ public class SocketIOConfig {
             if (roomDetails.getOccupancy() == 2) {
                 startRoomTimer(roomId);
             }
+
+            logger.info(rooms.toString());
 
             ackRequest.sendAckData(Map.of(
                 "status", "success",
