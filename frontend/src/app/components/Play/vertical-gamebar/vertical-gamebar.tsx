@@ -174,9 +174,9 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
                 if (e.key === 'Enter') handleSendMessage();
               }}
             />
-            <button className={classes.sendButton} onClick={handleSendMessage}>
+            {/* <button className={classes.sendButton} onClick={handleSendMessage}>
               <IconSend stroke={0.5} />
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -198,7 +198,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
       <Modal
         opened={drawModalOpen}
         onClose={() => setDrawModalOpen(false)}
-        title="Are you sure you want to request a draw"
+        title="Are you sure you want to request a draw?"
         centered
         withCloseButton={false}
         overlayProps={{
@@ -207,10 +207,12 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
         }}
         styles={{
           content: {
-              backgroundColor: "#18181b",
-              color: "#f4f4f5",
-              border: "1px solid #27272a",
-              fontFamily: 'Inter, sans-serif',
+            backgroundColor: "#18181b",
+            color: "#f4f4f5",
+            border: "1px solid #27272a",
+            fontFamily: "Inter, sans-serif",
+            borderRadius: "16px",
+            padding: "20px",
           },
           header: {
               backgroundColor: "#18181b",
@@ -243,11 +245,11 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
           <Button
               style={{ 
                   backgroundColor: "transparent",
-                  fontWeight: 300
+                  fontWeight: 600
               }}
               onClick={() => setForfeitModalOpen(false)}
           >
-              Decline
+              No
           </Button>
       </div>
       </Modal>
@@ -300,7 +302,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
           <Button
               style={{ 
                   backgroundColor: "transparent",
-                  fontWeight: 300
+                  fontWeight: 600
               }}
               onClick={() => setForfeitModalOpen(false)}
           >
@@ -321,16 +323,20 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
         }}
         styles={{
           content: {
-              backgroundColor: "#18181b",
-              color: "#f4f4f5",
-              border: "1px solid #27272a",
-              fontFamily: 'Inter, sans-serif',
+            backgroundColor: "#18181b",
+            color: "#f4f4f5",
+            border: "1px solid #27272a",
+            fontFamily: "Inter, sans-serif",
+            borderRadius: "16px",
+            padding: "20px",
           },
           header: {
-              backgroundColor: "#18181b",
-              color: "#f4f4f5",
-              borderBottom: "none",
-              fontFamily: 'Inter, sans-serif',
+            backgroundColor: "#18181b",
+            color: "#ff6b6b",
+            fontSize: "1.5rem",
+            fontWeight: "600",
+            borderBottom: "none",
+            fontFamily: "Inter, sans-serif",
           },
           body: {
               fontFamily: 'Inter, sans-serif',

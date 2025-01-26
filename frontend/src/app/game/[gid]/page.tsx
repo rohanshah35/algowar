@@ -152,12 +152,39 @@ export default function ProblemPageWrapper() {
         <CompetitiveWorkspace slug={problemSlug} />
       </main>
 
-      {/* Modal for tab leave warning */}
       <Modal
         opened={modalOpened}
-        onClose={handleModalClose} // Handle edge case on modal close
+        onClose={handleModalClose}
         title="Tab Leave Detected"
         centered
+        withCloseButton={false}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        styles={{
+          content: {
+            backgroundColor: "#18181b",
+            color: "#f4f4f5",
+            border: "1px solid #27272a",
+            fontFamily: "Inter, sans-serif",
+            borderRadius: "16px",
+            padding: "20px",
+          },
+          header: {
+            backgroundColor: "#18181b",
+            color: "#ff6b6b",
+            fontSize: "1.5rem",
+            fontWeight: "600",
+            borderBottom: "none",
+            fontFamily: "Inter, sans-serif",
+          },
+          body: {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "1rem",
+            lineHeight: "1.5",
+          },
+        }}
       >
         {strikes > 0 ? (
           <>
@@ -165,7 +192,30 @@ export default function ProblemPageWrapper() {
             <p>
               You have <b>{strikes}</b> more {strikes === 1 ? "strike" : "strikes"} before an auto-forfeit is enacted.
             </p>
-            <Button onClick={handleModalClose}>OK</Button>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "16px",
+              }}
+            >
+              <Button
+                style={{
+                  backgroundColor: "#ff6b6b",
+                  color: "#f4f4f5",
+                  border: "none",
+                  fontWeight: 500,
+                  borderRadius: "8px",
+                  padding: "8px 16px",
+                  fontFamily: "Inter, sans-serif",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s",
+                }}
+                onClick={handleModalClose}
+              >
+                OK
+              </Button>
+            </div>
           </>
         ) : (
           <>
