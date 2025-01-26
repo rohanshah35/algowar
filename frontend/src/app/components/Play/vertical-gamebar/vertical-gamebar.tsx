@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IconSend } from '@tabler/icons-react';
 import { Button, Modal, Progress } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import classes from './vertical-gamebar.module.css';
 import { Socket } from 'socket.io-client';
 
@@ -24,11 +25,18 @@ interface VerticalGamebarProps {
 }
 
 export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }: VerticalGamebarProps) {
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [drawModalOpen, setDrawModalOpen] = useState(false);
   const [forfeitModalOpen, setForfeitModalOpen] = useState(false);
   const [drawRequestModalOpen, setDrawRequestModalOpen] = useState(false);
+  const [gameEndModalOpen, setGameEndModalOpen] = useState(false);
+  const [gameEndReason, setGameEndReason] = useState('');
+  const [gameEndCountdown, setGameEndCountdown] = useState(5);
+  const [drawRequesterUsername, setDrawRequesterUsername] = useState<string | null>(null);
+  const [winner, setWinner] = useState<string | null>(null);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -38,10 +46,73 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
       setMessages(prev => [...prev, message]);
     });
 
+    socket.on('draw_requested', (requesterUsername: string) => {
+      if (requesterUsername !== currentPlayer?.username) {
+        setDrawRequesterUsername(requesterUsername);
+        setDrawRequestModalOpen(true);
+      }
+    });
+
+    socket.on('draw_rejected', () => {
+      alert('Draw request was declined');
+    });
+
+    socket.on('game_draw', () => {
+      setGameEndReason('draw');
+      setWinner(null);
+      setGameEndModalOpen(true);
+    });
+
+    socket.on('game_forfeit', (username: string) => {
+      setGameEndReason('forfeit');
+      setWinner(username || null);
+      setGameEndModalOpen(true);
+    });
+
     return () => {
       socket.off('room_message');
+      socket.off('draw_requested');
+      socket.off('draw_rejected');
+      socket.off('game_draw');
+      socket.off('game_forfeit');
     };
-  }, [socket]);
+  }, [socket, currentPlayer, opponent]);
+
+  // Handle countdown timer
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (gameEndModalOpen && gameEndCountdown > 0) {
+      timer = setInterval(() => {
+        setGameEndCountdown(prev => {
+          if (prev <= 1) {
+            setShouldRedirect(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [gameEndModalOpen]);
+
+  // Handle navigation separately
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push('/');
+    }
+  }, [shouldRedirect, router]);
+
+  // Reset states when component unmounts
+  useEffect(() => {
+    return () => {
+      setGameEndModalOpen(false);
+      setGameEndCountdown(5);
+      setShouldRedirect(false);
+    };
+  }, []);
+
 
   const handleSendMessage = () => {
     if (newMessage.trim().length > 0 && socket && currentPlayer) {
@@ -53,9 +124,27 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
     }
   };
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  const handleDrawRequest = () => {
+    console.log('Requesting draw');
+    socket?.emit('request_draw', gid);
+    setDrawModalOpen(false);
+  };
+
+  const handleDrawResponse = (accepted: boolean) => {
+    socket?.emit('respond_draw', {
+      roomId: gid,
+      accepted
+    });
+    setDrawRequestModalOpen(false);
+  };
+
+  const handleForfeit = () => {
+    socket?.emit('forfeit', {
+      roomId: gid,
+      opponent: opponent?.username
+    });
+    setForfeitModalOpen(false);
+  };
 
   const formatTime = (seconds: number | null): string => {
     if (seconds === null) return 'Waiting';
@@ -63,20 +152,6 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
     const secs = seconds % 60;
     return `${minutes}:${secs < 10 ? `0${secs}` : secs}`;
   };
-
-  const handleForfeit = (gid: string | string[] | undefined): any => {
-
-
-    socket?.emit('forfeit', gid, (response: any) => {
-      // Optional: Handle server acknowledgment
-      console.log('Forfeit response:', response);
-      
-      // Potential additional UI actions like:
-      // - Show forfeit confirmation
-      // - Redirect to game end screen
-      // - Update game state
-    });
-  }
 
   return (
     <nav className={classes.navbar}>
@@ -195,6 +270,48 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
           </button>
         </div>
 
+        <Modal
+        opened={gameEndModalOpen}
+        onClose={() => {}} // Prevent manual closing
+        title={`Game Over - ${gameEndReason.charAt(0).toUpperCase() + gameEndReason.slice(1)}`}
+        centered
+        withCloseButton={false}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        styles={{
+          content: {
+            backgroundColor: "#18181b",
+            color: "#f4f4f5",
+            border: "1px solid #27272a",
+            fontFamily: "Inter, sans-serif",
+            borderRadius: "16px",
+            padding: "20px",
+          },
+          header: {
+            backgroundColor: "#18181b",
+            color: "#f4f4f5",
+            fontSize: "1.5rem",
+            fontWeight: "600",
+            borderBottom: "none",
+            fontFamily: "Inter, sans-serif",
+          },
+          body: {
+            fontFamily: 'Inter, sans-serif',
+          }
+        }}
+      >
+        <div className="text-center">
+          {winner ? (
+            <p className="text-xl mb-4">{winner} wins by forfeit!</p>
+          ) : (
+            <p className="text-xl mb-4">The game ended in a draw</p>
+          )}
+          <p className="text-lg">Redirecting to home in {gameEndCountdown} seconds...</p>
+        </div>
+      </Modal>
+
       <Modal
         opened={drawModalOpen}
         onClose={() => setDrawModalOpen(false)}
@@ -215,43 +332,44 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
             padding: "20px",
           },
           header: {
-              backgroundColor: "#18181b",
-              color: "#f4f4f5",
-              borderBottom: "none",
-              fontFamily: 'Inter, sans-serif',
+            backgroundColor: "#18181b",
+            color: "#f4f4f5",
+            borderBottom: "none",
+            fontFamily: 'Inter, sans-serif',
           },
           body: {
-              fontFamily: 'Inter, sans-serif',
+            fontFamily: 'Inter, sans-serif',
           }
-      }}
+        }}
       >
         <div style={{ 
           display: "flex", 
           justifyContent: "center", 
           gap: "1rem", 
           marginTop: "1rem" 
-          }}>
+        }}>
           <Button
-              variant="outline"
-              style={{ 
-                  borderColor: "#27272a",
-                  color: "#f4f4f5",
-                  backgroundColor: "#27272a",
-                  fontWeight: 300
-              }}
+            variant="outline"
+            style={{ 
+              borderColor: "#27272a",
+              color: "#f4f4f5",
+              backgroundColor: "#27272a",
+              fontWeight: 300
+            }}
+            onClick={handleDrawRequest}
           >
-              Yes
+            Yes
           </Button>
           <Button
-              style={{ 
-                  backgroundColor: "transparent",
-                  fontWeight: 600
-              }}
-              onClick={() => setForfeitModalOpen(false)}
+            style={{ 
+              backgroundColor: "transparent",
+              fontWeight: 600
+            }}
+            onClick={() => setDrawModalOpen(false)}
           >
-              No
+            No
           </Button>
-      </div>
+        </div>
       </Modal>
 
       <Modal
@@ -266,49 +384,51 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
         }}
         styles={{
           content: {
-              backgroundColor: "#18181b",
-              color: "#f4f4f5",
-              border: "1px solid #27272a",
-              fontFamily: 'Inter, sans-serif',
+            backgroundColor: "#18181b",
+            color: "#f4f4f5",
+            border: "1px solid #27272a",
+            fontFamily: 'Inter, sans-serif',
           },
           header: {
-              backgroundColor: "#18181b",
-              color: "#f4f4f5",
-              borderBottom: "none",
-              fontFamily: 'Inter, sans-serif',
+            backgroundColor: "#18181b",
+            color: "#f4f4f5",
+            borderBottom: "none",
+            fontFamily: 'Inter, sans-serif',
           },
           body: {
-              fontFamily: 'Inter, sans-serif',
+            fontFamily: 'Inter, sans-serif',
           }
-      }}
+        }}
       >
+        <p className="text-center mb-4">{drawRequesterUsername} has requested a draw</p>
         <div style={{ 
           display: "flex", 
           justifyContent: "center", 
           gap: "1rem", 
           marginTop: "1rem" 
-          }}>
+        }}>
           <Button
-              variant="outline"
-              style={{ 
-                  borderColor: "#27272a",
-                  color: "#f4f4f5",
-                  backgroundColor: "#c04f4f",
-                  fontWeight: 300
-              }}
+            variant="outline"
+            style={{ 
+              borderColor: "#27272a",
+              color: "#f4f4f5",
+              backgroundColor: "#c04f4f",
+              fontWeight: 300
+            }}
+            onClick={() => handleDrawResponse(true)}
           >
-              Accept
+            Accept
           </Button>
           <Button
-              style={{ 
-                  backgroundColor: "transparent",
-                  fontWeight: 600
-              }}
-              onClick={() => setForfeitModalOpen(false)}
+            style={{ 
+              backgroundColor: "transparent",
+              fontWeight: 600
+            }}
+            onClick={() => handleDrawResponse(false)}
           >
-              Decline
+            Decline
           </Button>
-      </div>
+        </div>
       </Modal>
 
       <Modal
@@ -339,38 +459,38 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid }:
             fontFamily: "Inter, sans-serif",
           },
           body: {
-              fontFamily: 'Inter, sans-serif',
+            fontFamily: 'Inter, sans-serif',
           }
-      }}
+        }}
       >
         <div style={{ 
           display: "flex", 
           justifyContent: "center", 
           gap: "1rem", 
           marginTop: "1rem" 
-          }}>
+        }}>
           <Button
-              variant="outline"
-              style={{ 
-                  borderColor: "#27272a",
-                  color: "#f4f4f5",
-                  backgroundColor: "#c04f4f",
-                  fontWeight: 300
-              }}
-              onClick={() => handleForfeit(gid)}
+            variant="outline"
+            style={{ 
+              borderColor: "#27272a",
+              color: "#f4f4f5",
+              backgroundColor: "#c04f4f",
+              fontWeight: 300
+            }}
+            onClick={handleForfeit}
           >
-              Forfeit
+            Forfeit
           </Button>
           <Button
-              style={{ 
-                  backgroundColor: "transparent",
-                  fontWeight: 300
-              }}
-              onClick={() => setForfeitModalOpen(false)}
+            style={{ 
+              backgroundColor: "transparent",
+              fontWeight: 300
+            }}
+            onClick={() => setForfeitModalOpen(false)}
           >
-              Cancel
+            Cancel
           </Button>
-      </div>
+        </div>
       </Modal>
 
       </div>

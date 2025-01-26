@@ -66,10 +66,12 @@ public class SocketIOConfig {
                 
                 if (room != null) {
                     // Broadcast draw request to the other player in the room
+                    logger.info("Draw requested by " + requesterUsername + " in room: " + roomId);
                     server.getRoomOperations(roomId).sendEvent("draw_requested", requesterUsername);
                 }
             } else {
                 // Handle the case where the username was not found (client is not part of the room)
+                logger.error("Client not in room: " + client.getSessionId());
                 ackRequest.sendAckData("error: client not in room");
             }
         });
@@ -103,13 +105,15 @@ public class SocketIOConfig {
         });
 
 
-        server.addEventListener("forfeit", String.class, (client, roomId, ackRequest) -> {
+        server.addEventListener("forfeit", Map.class, (client, data, ackRequest) -> {
+            String roomId = (String) data.get("roomId");
             logger.info("Forfeit requested in room: " + roomId);
+            String username = (String) data.get("opponent");
             RoomDetails room = rooms.get(roomId);
             
             if (room != null) {
                 // Broadcast forfeit to the room
-                server.getRoomOperations(roomId).sendEvent("game_forfeit", "Opponent has forfeited.");
+                server.getRoomOperations(roomId).sendEvent("game_forfeit", username);
                 
                 // Kick all players from the room
                 room.getOccupants().keySet().forEach(clientId -> {
@@ -167,6 +171,7 @@ public class SocketIOConfig {
             }
 
             client.joinRoom(roomId);
+            roomDetails.setOccupancy(roomDetails.getOccupants().size());
 
             String pfp = s3Service.getPreSignedUrl(userService.getPfpByPreferredUsername(username));
             String elo = String.valueOf(userService.getEloByPreferredUsername(username));
@@ -239,7 +244,9 @@ public class SocketIOConfig {
         if (room != null) {
             // Iterate through the room's occupants to find the username for the given client sessionId
             for (Map.Entry<String, String> entry : room.getOccupants().entrySet()) {
-                if (entry.getKey().equals(client.getSessionId())) {
+                logger.info("Client sessionId: " + client.getSessionId() + ", entry key: " + entry.getKey());
+                logger.info("comparison result: " + entry.getKey().equals(client.getSessionId().toString()));
+                if (entry.getKey().equals(client.getSessionId().toString())) {
                     // Return the username associated with the client's sessionId
                     return entry.getValue();
                 }
