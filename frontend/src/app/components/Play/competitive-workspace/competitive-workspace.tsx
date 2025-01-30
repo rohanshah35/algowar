@@ -58,7 +58,17 @@ interface Problem {
   acceptedSubmissions: number;
 }
 
-const CompetitiveWorkspace = ({ slug }: { slug: any }) => {
+type CompetitiveWorkspaceProps = {
+  slug: any;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
+};
+
+const CompetitiveWorkspace: React.FC<CompetitiveWorkspaceProps> = ({
+  slug,
+  isSidebarOpen,
+  setIsSidebarOpen
+  }) => {
   const [problem, setProblem] = useState<Problem | null>(null);
   const [code, setCode] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>("python3");
@@ -189,6 +199,8 @@ const CompetitiveWorkspace = ({ slug }: { slug: any }) => {
         handleSubmit={handleSubmit}
         isRunning={isRunning}
         isSubmitting={isSubmitting}
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
       <div style={{ display: "flex", height: "100%", width: "100%" }}>

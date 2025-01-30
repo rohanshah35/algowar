@@ -25,8 +25,11 @@ export default function ProblemPageWrapper() {
   const [players, setPlayers] = useState<PlayerData[]>([]);
   const [strikes, setStrikes] = useState<number>(3); // Track strikes
   const [modalOpened, setModalOpened] = useState<boolean>(false); // Control modal visibility
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
 
   const { username, checkAuth } = useAuthStore();
+
+
 
   useEffect(() => {
     // Ensure the user is authenticated
@@ -91,20 +94,20 @@ export default function ProblemPageWrapper() {
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // Tab is hidden, decrement strikes and show modal
-        setStrikes((prevStrikes) => {
-          const newStrikes = prevStrikes - 1;
+        // setStrikes((prevStrikes) => {
+        //   const newStrikes = prevStrikes - 1;
 
-          if (newStrikes <= 0) {
-            // Emit auto-forfeit event if strikes reach 0
-            // socket?.emit("auto_forfeit", { roomId: gid, username });
-            console.log("Auto-forfeit triggered");
-          } else {
-            // Show modal if strikes are greater than 0
-            setModalOpened(true);
-          }
+        //   if (newStrikes <= 0) {
+        //     // Emit auto-forfeit event if strikes reach 0
+        //     // socket?.emit("auto_forfeit", { roomId: gid, username });
+        //     console.log("Auto-forfeit triggered");
+        //   } else {
+        //     // Show modal if strikes are greater than 0
+        //     setModalOpened(true);
+        //   }
 
-          return newStrikes;
-        });
+        //   return newStrikes;
+        // });
       }
     };
 
@@ -147,9 +150,13 @@ export default function ProblemPageWrapper() {
         opponent={sortedPlayers[1]}
         socket={socket}
         gid={gid}
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
-      <main className={classes.mainContent}>
-        <CompetitiveWorkspace slug={problemSlug} />
+      <main className={classes.mainContent}
+        style={{ marginLeft: isSidebarOpen ? "250px" : "0" }}
+      >
+        <CompetitiveWorkspace slug={problemSlug} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={() => setIsSidebarOpen(!isSidebarOpen)} />
       </main>
 
       <Modal

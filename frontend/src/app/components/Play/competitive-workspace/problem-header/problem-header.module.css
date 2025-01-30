@@ -9,10 +9,10 @@
   border-bottom: 1px solid #27272a;
 }
 
-/* .backButtonContainer {
+.backButtonContainer {
   position: absolute;
-  top: 14px; 
-  left: 14px; 
+  top: 10px; 
+  left: 0px; 
 }
 
 .backButton {
@@ -27,7 +27,7 @@
 .backButton:hover {
   background: none !important;
   color: white !important;
-} */
+}
 
 .buttonContainer {
   display: flex;

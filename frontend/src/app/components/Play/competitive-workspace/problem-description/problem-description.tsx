@@ -8,7 +8,7 @@ const nonSelectableStyles: React.CSSProperties = {
   WebkitUserSelect: 'none',
   MozUserSelect: 'none',
   msUserSelect: 'none',
-  pointerEvents: 'none' as const
+
 };
 
 const formatNumber = (num: number): string => {

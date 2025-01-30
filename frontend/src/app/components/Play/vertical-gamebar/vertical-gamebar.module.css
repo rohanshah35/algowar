@@ -1,4 +1,5 @@
 .navbar {
+  transition: transform 0.3s ease;
   position: fixed;
   top: 0;
   left: 0;
@@ -12,6 +13,25 @@
   align-items: center;
   padding: 10px; /* Adjusted for better space usage */
   overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+/* Toggle Button */
+.toggleButton {
+  position: fixed;
+  top: 50%;
+  left: 250px; /* Initial position */
+  /* transform: translateY(-50%); */
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  color: #fff;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: left 0.3s ease;
+}
+
+.toggleButton:hover {
+  background-color: #27272a;
 }
 
 .messageBubble.currentUser {
