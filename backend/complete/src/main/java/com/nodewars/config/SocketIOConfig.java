@@ -202,7 +202,28 @@ public class SocketIOConfig {
             ));
         });
 
-        
+        server.addEventListener("live_code_line_count", Map.class, (client, data, ackRequest) -> {
+            String roomId = getRoomOfClient(client);
+
+            if (roomId != null) {
+                server.getRoomOperations(roomId).sendEvent("live_code_line_count", Map.of (
+                    "username", data.get("username"),
+                    "lineCount", data.get("lineCount")
+                ));
+            }
+        });
+
+        server.addEventListener("live_test_cases_count", Map.class, (client, data, ackRequest) -> {
+            String roomId = getRoomOfClient(client);
+
+            if (roomId != null) {
+                server.getRoomOperations(roomId).sendEvent("live_test_cases_count", Map.of (
+                    "username", data.get("username"),
+                    "accepted", data.get("accepted"),
+                    "total", data.get("total")
+                ));
+            }
+        });
 
 
         server.addEventListener("create_room", RoomRequestDto.class, (client, data, ackRequest) -> {

@@ -33,6 +33,7 @@ interface PlaygroundProps {
   language: string;
   setLanguage: (language: string) => void;
   testResults: TestResult | null;
+  updateLiveCodeLineCount: (currentPlayer: number) => void;
 }
 
 const Playground: React.FC<PlaygroundProps> = ({
@@ -42,6 +43,7 @@ const Playground: React.FC<PlaygroundProps> = ({
   language,
   setLanguage,
   testResults,
+  updateLiveCodeLineCount,
 }) => {
   const handleTabChange = (value: string) => {
     console.log("Selected Tab:", value);
@@ -109,6 +111,12 @@ const Playground: React.FC<PlaygroundProps> = ({
     return () => splitInstance.destroy();
   }, []);
 
+  const handleCodeChange = (value: string) => {
+    setCode(value);
+    const lineCount = value.split('\n').length;
+    updateLiveCodeLineCount(lineCount);
+  };
+
   return (
     <div className="h-full w-full flex flex-col">
       <div
@@ -150,7 +158,7 @@ const Playground: React.FC<PlaygroundProps> = ({
         <CodeMirror
           value={code ?? ""}
           theme={vscodeDark}
-          onChange={(value) => setCode(value)}
+          onChange={handleCodeChange}
           basicSetup={{
             tabSize: 4,
             lineNumbers: true,

@@ -16,6 +16,18 @@ interface ChatMessage {
   content: string;
 }
 
+interface LiveCodeLineCount {
+  currentPlayer: number;
+  opponent: number;
+}
+
+interface LiveTestCasesCount {
+  currentPlayerAccepted: number;
+  currentPlayerTotal: number;
+  opponentAccepted: number;
+  opponentTotal: number;
+}
+
 interface VerticalGamebarProps {
   timer: number | null;
   currentPlayer?: PlayerData;
@@ -24,9 +36,11 @@ interface VerticalGamebarProps {
   gid: string | string[] | undefined;
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
+  liveCodeLineCount: LiveCodeLineCount;
+  liveTestCasesCount: LiveTestCasesCount;
 }
 
-export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid, isSidebarOpen, toggleSidebar }: VerticalGamebarProps) {
+export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid, isSidebarOpen, toggleSidebar, liveCodeLineCount, liveTestCasesCount }: VerticalGamebarProps) {
   const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -179,14 +193,14 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid, i
               <div className={classes.statsSection}>
                 <div className={classes.statBox}>
                   <div className={classes.statLabel}>TEST CASES PASSED</div>
-                  <div className={classes.statValue}>16/20</div>
+                  <div className={classes.statValue}>{liveTestCasesCount.currentPlayerAccepted} / {liveTestCasesCount.currentPlayerTotal}</div>
                   <Progress value={(16 / 20) * 100} size="xs" color="#4caf50" mt="xs" />
                 </div>
 
                 <div className={classes.statBox}>
                   <div className={classes.statLabel}>LINES OF CODE</div>
                   <div className={`${classes.statValue} ${classes.linesOfCode}`}>
-                    30<span className={classes.ellipses} />
+                  {liveCodeLineCount.currentPlayer}<span className={classes.ellipses} />
                   </div>
                 </div>
               </div>
@@ -209,14 +223,14 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid, i
               <div className={classes.statsSection}>
                 <div className={classes.statBox}>
                   <div className={classes.statLabel}>TEST CASES PASSED</div>
-                  <div className={classes.statValue}>9/20</div>
+                  <div className={classes.statValue}>{liveTestCasesCount.opponentAccepted} / {liveTestCasesCount.opponentTotal}</div>
                   <Progress value={(9 / 20) * 100} size="xs" color="#ff4d4d" mt="xs" />
                 </div>
 
                 <div className={classes.statBox}>
                   <div className={classes.statLabel}>LINES OF CODE</div>
                   <div className={`${classes.statValue} ${classes.linesOfCode}`}>
-                    39<span className={classes.ellipses} />
+                    {liveCodeLineCount.opponent}<span className={classes.ellipses} />
                   </div>
                 </div>
               </div>

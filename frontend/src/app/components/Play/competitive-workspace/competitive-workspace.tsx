@@ -62,12 +62,16 @@ type CompetitiveWorkspaceProps = {
   slug: any;
   isSidebarOpen: boolean;
   setIsSidebarOpen: (isOpen: boolean) => void;
+  updateLiveCodeLineCount: (currentPlayer: number) => void;
+  updateLiveTestCasesCount: (currentPlayerAccepted: number, currentPlayerTotal: number) => void;
 };
 
 const CompetitiveWorkspace: React.FC<CompetitiveWorkspaceProps> = ({
   slug,
   isSidebarOpen,
-  setIsSidebarOpen
+  setIsSidebarOpen,
+  updateLiveCodeLineCount,
+  updateLiveTestCasesCount,
   }) => {
   const [problem, setProblem] = useState<Problem | null>(null);
   const [code, setCode] = useState<string | null>(null);
@@ -143,17 +147,8 @@ const CompetitiveWorkspace: React.FC<CompetitiveWorkspaceProps> = ({
       }
 
       const result = await response.json();
-      
-      // Use the Zustand store to set submission data
-      setSubmission(
-        result,
-        code || '',
-        problem?.title || '',
-        language
-      );
-
-      // Optionally navigate to a results page
-      Router.push('/problems/submission-result');
+      console.log("Submission result:", result);
+      updateLiveTestCasesCount(result.test_cases_passed, result.total_test_cases);
     } catch (error) {
       console.error("Error during submission:", error);
     } finally {
@@ -220,6 +215,7 @@ const CompetitiveWorkspace: React.FC<CompetitiveWorkspaceProps> = ({
               language={language}
               setLanguage={setLanguage}
               testResults={testResults}
+              updateLiveCodeLineCount={updateLiveCodeLineCount}
             />
           ) : (
             <div></div>

@@ -15,6 +15,18 @@ interface PlayerData {
   elo: string;
 }
 
+interface LiveCodeLineCount {
+  currentPlayer: number;
+  opponent: number;
+}
+
+interface LiveTestCasesCount {
+  currentPlayerAccepted: number;
+  currentPlayerTotal: number;
+  opponentAccepted: number;
+  opponentTotal: number;
+}
+
 export default function ProblemPageWrapper() {
   const router = useRouter();
   const { gid } = useParams();
@@ -26,6 +38,8 @@ export default function ProblemPageWrapper() {
   const [strikes, setStrikes] = useState<number>(3); // Track strikes
   const [modalOpened, setModalOpened] = useState<boolean>(false); // Control modal visibility
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [liveCodeLineCount, setLiveCodeLineCount] = useState<LiveCodeLineCount>({ currentPlayer: 0, opponent: 0 });
+  const [liveTestCasesCount, setLiveTestCasesCount] = useState<LiveTestCasesCount>({ currentPlayerAccepted: 0, currentPlayerTotal: 0, opponentAccepted: 0, opponentTotal: 0 });
 
   const { username, checkAuth } = useAuthStore();
 
@@ -35,6 +49,7 @@ export default function ProblemPageWrapper() {
     // Ensure the user is authenticated
     checkAuth();
   }, [checkAuth]);
+
 
   useEffect(() => {
     if (!gid) {
@@ -81,6 +96,23 @@ export default function ProblemPageWrapper() {
       console.log("Game has been forfeited");
     });
 
+    socketConnection.on("live_code_line_count", (response: {lineCount: number, username: string}) => {
+      if (response.username === username) return;
+      setLiveCodeLineCount((prev) => ({
+        ...prev,
+        opponent: response.lineCount,
+      }));
+    });
+
+    socketConnection.on("live_test_cases_count", (response: {accepted: number, total: number, username: string}) => {
+      if (response.username === username) return;
+      setLiveTestCasesCount((prev) => ({
+        ...prev,
+        opponentAccepted: response.accepted,
+        opponentTotal: response.total,
+      }));
+    });
+
     setSocket(socketConnection);
 
     // Cleanup socket on unmount
@@ -88,6 +120,39 @@ export default function ProblemPageWrapper() {
       socketConnection.disconnect();
     };
   }, [gid, router, username]);
+
+  // Function to emit live code line count updates
+  const updateLiveCodeLineCount = (currentPlayer: number) => {
+    setLiveCodeLineCount((prev) => ({
+      ...prev,
+      currentPlayer,
+    }));
+
+    if (socket) {
+      socket.emit("live_code_line_count", {
+        lineCount: currentPlayer,
+        username,
+      });
+    }
+  };
+
+  const updateLiveTestCasesCount = (currentPlayerAccepted: number, currentPlayerTotal: number) => {
+    if (!currentPlayerTotal) return;
+    if (!currentPlayerAccepted) return;
+    setLiveTestCasesCount((prev) => ({
+      ...prev,
+      currentPlayerAccepted,
+      currentPlayerTotal,
+    }));
+
+    if (socket) {
+      socket.emit("live_test_cases_count", {
+        accepted: currentPlayerAccepted,
+        total: currentPlayerTotal,
+        username,
+      });
+    }
+  }
 
   // Track tab visibility and strikes
   useEffect(() => {
@@ -152,11 +217,19 @@ export default function ProblemPageWrapper() {
         gid={gid}
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        liveCodeLineCount={liveCodeLineCount}
+        liveTestCasesCount={liveTestCasesCount}
       />
       <main className={classes.mainContent}
         style={{ marginLeft: isSidebarOpen ? "250px" : "0" }}
       >
-        <CompetitiveWorkspace slug={problemSlug} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <CompetitiveWorkspace
+          slug={problemSlug}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={() => setIsSidebarOpen(!isSidebarOpen)}
+          updateLiveCodeLineCount={updateLiveCodeLineCount}
+          updateLiveTestCasesCount={updateLiveTestCasesCount}
+        />
       </main>
 
       <Modal
