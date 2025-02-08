@@ -7,6 +7,7 @@ import styles from "./competitive-workspace.module.css";
 import ProblemHeader from "./problem-header/problem-header";
 import { useRouter } from "next/navigation";
 import { useSubmissionStore } from "@/store/submission-store";
+import SubmissionResultModal from "./submission-result-modal/submission-result-modal";
 
 interface TestResult {
   results: Array<{
@@ -58,6 +59,22 @@ interface Problem {
   acceptedSubmissions: number;
 }
 
+interface SubmissionResult {
+  error?: string;
+  all_passed?: boolean;
+  test_cases_passed?: number;
+  total_test_cases?: number;
+  runtime_ms?: number;
+  first_case_failed?: {
+    case?: string;
+    passed?: boolean;
+    error?: string;
+    output?: unknown;
+    expected?: unknown;
+    [key: string]: unknown;
+  };
+}
+
 type CompetitiveWorkspaceProps = {
   slug: any;
   isSidebarOpen: boolean;
@@ -79,6 +96,8 @@ const CompetitiveWorkspace: React.FC<CompetitiveWorkspaceProps> = ({
   const [testResults, setTestResults] = useState<TestResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionModalOpen, setSubmissionModalOpen] = useState(false);
+  const [result, setResult] = useState<SubmissionResult | null>(null);
 
   const setSubmission = useSubmissionStore((state) => state.setSubmission);
   const Router = useRouter();
@@ -147,7 +166,9 @@ const CompetitiveWorkspace: React.FC<CompetitiveWorkspaceProps> = ({
       }
 
       const result = await response.json();
-      console.log("Submission result:", result);
+      console.log(result);
+      setResult(result);
+      setSubmissionModalOpen(true);
       updateLiveTestCasesCount(result.test_cases_passed, result.total_test_cases);
     } catch (error) {
       console.error("Error during submission:", error);
@@ -222,6 +243,15 @@ const CompetitiveWorkspace: React.FC<CompetitiveWorkspaceProps> = ({
           )}
         </div>
       </div>
+
+      <SubmissionResultModal 
+            isOpen={submissionModalOpen}
+            onClose={() => setSubmissionModalOpen(false)}
+            submissionResult={result ?? undefined}
+            submittedCode={code || ''}
+            problemTitle={problem?.title ?? undefined}
+            language="python3"
+      />
     </div>
   );
 };

@@ -26,7 +26,7 @@ const ProblemHeader: React.FC<ProblemHeaderProps> = ({
 }) => (
   <div className={styles.header}>
     <div className={styles.backButtonContainer}>
-      <HamburgerMenu isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
+      <HamburgerMenu isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
     </div>
 
     <div className={styles.buttonContainer}>

@@ -11,8 +11,7 @@
 
 .backButtonContainer {
   position: absolute;
-  top: 10px; 
-  left: 0px; 
+  left: 12px;
 }
 
 .backButton {
@@ -22,6 +21,7 @@
   color: white !important;
   background: none !important;
   box-shadow: none !important;
+
 }
 
 .backButton:hover {

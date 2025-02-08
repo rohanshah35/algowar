@@ -4,6 +4,7 @@ import { Button, Modal, Progress } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import classes from './vertical-gamebar.module.css';
 import { Socket } from 'socket.io-client';
+import SubmissionResultModal from '../competitive-workspace/submission-result-modal/submission-result-modal';
 
 interface PlayerData {
   username: string;
@@ -194,7 +195,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid, i
                 <div className={classes.statBox}>
                   <div className={classes.statLabel}>TEST CASES PASSED</div>
                   <div className={classes.statValue}>{liveTestCasesCount.currentPlayerAccepted} / {liveTestCasesCount.currentPlayerTotal}</div>
-                  <Progress value={(16 / 20) * 100} size="xs" color="#4caf50" mt="xs" />
+                  <Progress value={(liveTestCasesCount.currentPlayerAccepted / liveTestCasesCount.currentPlayerTotal) * 100} size="xs" color="#4caf50" mt="xs" />
                 </div>
 
                 <div className={classes.statBox}>
@@ -224,7 +225,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid, i
                 <div className={classes.statBox}>
                   <div className={classes.statLabel}>TEST CASES PASSED</div>
                   <div className={classes.statValue}>{liveTestCasesCount.opponentAccepted} / {liveTestCasesCount.opponentTotal}</div>
-                  <Progress value={(9 / 20) * 100} size="xs" color="#ff4d4d" mt="xs" />
+                  <Progress value={(liveTestCasesCount.opponentAccepted / liveTestCasesCount.opponentTotal) * 100} size="xs" color="#ff4d4d" mt="xs" />
                 </div>
 
                 <div className={classes.statBox}>
@@ -505,6 +506,7 @@ export function VerticalGamebar({ timer, currentPlayer, opponent, socket, gid, i
               </Button>
             </div>
           </Modal>
+
 
         </div>
       </nav>

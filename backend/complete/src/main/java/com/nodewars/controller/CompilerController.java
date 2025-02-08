@@ -107,6 +107,11 @@ public class CompilerController {
     
             resultMap = objectMapper.readValue(result, Map.class);
             resultMap.remove("results");
+
+            Object runtimeObj = resultMap.get("runtime_ms");
+            if (runtimeObj instanceof Number) {
+                resultMap.put("runtime_ms", ((Number) runtimeObj).doubleValue() * 100);
+            }
     
             logger.info(resultMap.toString());
     
