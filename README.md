@@ -9,7 +9,6 @@ Built with Next.js & Spring Boot • Styled with Mantine • Powered by AWS
 ## 🚀 Quick Links
 
 - 🌐 [Live Demo](#) *(link coming soon)*
-- 🎨 [Design System](#) *(link to Figma or UI docs)*
 
 ---
 
