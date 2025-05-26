@@ -87,7 +87,7 @@ export default function Social() {
   }
 
   return (
-    <div className={`container ${isDropdownOpen ? "blurred" : ""}`} style={{ paddingTop: "20px" }}>
+    <div className={`${isDropdownOpen ? "blurred" : ""}`} style={{ paddingTop: "20px" }}>
       <div
         style={{
           display: "flex",
@@ -100,7 +100,6 @@ export default function Social() {
             flex: 1,
             maxWidth: "500px",
             position: "relative",
-            zIndex: 10,
           }}
         >
           <Autocomplete
@@ -168,6 +167,7 @@ export default function Social() {
                 key={index}
                 username={friend.username}
                 profilePicture={friend.profilePicture}
+                // elo={friend.elo}
                 onRemoveFriend={handleRemoveFriend}
               />
             ))}

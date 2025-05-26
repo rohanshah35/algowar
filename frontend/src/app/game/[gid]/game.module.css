@@ -1,0 +1,29 @@
+
+.pageContainer {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+  }
+  
+  .mainContent {
+    flex: 1;
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    transition: margin-left 0.3s ease; /* Smooth transition */
+  }
+
+  .navbar {
+    background-color: #18181b;
+    height: 100vh;
+    width: 250px;
+    padding: var(--mantine-spacing-md);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #27272a;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+  }
+  

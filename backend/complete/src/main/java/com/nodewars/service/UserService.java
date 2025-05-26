@@ -21,10 +21,10 @@ import com.nodewars.repository.UserRepository;
 @Service
 public class UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private UserRepository userRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public User createUser(String email, String cognitoUserId, String username, String password, String stats, double elo, String preferredUsername, String preferredLanguage, String[] friends, String profilePicture, String[] friendRequests) {
         User user = new User(email, cognitoUserId, username, password, stats, elo, preferredUsername, preferredLanguage, friends, profilePicture, friendRequests);

@@ -1,5 +1,7 @@
 package com.nodewars.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ import java.util.Map;
 
  @Service
  public class CompilerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(S3Service.class);
 
     private final LambdaClient lambdaClient;
 

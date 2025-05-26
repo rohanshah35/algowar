@@ -1,0 +1,259 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import Split from "split.js";
+import ProblemDescription from "./problem-description/problem-description";
+import Playground from "./playground/playground";
+import styles from "./competitive-workspace.module.css";
+import ProblemHeader from "./problem-header/problem-header";
+import { useRouter } from "next/navigation";
+import { useSubmissionStore } from "@/store/submission-store";
+import SubmissionResultModal from "./submission-result-modal/submission-result-modal";
+
+interface TestResult {
+  results: Array<{
+    case: number;
+    error: string | null;
+    expected: any;
+    nums: number[];
+    output: any;
+    passed: boolean;
+    target: number;
+  }>;
+}
+
+interface TestCase {
+  input: string;
+  output: string;
+}
+
+interface Example {
+  input: string;
+  output: string;
+}
+
+interface StarterCode {
+  python3: string;
+  java: string;
+  c: string
+  cpp: string;
+}
+
+interface CategoriesObject {
+  datatypes: string[];
+  strategies: string[];
+}
+
+interface Problem {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  difficulty: string;
+  categories: CategoriesObject;
+  examples: Example[];
+  constraints: string[];
+  starterCode: StarterCode;
+  shownTestCases: TestCase[];
+  acceptanceRate: number;
+  totalSubmissions: number;
+  acceptedSubmissions: number;
+}
+
+interface SubmissionResult {
+  error?: string;
+  all_passed?: boolean;
+  test_cases_passed?: number;
+  total_test_cases?: number;
+  runtime_ms?: number;
+  first_case_failed?: {
+    case?: string;
+    passed?: boolean;
+    error?: string;
+    output?: unknown;
+    expected?: unknown;
+    [key: string]: unknown;
+  };
+}
+
+type CompetitiveWorkspaceProps = {
+  slug: any;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
+  updateLiveCodeLineCount: (currentPlayer: number) => void;
+  updateLiveTestCasesCount: (currentPlayerAccepted: number, currentPlayerTotal: number) => void;
+};
+
+const CompetitiveWorkspace: React.FC<CompetitiveWorkspaceProps> = ({
+  slug,
+  isSidebarOpen,
+  setIsSidebarOpen,
+  updateLiveCodeLineCount,
+  updateLiveTestCasesCount,
+  }) => {
+  const [problem, setProblem] = useState<Problem | null>(null);
+  const [code, setCode] = useState<string | null>(null);
+  const [language, setLanguage] = useState<string>("python3");
+  const [testResults, setTestResults] = useState<TestResult | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionModalOpen, setSubmissionModalOpen] = useState(false);
+  const [result, setResult] = useState<SubmissionResult | null>(null);
+
+  const setSubmission = useSubmissionStore((state) => state.setSubmission);
+  const Router = useRouter();
+
+  useEffect(() => {
+    const fetchProblem = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/problem/${slug}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const rawData = await response.json();
+        const parsedData: Problem = {
+          ...rawData,
+          examples: JSON.parse(rawData.examples),
+          shownTestCases: JSON.parse(rawData.shownTestCases),
+          starterCode: JSON.parse(rawData.starterCode),
+          categories: JSON.parse(rawData.categories),
+        };
+        setProblem(parsedData);
+        setCode(parsedData.starterCode.python3);
+      } catch (err: any) {
+        console.error(err.message || "Failed to fetch problem");
+      }
+    };
+
+    fetchProblem();
+  }, [slug]);
+
+  useEffect(() => {
+    const splitInstance = Split(["#description", "#playground"], {
+      sizes: [50, 50],
+      minSize: 300,
+      snapOffset: 30,
+      dragInterval: 1,
+      gutterAlign: "center",
+      gutter: () => {
+        const gutter = document.createElement("div");
+        gutter.className = `${styles.gutter}`;
+        return gutter;
+      },
+    });
+
+    return () => splitInstance.destroy();
+  }, []);
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    const requestBody = {
+      language: language,
+      slug: slug,
+      code: code,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/compile/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log(result);
+      setResult(result);
+      setSubmissionModalOpen(true);
+      updateLiveTestCasesCount(result.test_cases_passed, result.total_test_cases);
+    } catch (error) {
+      console.error("Error during submission:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRun = async () => {
+    setIsRunning(true);
+    const requestBody = {
+      language: language,
+      slug: slug,
+      code: code,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/compile/run", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      setTestResults(result);
+    } catch (error) {
+      console.error("Error during code execution:", error);
+      setTestResults(null);
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", width: "100%" }}>
+      <ProblemHeader 
+        handleRun={handleRun} 
+        handleSubmit={handleSubmit}
+        isRunning={isRunning}
+        isSubmitting={isSubmitting}
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+      />
+
+      <div style={{ display: "flex", height: "100%", width: "100%" }}>
+        <div id="description" style={{ height: "100%", overflow: "auto" }}>
+          {problem ? (
+            <ProblemDescription problem={problem} />
+          ) : (
+            <div></div>
+          )}
+        </div>
+        <div id="playground" style={{ height: "100%", overflow: "auto" }}>
+          {problem ? (
+            <Playground
+              problem={problem}
+              code={code}
+              setCode={setCode}
+              language={language}
+              setLanguage={setLanguage}
+              testResults={testResults}
+              updateLiveCodeLineCount={updateLiveCodeLineCount}
+            />
+          ) : (
+            <div></div>
+          )}
+        </div>
+      </div>
+
+      <SubmissionResultModal 
+            isOpen={submissionModalOpen}
+            onClose={() => setSubmissionModalOpen(false)}
+            submissionResult={result ?? undefined}
+            submittedCode={code || ''}
+            problemTitle={problem?.title ?? undefined}
+            language="python3"
+      />
+    </div>
+  );
+};
+
+export default CompetitiveWorkspace;

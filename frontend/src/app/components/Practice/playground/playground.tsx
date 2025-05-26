@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from "react";
 import Split from "split.js";
 import CodeMirror from "@uiw/react-codemirror";
@@ -23,7 +25,7 @@ interface TestResult {
 
 interface PlaygroundProps {
   problem: any;
-  code: string;
+  code: string | null;
   setCode: (code: string) => void;
   language: string;
   setLanguage: (language: string) => void;
@@ -91,6 +93,7 @@ const Playground: React.FC<PlaygroundProps> = ({
           }}
           classNames={{
             option: styles.option,
+            input: styles.input,
           }}
           data={[
             // { value: "java", label: "Java" },
@@ -100,25 +103,26 @@ const Playground: React.FC<PlaygroundProps> = ({
           styles={{
             dropdown: {
               backgroundColor: "#1e1e1e",
-              border: "none",
-              height: "60px",
+              borderColor: "#27272a",
+              border: "1px solid #27272a",
+              height: "35px",
               fontSize: "11px",
             },
-            input: {
-              backgroundColor: "#1e1e1e",
-              color: "#f4f4f5",
-              fontSize: "11px",
-              padding: "3px 6px",
-              border: "none",
-              marginLeft: "5px",
-            },
+            // input: {
+            //   backgroundColor: "#1e1e1e",
+            //   color: "#f4f4f5",
+            //   fontSize: "11px",
+            //   padding: "3px 6px",
+            //   border: "none",
+            //   marginLeft: "5px",
+            // },
           }}
         />
       </div>
 
       <div id="editor" className="bg-dark-layer-1 overflow-auto" style={{ backgroundColor: "#1e1e1e" }}>
         <CodeMirror
-          value={code}
+          value={code ?? ""}
           theme={vscodeDark}
           onChange={(value) => setCode(value)}
           extensions={getCodeMirrorExtensions()}
@@ -126,7 +130,7 @@ const Playground: React.FC<PlaygroundProps> = ({
             tabSize: 4,
             lineNumbers: true,
           }}
-          style={{ height: "100%", fontSize: "12px" }}
+          style={{ height: "100%", fontSize: "14px" }}
         />
       </div>
 

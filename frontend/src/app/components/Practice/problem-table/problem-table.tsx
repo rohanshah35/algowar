@@ -1,14 +1,50 @@
 'use client';
 
-import React, { useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Card } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import ProblemData from '@/components/Practice/ProblemData';
+
+interface ProblemSummary {
+  title: string;
+  difficulty: string;
+  acceptanceRate: number;
+  slug: string;
+}
 
 export function ProblemTable(): React.ReactElement {
   const router = useRouter();
-  const { problems, loading, error } = useContext(ProblemData);
-  
+  const [problems, setProblems] = useState<ProblemSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProblemTitles = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/problem/titles");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Transform the array response into ProblemSummary objects
+        const problemSummaries: ProblemSummary[] = data.map((problem: [string, string, number, string]) => ({
+          title: problem[0],
+          difficulty: problem[1],
+          acceptanceRate: problem[2],
+          slug: problem[3]
+        }));
+
+        setProblems(problemSummaries);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch problems");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProblemTitles();
+  }, []);
+
   const handleTitleClick = (slug: string) => {
     router.push(`/problems/${slug}`);
   };
@@ -72,8 +108,8 @@ export function ProblemTable(): React.ReactElement {
           </tr>
         </thead>
         <tbody>
-          {problems?.map((problem) => (
-            <tr key={problem.id} style={{ borderBottom: '1px solid #27272a' }}>
+          {problems.map((problem, index) => (
+            <tr key={index} style={{ borderBottom: '1px solid #27272a' }}>
               <td
                 style={{
                   textAlign: 'center',

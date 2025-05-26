@@ -1,0 +1,61 @@
+.header {
+  background-color: #18181b;
+  padding: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  border-bottom: 1px solid #27272a;
+}
+
+.backButtonContainer {
+  position: absolute;
+  left: 12px;
+}
+
+.backButton {
+  font-size: 0;
+  line-height: 0;
+  padding: 0;
+  color: white !important;
+  background: none !important;
+  box-shadow: none !important;
+
+}
+
+.backButton:hover {
+  background: none !important;
+  color: white !important;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 4px;
+}
+
+.runButton {
+  font-size: 12px !important;
+  width: 80px !important;
+  height: 30px !important;
+  background-color: #2d2d2d !important;
+  color: #d4d4d4 !important;
+  transition: background-color 0.2s ease-in-out !important;
+}
+
+.runButton:hover {
+  background-color: #404040 !important;
+}
+
+.submitButton {
+  font-size: 12px !important;
+  width: 100px !important;
+  height: 30px !important;
+  background-color: #059669 !important;
+  color: white !important;
+  transition: background-color 0.2s ease-in-out !important;
+}
+
+.submitButton:hover {
+  background-color: #047857 !important;
+}

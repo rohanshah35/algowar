@@ -19,6 +19,7 @@
     "@mantine/form": "^7.15.1",
     "@mantine/hooks": "^7.15.1",
     "@mantine/modals": "^7.15.2",
+    "@mantine/notifications": "^7.15.2",
     "@mantine/spotlight": "^7.15.2",
     "@nivo/core": "^0.88.0",
     "@nivo/line": "^0.88.0",
@@ -32,7 +33,9 @@
     "react-split": "^2.0.14",
     "recharts": "^2.15.0",
     "sass": "^1.83.0",
-    "split.js": "^1.6.5"
+    "socket.io-client": "^4.8.1",
+    "split.js": "^1.6.5",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

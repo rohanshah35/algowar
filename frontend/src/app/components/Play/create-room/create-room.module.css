@@ -1,0 +1,42 @@
+.topContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+}
+
+.container {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  padding: 1.5rem;
+  border-radius: 0.375rem;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.6);
+  color: #f4f4f5;
+  width: 100%;
+}
+
+.errorText {
+  color: #f87171;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.control {
+  width: 100%;
+  background-color: #27272a;
+  color: #d4d4d8;
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-weight: 200;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}

@@ -28,9 +28,10 @@ import com.nodewars.utils.CognitoUtils;
 @Service
 public class CognitoService {
 
-    private final CognitoIdentityProviderClient cognitoClient;
     private static final Logger logger = LoggerFactory.getLogger(CognitoService.class);
-    
+
+    private final CognitoIdentityProviderClient cognitoClient;
+
     @Value("${aws.cognito.client-id}")
     private String clientId;
     
@@ -135,7 +136,6 @@ public class CognitoService {
                     .build();
     
             AdminInitiateAuthResponse authResponse = cognitoClient.adminInitiateAuth(authRequest);
-            logger.info("Access token: " + authResponse.authenticationResult().accessToken());
             return authResponse.authenticationResult().accessToken();
         } catch (CognitoIdentityProviderException e) {
             System.err.println("Error during authentication: " + e.getMessage());
@@ -169,7 +169,6 @@ public class CognitoService {
                     .build();
     
             AdminGetUserResponse getUserResponse = cognitoClient.adminGetUser(getUserRequest);
-            logger.info("User retrieved from Cognito: " + getUserResponse.username());
     
             AttributeType emailVerifiedAttribute = AttributeType.builder()
                     .name("email_verified")
@@ -183,10 +182,8 @@ public class CognitoService {
                     .build();
     
             cognitoClient.adminUpdateUserAttributes(updateRequest);
-            logger.info("Email verification status updated to true for user: " + username);
     
         } catch (Exception e) {
-            logger.error("Error setting email_verified attribute: " + e.getMessage(), e);
         }
     }
     

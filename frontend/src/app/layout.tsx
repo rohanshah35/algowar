@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AppShell, MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import "./globals.css";
+import '@mantine/notifications/styles.css';
+import { Notifications } from '@mantine/notifications';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +27,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <MantineProvider>
+          <Notifications />
           <AppShell
             header={{ height: 60 }}
             padding="md"

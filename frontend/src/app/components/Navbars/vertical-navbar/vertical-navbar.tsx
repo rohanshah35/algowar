@@ -49,8 +49,9 @@ import { use, useEffect, useState } from 'react';
         label: 'Play',
         icon: IconSwords,
         links: [
-          { label: 'Join Queue', link: '/queue' },
-          { label: 'Invite Friend', link: '/invite' },
+          { label: 'Matchmaking', link: '/matchmaking' },
+          { label: 'Join Room', link: '/join' },
+          { label: 'Create Room', link: '/create' },
         ],
       },
       {
@@ -107,7 +108,7 @@ import { use, useEffect, useState } from 'react';
       <nav className={classes.navbar}>
         <div className={classes.header}>
           <Group justify="space-between">
-            <div style={{ color: '#f4f4f5', fontSize: '20px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
+            <div style={{ color: '#f4f4f5', fontSize: '16px', letterSpacing: '3px', fontFamily: inter.style.fontFamily }}>
               algowar.xyz
             </div>
           </Group>
