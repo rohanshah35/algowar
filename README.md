@@ -9,27 +9,27 @@ Built with Next.js & Spring Boot • Styled with Mantine • Powered by AWS
 ## 🖼️ Gallery
 #### ▶️ Problem Execution & Submission Demo
 <p align="center">
-  <img src="https://ibb.co/mCCz80VP" alt="AlgoWar Running and Submitting Demo" width="600" />
+  <img src="https://i.ibb.co/QFFmdk3x/ezgif-3c6d480ac33828.gif" alt="AlgoWar Running and Submitting Demo" width="600" />
 </p>
 
 #### 📄 Profile Page
 <p align="center">
-  <img src="https://ibb.co/3yrcnhvw" alt="AlgoWar Profile Page Screenshot" width="600" />
+  <img src="https://i.ibb.co/BVzB9sGm/5debac62d5dc6f49f8db4a648fefe78e.png" alt="AlgoWar Profile Page Screenshot" width="600" />
 </p>
 
 #### 📊 Problem Workspace
 <p align="center">
-  <img src="https://ibb.co/XffF64bR" alt="AlgoWar Problem Workspace" width="600" />
+  <img src="https://i.ibb.co/p664NPxF/eb9e9606473b8b59480321b4fbfd25ed.png" alt="AlgoWar Problem Workspace" width="600" />
 </p>
 
 #### 🧠 Problem List
 <p align="center">
-  <img src="https://ibb.co/27h4GZ8k" alt="AlgoWar Problem List" width="600" />
+  <img src="https://i.ibb.co/JRtJD3xs/44ea678d4ee5afa2b908f98a54108bd2.png" alt="AlgoWar Problem List" width="600" />
 </p>
 
 #### 📈 Landing Page
 <p align="center">
-  <img src="https://ibb.co/0ptHrstT" alt="AlgoWar Landing Page" width="600" />
+  <img src="https://i.ibb.co/PsQqgDQK/e8321901d8fa6777629cfa0d67384c63.png" alt="AlgoWar Landing Page" width="600" />
 </p>
 
 ---
